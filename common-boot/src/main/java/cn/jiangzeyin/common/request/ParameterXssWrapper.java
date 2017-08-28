@@ -1,0 +1,76 @@
+package cn.jiangzeyin.common.request;
+
+import cn.jiangzeyin.util.util.StringUtil;
+import org.springframework.util.Assert;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+import java.util.*;
+
+/**
+ * @author jiangzeyin
+ * Created by jiangzeyin on 2017/2/4.
+ */
+public class ParameterXssWrapper extends HttpServletRequestWrapper {
+    private final Map<String, String[]> parameters;
+    private final HttpServletRequest request;
+
+    /**
+     * Constructs a request object wrapping the given request.
+     *
+     * @param request The request to wrap
+     */
+    ParameterXssWrapper(HttpServletRequest request) {
+        super(request);
+        //request = this;
+        this.request = request;
+        this.parameters = doXss(request.getParameterMap(), true);
+    }
+
+    @Override
+    public Map<String, String[]> getParameterMap() {
+        return parameters;
+    }
+
+    @Override
+    public Enumeration<String> getParameterNames() {
+        return new Vector<>(parameters.keySet()).elements();
+    }
+
+    @Override
+    public String getParameter(String name) {
+        return request.getParameter(name);
+    }
+
+    @Override
+    public String[] getParameterValues(String name) {
+        return parameters.get(name);
+    }
+
+    /**
+     * 处理xss 问题
+     *
+     * @param map  map
+     * @param utf8 utf8
+     * @return 结果
+     */
+    public static Map<String, String[]> doXss(Map<String, String[]> map, boolean utf8) {
+        Assert.notNull(map);
+        Iterator<Map.Entry<String, String[]>> iterator = map.entrySet().iterator();
+        Map<String, String[]> valuesMap = new HashMap<>();
+        while (iterator.hasNext()) {
+            Map.Entry<String, String[]> entry = iterator.next();
+            String key = entry.getKey();
+            String[] values = entry.getValue();
+            if (values != null) {
+                for (int i = 0; i < values.length; i++) {
+                    if (!utf8)
+                        values[i] = StringUtil.getUTF8(values[i]);
+                    values[i] = StringUtil.filterHTML(values[i]);
+                }
+                valuesMap.put(key, values);
+            }
+        }
+        return valuesMap;
+    }
+}
