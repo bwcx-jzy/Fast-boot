@@ -2,81 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" readonly="true" id="fdf586a4-1307-4785-b141-8540cf6bcbfa" name="Default" comment="合并ok">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/.name" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/dictionaries/Administrator.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/encodings.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__antlr_antlr_2_7_2.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__antlr_antlr_2_7_7.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__ch_qos_logback_logback_classic_1_1_7.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__ch_qos_logback_logback_core_1_1_7.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__cn_jiangzeyin_dbutil_1_1_1.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_alibaba_druid_1_1_2.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_alibaba_fastjson_1_2_37.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_classmate_1_1_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_classmate_1_3_3.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_annotations_2_8_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_annotations_2_8_4.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_core_2_8_4.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_databind_2_8_4.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_beanutils_commons_beanutils_1_9_3.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_chain_commons_chain_1_1.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_codec_commons_codec_1_10.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_codec_commons_codec_1_2.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_collections_commons_collections_3_2_2.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_digester_commons_digester_2_1.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_httpclient_commons_httpclient_3_1.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_lang_commons_lang_2_4.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_logging_commons_logging_1_0_4.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_net_commons_net_3_5.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_validator_commons_validator_1_3_1.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__dom4j_dom4j_1_6_1.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__javax_validation_validation_api_1_1_0_Final.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__mysql_mysql_connector_java_5_1_40.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_httpcomponents_httpclient_4_5_3.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_httpcomponents_httpcore_4_4_6.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_httpcomponents_httpmime_4_5_3.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_struts_struts_core_1_3_8.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_struts_struts_taglib_1_3_8.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_struts_struts_tiles_1_3_8.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_tomcat_embed_tomcat_embed_core_8_5_6.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_tomcat_embed_tomcat_embed_el_8_5_6.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_tomcat_embed_tomcat_embed_websocket_8_5_6.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_velocity_velocity_1_7.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_velocity_velocity_tools_2_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_hibernate_hibernate_validator_5_2_4_Final.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jboss_logging_jboss_logging_3_2_1_Final.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jboss_logging_jboss_logging_3_3_0_Final.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_jcl_over_slf4j_1_7_21.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_jul_to_slf4j_1_7_21.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_log4j_over_slf4j_1_7_21.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_slf4j_api_1_7_20.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_slf4j_api_1_7_21.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_1_4_2_RELEASE.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_actuator_1_4_2_RELEASE.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_autoconfigure_1_4_2_RELEASE.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_1_4_2_RELEASE.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_logging_1_4_2_RELEASE.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_tomcat_1_4_2_RELEASE.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_velocity_1_4_2_RELEASE.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_web_1_4_2_RELEASE.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_aop_4_3_4_RELEASE.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_beans_4_3_4_RELEASE.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_context_4_3_4_RELEASE.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_context_support_4_3_4_RELEASE.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_core_4_3_4_RELEASE.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_expression_4_3_4_RELEASE.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_web_4_3_4_RELEASE.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_webmvc_4_3_4_RELEASE.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_yaml_snakeyaml_1_17.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__oro_oro_2_0_8.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__sslext_sslext_1_2_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__xml_apis_xml_apis_1_0_b2.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__xml_apis_xml_apis_1_4_01.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -109,47 +34,47 @@
             <state relative-caret-position="0">
               <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding>
-                <marker date="1503994777085" expanded="true" signature="57827:57869" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="57827:57887" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="57827:57900" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="57827:57915" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="57950:60457" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="57963:60442" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="58017:58312" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="58036:58297" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="58099:58277" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="58139:58243" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="58160:58221" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="58362:58671" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="58381:58656" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="58458:58636" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="58498:58602" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="58519:58580" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="58722:58987" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="58741:58972" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="58774:58952" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="58814:58918" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="58835:58896" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="59030:59336" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="59049:59321" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="59123:59301" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="59163:59267" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="59184:59245" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="59387:59708" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="59406:59693" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="59495:59673" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="59535:59639" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="59556:59617" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="59743:60049" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="59762:60034" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="59836:60014" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="59876:59980" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="59897:59958" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="60101:60428" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="60120:60413" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="60215:60393" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="60255:60359" ph="..." />
-                <marker date="1503994777085" expanded="true" signature="60276:60337" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="57842:57884" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="57842:57902" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="57842:57915" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="57842:57930" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="57965:60472" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="57978:60457" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="58032:58327" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="58051:58312" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="58114:58292" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="58154:58258" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="58175:58236" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="58377:58686" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="58396:58671" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="58473:58651" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="58513:58617" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="58534:58595" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="58737:59002" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="58756:58987" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="58789:58967" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="58829:58933" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="58850:58911" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="59045:59351" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="59064:59336" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="59138:59316" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="59178:59282" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="59199:59260" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="59402:59723" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="59421:59708" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="59510:59688" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="59550:59654" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="59571:59632" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="59758:60064" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="59777:60049" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="59851:60029" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="59891:59995" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="59912:59973" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="60116:60443" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="60135:60428" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="60230:60408" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="60270:60374" ph="..." />
+                <marker date="1503995762219" expanded="true" signature="60291:60352" ph="..." />
               </folding>
             </state>
           </provider>
@@ -527,7 +452,7 @@
       <workItem from="1503975407755" duration="1704000" />
       <workItem from="1503994221406" duration="72000" />
       <workItem from="1503994309366" duration="55000" />
-      <workItem from="1503994379656" duration="411000" />
+      <workItem from="1503994379656" duration="1428000" />
     </task>
     <task id="LOCAL-00001" summary="123">
       <created>1503461000184</created>
@@ -613,11 +538,18 @@
       <option name="project" value="LOCAL" />
       <updated>1503994058511</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="合并ok">
+      <created>1503994819061</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1503994819061</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="68476000" />
+    <option name="totallyTimeSpent" value="69493000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1911" y="-9" width="1938" height="1098" extended-state="6" />
@@ -627,12 +559,12 @@
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.48394004" sideWeight="0.5193133" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.48394004" sideWeight="0.5214592" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.14860515" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32976446" sideWeight="0.4914163" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32976446" sideWeight="0.4892704" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32976446" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Spring" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32976446" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.48394004" sideWeight="0.4806867" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.48394004" sideWeight="0.47854078" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33154505" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -938,47 +870,47 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1503994777085" expanded="true" signature="57827:57869" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="57827:57887" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="57827:57900" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="57827:57915" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="57950:60457" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="57963:60442" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="58017:58312" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="58036:58297" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="58099:58277" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="58139:58243" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="58160:58221" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="58362:58671" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="58381:58656" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="58458:58636" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="58498:58602" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="58519:58580" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="58722:58987" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="58741:58972" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="58774:58952" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="58814:58918" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="58835:58896" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="59030:59336" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="59049:59321" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="59123:59301" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="59163:59267" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="59184:59245" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="59387:59708" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="59406:59693" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="59495:59673" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="59535:59639" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="59556:59617" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="59743:60049" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="59762:60034" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="59836:60014" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="59876:59980" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="59897:59958" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="60101:60428" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="60120:60413" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="60215:60393" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="60255:60359" ph="..." />
-            <marker date="1503994777085" expanded="true" signature="60276:60337" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="57842:57884" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="57842:57902" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="57842:57915" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="57842:57930" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="57965:60472" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="57978:60457" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="58032:58327" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="58051:58312" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="58114:58292" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="58154:58258" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="58175:58236" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="58377:58686" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="58396:58671" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="58473:58651" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="58513:58617" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="58534:58595" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="58737:59002" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="58756:58987" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="58789:58967" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="58829:58933" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="58850:58911" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="59045:59351" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="59064:59336" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="59138:59316" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="59178:59282" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="59199:59260" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="59402:59723" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="59421:59708" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="59510:59688" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="59550:59654" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="59571:59632" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="59758:60064" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="59777:60049" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="59851:60029" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="59891:59995" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="59912:59973" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="60116:60443" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="60135:60428" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="60230:60408" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="60270:60374" ph="..." />
+            <marker date="1503995762219" expanded="true" signature="60291:60352" ph="..." />
           </folding>
         </state>
       </provider>
