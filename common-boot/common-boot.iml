@@ -4,18 +4,11 @@
     <facet type="Spring" name="Spring">
       <configuration>
         <fileset id="fileset" name="common-boot" removed="false">
-          <file>file://$MODULE_DIR$/src/main/java/cn/jiangzeyin/common/spring/init/SiteCache.java</file>
           <file>file://$MODULE_DIR$/src/main/java/cn/jiangzeyin/system/pool/AsyncConfig.java</file>
-          <file>file://$MODULE_DIR$/src/main/java/cn/jiangzeyin/database/CommonDatabaseConfig.java</file>
           <file>file://$MODULE_DIR$/src/main/java/cn/jiangzeyin/common/spring/FilterInitBean.java</file>
           <file>file://$MODULE_DIR$/src/main/java/cn/jiangzeyin/common/spring/InitBean.java</file>
           <file>file://$MODULE_DIR$/src/main/java/cn/jiangzeyin/common/interceptor/InterceptorControl.java</file>
-          <file>file://$MODULE_DIR$/src/main/java/cn/jiangzeyin/common/spring/init/PageTemplateCache.java</file>
-          <file>file://$MODULE_DIR$/src/main/java/cn/jiangzeyin/common/spring/ServiceInfoUtil.java</file>
-          <file>file://$MODULE_DIR$/src/main/java/cn/jiangzeyin/common/spring/init/SpringUtil.java</file>
           <file>file://$MODULE_DIR$/src/main/java/cn/jiangzeyin/system/SystemBean.java</file>
-          <file>file://$MODULE_DIR$/src/main/java/cn/jiangzeyin/common/spring/init/SystemInitPackageControl.java</file>
-          <file>file://$MODULE_DIR$/src/main/java/cn/jiangzeyin/common/spring/init/SystemParameterCache.java</file>
           <file>file://$MODULE_DIR$/src/main/java/cn/jiangzeyin/common/spring/TomcatInitBean.java</file>
         </fileset>
       </configuration>
