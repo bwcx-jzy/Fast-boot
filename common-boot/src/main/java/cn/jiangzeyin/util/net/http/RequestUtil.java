@@ -1,9 +1,6 @@
 package cn.jiangzeyin.util.net.http;
 
 import cn.jiangzeyin.util.util.StringUtil;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONException;
-import com.alibaba.fastjson.JSONObject;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -234,48 +231,12 @@ public final class RequestUtil {
      */
     public static Map<String, String> getHeaderMapValues(HttpServletRequest request) {
         Enumeration<String> enumeration = request.getHeaderNames();
-        Map<String, String> headerMapValues = new HashMap<String, String>();
+        Map<String, String> headerMapValues = new HashMap<>();
         if (enumeration != null)
             for (; enumeration.hasMoreElements(); ) {
                 String name = enumeration.nextElement();
                 headerMapValues.put(name, request.getHeader(name));
             }
         return headerMapValues;
-    }
-
-    /**
-     * 根据Ip获取地址 淘宝接口
-     *
-     * @param ipAddress ip
-     * @return str
-     * @throws JSONException json
-     * @throws Exception     e
-     * @author jiangzeyin
-     */
-    public static String getIpAddressRegion(String ipAddress) throws Exception {
-        String apiData = HttpUtil.doGet("http://ip.taobao.com/service/getIpInfo.php?ip=" + ipAddress, "UTF-8");
-        JSONObject jsonObject = JSON.parseObject(apiData);
-        JSONObject data = jsonObject.getJSONObject("data");
-        if (data == null)
-            return "未知地址";
-        return data.getString("country") +
-                data.getString("region") +
-                data.getString("city") +
-                data.getString("county") + "_地区：" +
-                data.getString("area");
-
-    }
-
-    /**
-     * 获取ip 地址的json 数据
-     *
-     * @param ip ip
-     * @return str
-     * @throws Exception e
-     */
-    public static String getIpInfo(String ip) throws Exception {
-        String data = HttpUtil.doGet("http://ip.taobao.com/service/getIpInfo.php?ip=" + ip, "UTF-8");
-        JSONObject obj = JSON.parseObject(data);
-        return obj.toJSONString();
     }
 }

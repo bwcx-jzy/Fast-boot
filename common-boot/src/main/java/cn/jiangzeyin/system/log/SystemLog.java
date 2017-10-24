@@ -21,7 +21,12 @@ public class SystemLog {
     private static final Map<LogType, Logger> LOG_TYPE_LOGGER_MAP = new ConcurrentHashMap<>();
     private static final String TYPE_ERROR_TAG = "ERROR";
     private static ConsoleAppender consoleAppender;
-    private static String LogPath = "/log/cn.jiangzeyin";
+
+    public enum LogType {
+        REQUEST, REQUEST_ERROR,
+        DEFAULT, ERROR
+    }
+
 
     public static void init() {
         consoleAppender = initConsole();
@@ -80,8 +85,8 @@ public class SystemLog {
         //policy
         SizeAndTimeBasedRollingPolicy policy = new SizeAndTimeBasedRollingPolicy<>();
         policy.setContext(loggerContext);
-        //"/ztoutiao/logsss/" + EntitySystemBean.getInstance().systemTag + "/" + path + "/" + tag + "-%d{yyyy-MM-dd}.%i.logsss"
-        policy.setFileNamePattern(String.format("%s/%s/%s/%s-%%d{yyyy-MM-dd}.%%i.log", LogPath, SpringUtil.getApplicationId(), path, tag).toLowerCase());
+        String logPath = "/log/cn.jiangzeyin";
+        policy.setFileNamePattern(String.format("%s/%s/%s/%s-%%d{yyyy-MM-dd}.%%i.log", logPath, SpringUtil.getApplicationId(), path, tag).toLowerCase());
         policy.setMaxFileSize("100MB");
         policy.setMaxHistory(30);
         policy.setTotalSizeCap(FileSize.valueOf("10GB"));
@@ -92,13 +97,13 @@ public class SystemLog {
         encoder.setContext(loggerContext);
         encoder.setPattern("%d{HH:mm:ss.SSS} %-5level [%thread %file:%line] %logger - %msg%n");
         encoder.start();
-        //start appender    // "/ztoutiao/logsss/" + EntitySystemBean.getInstance().systemTag + "/" + path + "/" + tag + ".logsss"
-        appender.setFile(String.format("%s/%s/%s/%s.log", LogPath, SpringUtil.getApplicationId(), path, tag).toLowerCase());
+        appender.setFile(String.format("%s/%s/%s/%s.log", logPath, SpringUtil.getApplicationId(), path, tag).toLowerCase());
         appender.setName("appender" + tag);
         appender.setRollingPolicy(policy);
         appender.setContext(loggerContext);
         appender.setEncoder(encoder);
-        //appender.setPrudent(true); //support that multiple JVMs can safely write to the same file.
+        //support that multiple JVMs can safely write to the same file.
+        appender.setPrudent(true);
         appender.start();
         asyncAppender.addAppender(appender);
         asyncAppender.start();

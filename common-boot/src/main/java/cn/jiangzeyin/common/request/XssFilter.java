@@ -2,7 +2,6 @@ package cn.jiangzeyin.common.request;
 
 import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.common.spring.SpringUtil;
-import cn.jiangzeyin.system.log.LogType;
 import cn.jiangzeyin.system.log.SystemLog;
 import cn.jiangzeyin.util.net.http.RequestUtil;
 import cn.jiangzeyin.util.util.StringUtil;
@@ -76,7 +75,7 @@ public class XssFilter extends CharacterEncodingFilter {
             stringBuffer.append("null");
         }
         stringBuffer.append(",header:").append(header);
-        SystemLog.LOG(LogType.REQUEST).info(stringBuffer.toString());
+        SystemLog.LOG(SystemLog.LogType.REQUEST).info(stringBuffer.toString());
         REQUEST_INFO.set(stringBuffer);
     }
 
@@ -93,7 +92,7 @@ public class XssFilter extends CharacterEncodingFilter {
                     status +
                     ",url:" +
                     REQUEST_INFO.get();
-            SystemLog.LOG(LogType.REQUEST_ERROR).error(stringBuffer);
+            SystemLog.LOG(SystemLog.LogType.REQUEST_ERROR).error(stringBuffer);
             return;
         }
         // 记录请求超时
@@ -108,7 +107,7 @@ public class XssFilter extends CharacterEncodingFilter {
                     time +
                     ",url:" +
                     REQUEST_INFO.get();
-            SystemLog.LOG(LogType.REQUEST_ERROR).error(stringBuffer);
+            SystemLog.LOG(SystemLog.LogType.REQUEST_ERROR).error(stringBuffer);
         }
     }
 }

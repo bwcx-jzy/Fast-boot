@@ -1,7 +1,6 @@
 package cn.jiangzeyin.common.spring;
 
 import cn.jiangzeyin.CommonPropertiesFinal;
-import cn.jiangzeyin.system.log.LogType;
 import cn.jiangzeyin.system.log.SystemLog;
 import cn.jiangzeyin.util.util.PackageUtil;
 import cn.jiangzeyin.util.util.StringUtil;
@@ -69,9 +68,9 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware,
         } else if (event instanceof ServletRequestHandledEvent) {
             ServletRequestHandledEvent servletRequestHandledEvent = (ServletRequestHandledEvent) event;
             if (!servletRequestHandledEvent.wasFailure()) {
-                SystemLog.LOG(LogType.REQUEST).info(servletRequestHandledEvent.toString());
+                SystemLog.LOG(SystemLog.LogType.REQUEST).info(servletRequestHandledEvent.toString());
             } else {
-                SystemLog.LOG(LogType.REQUEST).info("error:" + servletRequestHandledEvent.toString());
+                SystemLog.LOG(SystemLog.LogType.REQUEST).info("error:" + servletRequestHandledEvent.toString());
             }
         } else if (event instanceof EmbeddedServletContainerInitializedEvent) {
 
