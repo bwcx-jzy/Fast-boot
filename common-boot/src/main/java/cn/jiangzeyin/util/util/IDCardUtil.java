@@ -114,8 +114,7 @@ public final class IDCardUtil {
     private static int getIdcardCalendar() {
         GregorianCalendar curDay = new GregorianCalendar();
         int curYear = curDay.get(Calendar.YEAR);
-        int year2bit = Integer.parseInt(String.valueOf(curYear).substring(2));
-        return year2bit;
+        return Integer.parseInt(String.valueOf(curYear).substring(2));
     }
 
     public static void main(String[] args) {

@@ -141,8 +141,5 @@ public class Calculate {
         result = calculate.getPostOrder(result);   //中缀变后缀
         int i = calculate.calculate(result);   //计算
         System.out.println(i);
-
     }
-
-
 }
