@@ -3,7 +3,7 @@ package cn.jiangzeyin.common.request;
 import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.common.DefaultSystemLog;
 import cn.jiangzeyin.common.spring.SpringUtil;
-import cn.jiangzeyin.util.RequestUtil;
+import cn.jiangzeyin.controller.base.RequestUtil;
 import cn.jiangzeyin.util.StringUtil;
 import org.apache.http.HttpStatus;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;

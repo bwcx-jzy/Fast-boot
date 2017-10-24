@@ -1,7 +1,8 @@
 package cn.jiangzeyin.controller.base;
 
+import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.common.DefaultSystemLog;
-import cn.jiangzeyin.util.RequestUtil;
+import cn.jiangzeyin.common.spring.SpringUtil;
 import cn.jiangzeyin.util.StringUtil;
 
 import javax.servlet.http.Cookie;
@@ -55,7 +56,7 @@ public abstract class AbstractBaseControl {
         HTTP_SERVLET_REQUEST_THREAD_LOCAL.set(request);
         HTTP_SESSION_THREAD_LOCAL.set(session);
         HTTP_SERVLET_RESPONSE_THREAD_LOCAL.set(response);
-        this.ip = RequestUtil.getIpAddress(request);
+        this.ip = getIpAddress(request);
         response.setCharacterEncoding("UTF-8");
     }
 
@@ -227,5 +228,31 @@ public abstract class AbstractBaseControl {
         return "set"
                 + fieldName.substring(startIndex, startIndex + 1).toUpperCase()
                 + fieldName.substring(startIndex + 1);
+    }
+
+    private static String default_headerName = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.IP_DEFAULT_HEADER_NAME);
+
+    public static String getIpAddress(HttpServletRequest request) {
+        String ipFromNginx = request.getHeader(default_headerName);
+        if (ipFromNginx != null && ipFromNginx.length() > 0)
+            return ipFromNginx;
+        String ip = request.getHeader("x-forwarded-for");
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_CLIENT_IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        ip = StringUtil.convertNULL(ip);
+        return ip;
     }
 }

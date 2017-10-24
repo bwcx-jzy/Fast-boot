@@ -22,7 +22,7 @@ public class TomcatInitBean {
     @Bean
     public EmbeddedServletContainerCustomizer containerCustomizer() {
         return container -> {
-            Integer timout = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.REQUEST_TIME_OUT, Integer.class);
+            Integer timout = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.TOMCAT_SESSION_TIME_OUT, Integer.class);
             if (timout != null)
                 container.setSessionTimeout(timout, TimeUnit.MINUTES);//单位为分钟
         };

@@ -16,7 +16,7 @@ import java.util.Map;
  * Created by jiangzeyin on 2017/1/10.
  */
 
-public class BaseApplication extends SpringApplication {
+public abstract class BaseApplication extends SpringApplication {
 
     private static Environment environment;
 

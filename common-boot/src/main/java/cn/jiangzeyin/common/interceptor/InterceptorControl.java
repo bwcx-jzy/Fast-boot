@@ -1,16 +1,14 @@
 package cn.jiangzeyin.common.interceptor;
 
+import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.common.DefaultSystemLog;
 import cn.jiangzeyin.util.PackageUtil;
-import cn.jiangzeyin.util.ReflectUtil;
 import cn.jiangzeyin.util.StringUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import java.io.IOException;
 import java.lang.reflect.Modifier;
@@ -25,8 +23,7 @@ import java.util.List;
 @Configuration
 @EnableWebMvc
 public class InterceptorControl extends WebMvcConfigurerAdapter {
-    //com.yoke.common.interceptor
-    @Value("${interceptor.package:}")
+    @Value("${" + CommonPropertiesFinal.INTERCEPTOR_INIT_PACKAGE_NAME + ":}")
     private String loadPath;
 
     @Override
@@ -51,29 +48,30 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
         if (list == null)
             return;
         for (String item : list) {
-            Class classItem = null;
+            Class classItem;
             try {
                 classItem = Class.forName(item);
             } catch (ClassNotFoundException e) {
                 DefaultSystemLog.ERROR().error("加载拦截器错误", e);
+                continue;
             }
             if (classItem == null)
                 continue;
             boolean isAbstract = Modifier.isAbstract(classItem.getModifiers());
             if (isAbstract)
                 continue;
-            if (!ReflectUtil.isSuperclass(classItem, HandlerInterceptorAdapter.class))
+            if (!BaseInterceptor.class.isAssignableFrom(classItem))
                 continue;
-            HandlerInterceptor handlerInterceptor;
+            InterceptorPattens interceptorPattens = (InterceptorPattens) classItem.getAnnotation(InterceptorPattens.class);
+            if (interceptorPattens == null)
+                continue;
+            BaseInterceptor handlerInterceptor;
             try {
-                handlerInterceptor = (HandlerInterceptor) classItem.newInstance();
+                handlerInterceptor = (BaseInterceptor) classItem.newInstance();
             } catch (InstantiationException | IllegalAccessException e) {
                 DefaultSystemLog.ERROR().error("加载拦截器错误", e);
                 continue;
             }
-            InterceptorPattens interceptorPattens = (InterceptorPattens) classItem.getAnnotation(InterceptorPattens.class);
-            if (interceptorPattens == null)
-                continue;
             String[] patterns = interceptorPattens.value();
             registry.addInterceptor(handlerInterceptor).addPathPatterns(patterns);
             DefaultSystemLog.LOG().info("加载拦截器：" + classItem + "  " + patterns[0]);

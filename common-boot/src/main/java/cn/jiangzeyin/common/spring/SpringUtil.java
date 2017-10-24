@@ -3,10 +3,8 @@ package cn.jiangzeyin.common.spring;
 import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.common.BaseApplication;
 import cn.jiangzeyin.common.DefaultSystemLog;
-import cn.jiangzeyin.util.PackageUtil;
-import cn.jiangzeyin.util.StringUtil;
+import cn.jiangzeyin.common.SystemInitPackageControl;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerInitializedEvent;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationContext;
@@ -20,10 +18,6 @@ import org.springframework.context.event.ContextStoppedEvent;
 import org.springframework.core.env.Environment;
 import org.springframework.util.Assert;
 import org.springframework.web.context.support.ServletRequestHandledEvent;
-
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.List;
 
 /**
  * @author jiangzeyin
@@ -43,7 +37,6 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         SpringUtil.applicationContext = applicationContext;
-        System.out.println("加载中");
         DefaultSystemLog.init();
     }
 
@@ -55,7 +48,7 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
         if (event instanceof ApplicationReadyEvent) {
-            //SystemInitPackageControl.init();
+            SystemInitPackageControl.init();
             //创建tomcat 临时文件
             //ServiceInfoUtil.initTomcatTemPath();
             DefaultSystemLog.LOG().info("启动完成");
@@ -134,52 +127,6 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
 
     public static String getApplicationId() {
         return getEnvironment().getProperty(CommonPropertiesFinal.APPLICATION_ID);
-    }
-}
-
-class SystemInitPackageControl {
-
-    @Value("${initPackageName:}")
-    private String initPackageName;
-
-    @Value("${initPackageName.methodName:init}")
-    private String methodName;
-
-    private static SystemInitPackageControl systemInitPackageControl;
-
-    /**
-     * //     * 系统预加载包名
-     * //
-     */
-//    @Value("${server.initPackageName:com.yoke.system.init}")
-//    public String initPackageName;
-    static void init() {
-        if (systemInitPackageControl == null)
-            systemInitPackageControl = SpringUtil.getBean(SystemInitPackageControl.class);
-        if (StringUtil.isEmpty(systemInitPackageControl.initPackageName))
-            return;
-        try {
-            List<String> list = PackageUtil.getClassName(systemInitPackageControl.initPackageName);
-            if (list == null)
-                return;
-            for (String name : list) {
-                try {
-                    if (name.contains("$"))
-                        continue;
-                    Class<?> cls = Class.forName(name);
-                    if (cls == SystemInitPackageControl.class)
-                        continue;
-                    Method method = cls.getMethod(systemInitPackageControl.methodName);
-                    method.invoke(null);
-                } catch (ClassNotFoundException e) {
-                    DefaultSystemLog.ERROR().error("预加载包错误:" + name, e);
-                } catch (Exception e) {
-                    DefaultSystemLog.ERROR().error("预加载包错误:" + name + "  执行错误", e);
-                }
-            }
-        } catch (IOException e) {
-            DefaultSystemLog.ERROR().error("预加载包错误", e);
-        }
     }
 }
 
