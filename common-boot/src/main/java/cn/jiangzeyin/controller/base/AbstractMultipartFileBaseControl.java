@@ -1,7 +1,7 @@
 package cn.jiangzeyin.controller.base;
 
 import cn.jiangzeyin.common.request.ParameterXssWrapper;
-import cn.jiangzeyin.util.ref.ReflectUtil;
+import cn.jiangzeyin.util.util.ReflectUtil;
 import cn.jiangzeyin.util.util.StringUtil;
 import cn.jiangzeyin.util.util.file.FileStreamUtil;
 import cn.jiangzeyin.util.util.file.FileType;

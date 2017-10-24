@@ -2,7 +2,6 @@ package cn.jiangzeyin.common.interceptor;
 
 import cn.jiangzeyin.controller.base.AbstractBaseControl;
 import cn.jiangzeyin.controller.base.AbstractMultipartFileBaseControl;
-import cn.jiangzeyin.system.log.LogType;
 import cn.jiangzeyin.system.log.SystemLog;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.method.HandlerMethod;
@@ -60,7 +59,7 @@ public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         if (response.getStatus() != HttpStatus.OK.value()) {
-            SystemLog.LOG(LogType.CONTROL_ERROR).info("请求错误:" + request.getRequestURI() + "  " + response.getStatus());
+            SystemLog.LOG().info("请求错误:" + request.getRequestURI() + "  " + response.getStatus());
         }
     }
 
@@ -68,6 +67,6 @@ public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         if (ex != null)
-            SystemLog.LOG(LogType.CONTROL_ERROR).error("controller 异常", ex);
+            SystemLog.ERROR().error("controller 异常", ex);
     }
 }

@@ -7,19 +7,8 @@ import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy;
 import ch.qos.logback.core.util.FileSize;
 import cn.jiangzeyin.system.SystemBean;
-import cn.jiangzeyin.util.system.interfaces.UtilSystemLogInterface;
-import cn.jiangzeyin.util.system.util.UtilSystemCache;
-import cn.jiangzeyin.util.util.StringUtil;
-import cn.jiangzeyin.util.util.XmlUtil;
-import org.dom4j.Attribute;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Element;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
 
-import java.io.InputStream;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -27,23 +16,16 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author jiangzeyin
  * Created by jiangzeyin on 2017/2/3.
  */
-public class SystemLog implements UtilSystemLogInterface {
+public class SystemLog {
     private static final LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
     private static final Map<LogType, Logger> LOG_TYPE_LOGGER_MAP = new ConcurrentHashMap<>();
-    private static final Map<String, Logger> LOGGER_MAP = new ConcurrentHashMap<>();
-    private static final SystemLog systemLog = new SystemLog();
     private static final String TYPE_ERROR_TAG = "ERROR";
-    private static final String MY_LOG_TYPENAME = "LogType";
-    private static final String LOG_PATH_NAME = "LogPath";
     private static ConsoleAppender consoleAppender;
     private static String LogPath = "/ztoutiao/log/";
 
     public static void init() {
         consoleAppender = initConsole();
-        initLogBackXml();
         initSystemLog();
-        // EntitySystemCache.init(systemLog);
-        UtilSystemCache.init(systemLog);
     }
 
     /**
@@ -58,45 +40,6 @@ public class SystemLog implements UtilSystemLogInterface {
             }
             Logger logger = initLogger(tag, tag, level);
             LOG_TYPE_LOGGER_MAP.put(type, logger);
-            //logger.info("init ok!");
-            //logger.error("init error");
-        }
-    }
-
-    /**
-     * 加载自定义日志文件对象
-     */
-    private static void initLogBackXml() {
-        // 加载自定义日志类型
-        InputStream inputStream = SystemLog.class.getResourceAsStream("/logback-spring.xml");
-        try {
-            Document document = XmlUtil.load(inputStream);
-            Element rootElement = document.getRootElement();
-            List<Element> property_s = rootElement.elements("property");
-            for (Element property : property_s) {
-                Attribute name = property.attribute("name");
-                String name_value = name.getValue();
-                // 自定义日志类型
-                if (MY_LOG_TYPENAME.equalsIgnoreCase(name_value)) {
-                    String value = property.attribute("value").getValue();
-                    String[] values = StringUtil.StringToArray(value);
-                    if (values != null)
-                        for (String item : values) {
-                            Level level = Level.INFO;
-                            if (item.endsWith(TYPE_ERROR_TAG)) {
-                                level = Level.ERROR;
-                            }
-                            Logger logger = initLogger(item, item, level);
-                            LOGGER_MAP.put(item, logger);
-                            //logger.info("init ok!");
-                        }
-                } else if (LOG_PATH_NAME.equalsIgnoreCase(name_value)) {
-                    // 日志保存跟路径
-                    LogPath = property.attribute("value").getValue();
-                }
-            }
-        } catch (DocumentException e) {
-            SystemLog.ERROR().error("加载日志文件xml", e);
         }
     }
 
@@ -178,7 +121,7 @@ public class SystemLog implements UtilSystemLogInterface {
      */
     public static Logger LOG(LogType type) {
         Logger logger = LOG_TYPE_LOGGER_MAP.get(type);
-        if (logger == null)
+        if (logger == null && LogType.DEFAULT != type)
             return LOG(LogType.DEFAULT);
         return logger;
     }
@@ -189,33 +132,5 @@ public class SystemLog implements UtilSystemLogInterface {
 
     public static Logger ERROR() {
         return LOG(LogType.ERROR);
-    }
-
-    /**
-     * 获取自定义日志
-     *
-     * @param type type
-     * @return logger
-     */
-    public static Logger LOG(String type) {
-        Logger logger = LOGGER_MAP.get(type);
-        if (logger == null) {
-            Assert.notNull(type);
-            if (type.endsWith(TYPE_ERROR_TAG))
-                return ERROR();
-            else
-                return LOG();
-        }
-        return logger;
-    }
-
-    @Override
-    public Logger LOG_ERROR() {
-        return ERROR();
-    }
-
-    @Override
-    public Logger LOG_INFO() {
-        return LOG();
     }
 }

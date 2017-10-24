@@ -43,6 +43,7 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         SpringUtil.applicationContext = applicationContext;
+        System.out.println("加载中");
         SystemLog.init();
     }
 
