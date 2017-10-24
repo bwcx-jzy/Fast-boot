@@ -1,6 +1,6 @@
 package cn.jiangzeyin.common.request;
 
-import cn.jiangzeyin.util.util.StringUtil;
+import cn.jiangzeyin.util.StringUtil;
 import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletRequest;

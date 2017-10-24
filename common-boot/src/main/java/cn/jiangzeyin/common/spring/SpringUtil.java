@@ -1,14 +1,18 @@
 package cn.jiangzeyin.common.spring;
 
 import cn.jiangzeyin.CommonPropertiesFinal;
-import cn.jiangzeyin.system.log.SystemLog;
-import cn.jiangzeyin.util.util.PackageUtil;
-import cn.jiangzeyin.util.util.StringUtil;
+import cn.jiangzeyin.common.BaseApplication;
+import cn.jiangzeyin.common.DefaultSystemLog;
+import cn.jiangzeyin.util.PackageUtil;
+import cn.jiangzeyin.util.StringUtil;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerInitializedEvent;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.*;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextStartedEvent;
@@ -26,10 +30,9 @@ import java.util.List;
  * Created by jiangzeyin on 2017/1/5.
  */
 @Configuration
-public class SpringUtil implements ApplicationListener, ApplicationContextAware, EnvironmentAware {
+public class SpringUtil implements ApplicationListener, ApplicationContextAware {
 
     private static ApplicationContext applicationContext;
-    private static Environment environment;
 
     /**
      * 容器加载完成
@@ -41,7 +44,7 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware,
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         SpringUtil.applicationContext = applicationContext;
         System.out.println("加载中");
-        SystemLog.init();
+        DefaultSystemLog.init();
     }
 
     /**
@@ -55,7 +58,7 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware,
             //SystemInitPackageControl.init();
             //创建tomcat 临时文件
             //ServiceInfoUtil.initTomcatTemPath();
-            SystemLog.LOG().info("启动完成");
+            DefaultSystemLog.LOG().info("启动完成");
             return;
         }
         if (event instanceof ContextStartedEvent) { // 应用启动，需要在代码动态添加监听器才可捕获
@@ -63,14 +66,14 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware,
         } else if (event instanceof ContextStoppedEvent) { // 应用停止
             System.out.println("stop");
         } else if (event instanceof ContextClosedEvent) { // 应用关闭
-            SystemLog.LOG().info("关闭程序");
+            DefaultSystemLog.LOG().info("关闭程序");
             //SystemExecutorService.shutdown();
         } else if (event instanceof ServletRequestHandledEvent) {
             ServletRequestHandledEvent servletRequestHandledEvent = (ServletRequestHandledEvent) event;
             if (!servletRequestHandledEvent.wasFailure()) {
-                SystemLog.LOG(SystemLog.LogType.REQUEST).info(servletRequestHandledEvent.toString());
+                DefaultSystemLog.LOG(DefaultSystemLog.LogType.REQUEST).info(servletRequestHandledEvent.toString());
             } else {
-                SystemLog.LOG(SystemLog.LogType.REQUEST).info("error:" + servletRequestHandledEvent.toString());
+                DefaultSystemLog.LOG(DefaultSystemLog.LogType.REQUEST).info("error:" + servletRequestHandledEvent.toString());
             }
         } else if (event instanceof EmbeddedServletContainerInitializedEvent) {
 
@@ -124,14 +127,9 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware,
         return getApplicationContext().getBean(name, clazz);
     }
 
-    @Override
-    public void setEnvironment(Environment environment) {
-        SpringUtil.environment = environment;
-    }
 
     public static Environment getEnvironment() {
-        Assert.notNull(applicationContext, "environment is null");
-        return environment;
+        return BaseApplication.getEnvironment();
     }
 
     public static String getApplicationId() {
@@ -174,13 +172,13 @@ class SystemInitPackageControl {
                     Method method = cls.getMethod(systemInitPackageControl.methodName);
                     method.invoke(null);
                 } catch (ClassNotFoundException e) {
-                    SystemLog.ERROR().error("预加载包错误:" + name, e);
+                    DefaultSystemLog.ERROR().error("预加载包错误:" + name, e);
                 } catch (Exception e) {
-                    SystemLog.ERROR().error("预加载包错误:" + name + "  执行错误", e);
+                    DefaultSystemLog.ERROR().error("预加载包错误:" + name + "  执行错误", e);
                 }
             }
         } catch (IOException e) {
-            SystemLog.ERROR().error("预加载包错误", e);
+            DefaultSystemLog.ERROR().error("预加载包错误", e);
         }
     }
 }

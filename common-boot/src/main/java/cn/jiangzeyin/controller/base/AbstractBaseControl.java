@@ -1,8 +1,8 @@
 package cn.jiangzeyin.controller.base;
 
-import cn.jiangzeyin.system.log.SystemLog;
-import cn.jiangzeyin.util.net.http.RequestUtil;
-import cn.jiangzeyin.util.util.StringUtil;
+import cn.jiangzeyin.common.DefaultSystemLog;
+import cn.jiangzeyin.util.RequestUtil;
+import cn.jiangzeyin.util.StringUtil;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -197,11 +197,11 @@ public abstract class AbstractBaseControl {
                 } catch (NumberFormatException ignored) {
                 }
             } else {
-                SystemLog.ERROR().error("没有设置:" + type, new RuntimeException());
+                DefaultSystemLog.ERROR().error("没有设置:" + type, new RuntimeException());
             }
             System.out.println(type + "  " + name + "  " + value);
         } catch (Exception e) {
-            SystemLog.ERROR().error("创建对象错误", e);
+            DefaultSystemLog.ERROR().error("创建对象错误", e);
         }
     }
 

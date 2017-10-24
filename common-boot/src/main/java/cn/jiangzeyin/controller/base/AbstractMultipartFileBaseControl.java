@@ -1,11 +1,11 @@
 package cn.jiangzeyin.controller.base;
 
 import cn.jiangzeyin.common.request.ParameterXssWrapper;
-import cn.jiangzeyin.util.util.ReflectUtil;
-import cn.jiangzeyin.util.util.StringUtil;
-import cn.jiangzeyin.util.util.file.FileStreamUtil;
-import cn.jiangzeyin.util.util.file.FileType;
-import cn.jiangzeyin.util.util.file.FileUtil;
+import cn.jiangzeyin.util.ReflectUtil;
+import cn.jiangzeyin.util.StringUtil;
+import cn.jiangzeyin.util.file.FileStreamUtil;
+import cn.jiangzeyin.util.file.FileType;
+import cn.jiangzeyin.util.file.FileUtil;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;

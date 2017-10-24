@@ -3,6 +3,8 @@ package cn.jiangzeyin.common;
 import cn.jiangzeyin.CommonPropertiesFinal;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.env.Environment;
+import org.springframework.util.Assert;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
@@ -16,6 +18,12 @@ import java.util.Map;
 
 public class BaseApplication extends SpringApplication {
 
+    private static Environment environment;
+
+    public static Environment getEnvironment() {
+        Assert.notNull(environment, "environment is null");
+        return environment;
+    }
 
     /**
      * @param sources sources
@@ -30,6 +38,7 @@ public class BaseApplication extends SpringApplication {
         }
         // 设置banner
         this.setBanner((environment, sourceClass, out) -> {
+            BaseApplication.environment = environment;
             String msg = environment.getProperty(CommonPropertiesFinal.BANNER_MSG, "boot Application starting");
             out.println(msg);
         });

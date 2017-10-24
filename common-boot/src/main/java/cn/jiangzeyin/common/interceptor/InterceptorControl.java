@@ -1,9 +1,9 @@
 package cn.jiangzeyin.common.interceptor;
 
-import cn.jiangzeyin.system.log.SystemLog;
-import cn.jiangzeyin.util.util.PackageUtil;
-import cn.jiangzeyin.util.util.ReflectUtil;
-import cn.jiangzeyin.util.util.StringUtil;
+import cn.jiangzeyin.common.DefaultSystemLog;
+import cn.jiangzeyin.util.PackageUtil;
+import cn.jiangzeyin.util.ReflectUtil;
+import cn.jiangzeyin.util.StringUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -45,7 +45,7 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
         try {
             list = PackageUtil.getClassName(loadPath);
         } catch (IOException e) {
-            SystemLog.ERROR().error("加载拦截器异常", e);
+            DefaultSystemLog.ERROR().error("加载拦截器异常", e);
             return;
         }
         if (list == null)
@@ -55,7 +55,7 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
             try {
                 classItem = Class.forName(item);
             } catch (ClassNotFoundException e) {
-                SystemLog.ERROR().error("加载拦截器错误", e);
+                DefaultSystemLog.ERROR().error("加载拦截器错误", e);
             }
             if (classItem == null)
                 continue;
@@ -68,7 +68,7 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
             try {
                 handlerInterceptor = (HandlerInterceptor) classItem.newInstance();
             } catch (InstantiationException | IllegalAccessException e) {
-                SystemLog.ERROR().error("加载拦截器错误", e);
+                DefaultSystemLog.ERROR().error("加载拦截器错误", e);
                 continue;
             }
             InterceptorPattens interceptorPattens = (InterceptorPattens) classItem.getAnnotation(InterceptorPattens.class);
@@ -76,7 +76,7 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
                 continue;
             String[] patterns = interceptorPattens.value();
             registry.addInterceptor(handlerInterceptor).addPathPatterns(patterns);
-            SystemLog.LOG().info("加载拦截器：" + classItem + "  " + patterns[0]);
+            DefaultSystemLog.LOG().info("加载拦截器：" + classItem + "  " + patterns[0]);
         }
     }
 }
