@@ -48,6 +48,7 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
         if (event instanceof ApplicationReadyEvent) {
+            // 启动最后的预加载
             SystemInitPackageControl.init();
             //创建tomcat 临时文件
             //ServiceInfoUtil.initTomcatTemPath();
