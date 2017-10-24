@@ -1,13 +1,9 @@
 package cn.jiangzeyin.util.util.file;
 
-import cn.jiangzeyin.util.system.util.UtilSystemCache;
-import cn.jiangzeyin.util.util.RandomUtil;
-import cn.jiangzeyin.util.util.StringUtil;
 import org.springframework.util.Assert;
 
 import java.io.*;
 import java.math.BigDecimal;
-import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.Properties;
 
@@ -494,102 +490,6 @@ public final class FileUtil {
      */
     public static boolean deleteDir(String dir) {
         return deleteDir(new File(dir));
-    }
-
-    /**
-     * 获取 文件名
-     * <p>
-     * 格式 {path_}/年/月/日/文件名
-     *
-     * @param path_   path
-     * @param ext     ext
-     * @param siteTag tag
-     * @return str
-     * @author jiangzeyin
-     */
-    public static String getFilePathName(String siteTag, String path_, String ext) {
-        path_ = StringUtil.convertNULL(path_);
-        StringBuffer sb = new StringBuffer("/");
-        sb.append(path_ + "/");
-        Calendar cal = Calendar.getInstance();
-        sb.append(cal.get(Calendar.YEAR));
-        sb.append("/");
-        String f = "%02d";
-        f = String.format(f, (cal.get(Calendar.MONTH) + 1));
-        sb.append(f);
-        sb.append("/");
-        f = "%02d";
-        f = String.format(f, cal.get(Calendar.DATE));
-        sb.append(f);
-        sb.append("/");
-        // "images"
-        // SiteInfo image = SystemCache.getSiteInfo(siteTag);
-        String root = UtilSystemCache.getInstance().getLocalPath(siteTag);// image.getLocalPath();
-        int length = 15;
-        String name = RandomUtil.getBoundry(length) + "." + ext;
-        while (true) {
-            String path = FileUtil.clearPath(root + sb.toString() + name);
-            File file = new File(path);
-            file.getParentFile().mkdirs();
-            if (file.exists()) {
-                name = RandomUtil.getBoundry(++length) + "." + ext;
-                continue;
-            }
-            break;
-        }
-        sb.append(name);
-        return clearPath(sb.toString());
-    }
-
-    /**
-     * @param siteTag tag
-     * @param ext     ext
-     * @param time    time
-     * @return str
-     * @author jiangzeyin
-     */
-    public static String getFilePathName(String siteTag, String ext, long time) {
-        StringBuilder sb = new StringBuilder("/");
-        Calendar cal = Calendar.getInstance();
-        sb.append(cal.get(Calendar.YEAR));
-        sb.append("/");
-        String f = "%02d";
-        f = String.format(f, (cal.get(Calendar.MONTH) + 1));
-        sb.append(f);
-        sb.append("/");
-        f = "%02d";
-        f = String.format(f, cal.get(Calendar.DATE));
-        sb.append(f);
-        sb.append("/");
-        // "images"
-        //SiteInfo image = SystemCache.getSiteInfo(siteTag);
-        String root = UtilSystemCache.getInstance().getLocalPath(siteTag);
-        String name = time + "." + ext;
-        while (true) {
-            String path = FileUtil.clearPath(root + sb.toString() + name);
-            mkdirs(path);
-            if (exists(path)) {
-                name = (time += RandomUtil.getRandomCode(2)) + "." + ext;
-                continue;
-            }
-            break;
-        }
-        sb.append(name);
-        return sb.toString();
-    }
-
-    /**
-     * 获取 文件名
-     * <p>
-     * 格式 /年/月/日/文件名
-     *
-     * @param ext     文件后缀
-     * @param sitetag tag
-     * @return str
-     * @author jiangzeyin
-     */
-    public static String getFilePathName(String sitetag, String ext) {
-        return getFilePathName(sitetag, "", ext);
     }
 }
 

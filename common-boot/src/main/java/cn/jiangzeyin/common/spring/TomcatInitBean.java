@@ -1,6 +1,5 @@
 package cn.jiangzeyin.common.spring;
 
-import cn.jiangzeyin.system.SystemBean;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
@@ -29,7 +28,7 @@ public class TomcatInitBean {
     @Bean
     public ServletContextInitializer servletContextInitializer() {
         return servletContext -> {
-            servletContext.getSessionCookieConfig().setName(SystemBean.SYSTEM_TAG.toUpperCase() + "_JSESSIONID");
+            servletContext.getSessionCookieConfig().setName("_JSESSIONID");
         };
     }
 }

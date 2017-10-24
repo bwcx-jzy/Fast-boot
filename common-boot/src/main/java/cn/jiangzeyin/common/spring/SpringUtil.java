@@ -1,23 +1,20 @@
 package cn.jiangzeyin.common.spring;
 
-import cn.jiangzeyin.system.SystemBean;
+import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.system.log.LogType;
 import cn.jiangzeyin.system.log.SystemLog;
 import cn.jiangzeyin.util.util.PackageUtil;
 import cn.jiangzeyin.util.util.StringUtil;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.actuate.audit.listener.AuditApplicationEvent;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerInitializedEvent;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationListener;
+import org.springframework.context.*;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextStartedEvent;
 import org.springframework.context.event.ContextStoppedEvent;
+import org.springframework.core.env.Environment;
 import org.springframework.util.Assert;
 import org.springframework.web.context.support.ServletRequestHandledEvent;
 
@@ -30,9 +27,10 @@ import java.util.List;
  * Created by jiangzeyin on 2017/1/5.
  */
 @Configuration
-public class SpringUtil implements ApplicationListener, ApplicationContextAware {
+public class SpringUtil implements ApplicationListener, ApplicationContextAware, EnvironmentAware {
 
     private static ApplicationContext applicationContext;
+    private static Environment environment;
 
     /**
      * 容器加载完成
@@ -55,23 +53,10 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
         if (event instanceof ApplicationReadyEvent) {
-//            // 应用已启动完成
-//            try {
-//                CommonDatabaseConfig.init();
-//            } catch (Exception e) {
-//                SystemLog.ERROR().error("加载失败失败", e);
-//            }
-//            // 加载站点缓存
-//            SiteCache.init();
-//            // 系统参数
-//            SystemParameterCache.init();
-//            PageTemplateCache.init();
-//            //SystemJob.init();
-//            EntityDatabase.init();
-            SystemInitPackageControl.init();
+            //SystemInitPackageControl.init();
             //创建tomcat 临时文件
             //ServiceInfoUtil.initTomcatTemPath();
-            SystemLog.LOG().info(SystemBean.getInstance().getSystemTag() + " 启动完成");
+            SystemLog.LOG().info("启动完成");
             return;
         }
         if (event instanceof ContextStartedEvent) { // 应用启动，需要在代码动态添加监听器才可捕获
@@ -88,11 +73,6 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
             } else {
                 SystemLog.LOG(LogType.REQUEST).info("error:" + servletRequestHandledEvent.toString());
             }
-        } else if (event instanceof AuditApplicationEvent) {
-            AuditApplicationEvent auditApplicationEvent = (AuditApplicationEvent) event;
-            SystemLog.LOG(LogType.REQUEST).info(auditApplicationEvent.toString());
-//        } else if (event instanceof AuthenticationSuccessEvent) {
-//
         } else if (event instanceof EmbeddedServletContainerInitializedEvent) {
 
         } else {
@@ -143,6 +123,20 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
      */
     public static <T> T getBean(String name, Class<T> clazz) {
         return getApplicationContext().getBean(name, clazz);
+    }
+
+    @Override
+    public void setEnvironment(Environment environment) {
+        SpringUtil.environment = environment;
+    }
+
+    public static Environment getEnvironment() {
+        Assert.notNull(applicationContext, "environment is null");
+        return environment;
+    }
+
+    public static String getApplicationId() {
+        return getEnvironment().getProperty(CommonPropertiesFinal.APPLICATION_ID);
     }
 }
 

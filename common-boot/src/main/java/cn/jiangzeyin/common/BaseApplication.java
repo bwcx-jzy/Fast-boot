@@ -1,6 +1,6 @@
 package cn.jiangzeyin.common;
 
-import cn.jiangzeyin.system.SystemBean;
+import cn.jiangzeyin.CommonPropertiesFinal;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.annotation.ComponentScan;
 
@@ -30,10 +30,8 @@ public class BaseApplication extends SpringApplication {
         }
         // 设置banner
         this.setBanner((environment, sourceClass, out) -> {
-            SystemBean.SYSTEM_TAG = environment.getProperty("server.tag", "");
-            String dev = environment.getProperty("spring.profiles.active", "dev");
-            SystemBean.Active active = SystemBean.Active.valueOf(dev);
-            out.println("优客创想 " + SystemBean.SYSTEM_TAG + " 系统启动中:" + active.getTip());
+            String msg = environment.getProperty(CommonPropertiesFinal.BANNER_MSG, "boot Application starting");
+            out.println(msg);
         });
     }
 

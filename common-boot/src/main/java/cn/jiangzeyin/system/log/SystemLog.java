@@ -6,7 +6,7 @@ import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy;
 import ch.qos.logback.core.util.FileSize;
-import cn.jiangzeyin.system.SystemBean;
+import cn.jiangzeyin.common.spring.SpringUtil;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
@@ -21,7 +21,7 @@ public class SystemLog {
     private static final Map<LogType, Logger> LOG_TYPE_LOGGER_MAP = new ConcurrentHashMap<>();
     private static final String TYPE_ERROR_TAG = "ERROR";
     private static ConsoleAppender consoleAppender;
-    private static String LogPath = "/ztoutiao/log/";
+    private static String LogPath = "/log/cn.jiangzeyin";
 
     public static void init() {
         consoleAppender = initConsole();
@@ -81,7 +81,7 @@ public class SystemLog {
         SizeAndTimeBasedRollingPolicy policy = new SizeAndTimeBasedRollingPolicy<>();
         policy.setContext(loggerContext);
         //"/ztoutiao/logsss/" + EntitySystemBean.getInstance().systemTag + "/" + path + "/" + tag + "-%d{yyyy-MM-dd}.%i.logsss"
-        policy.setFileNamePattern(String.format("%s/%s/%s/%s-%%d{yyyy-MM-dd}.%%i.log", LogPath, SystemBean.getInstance().getSystemTag(), path, tag));
+        policy.setFileNamePattern(String.format("%s/%s/%s/%s-%%d{yyyy-MM-dd}.%%i.log", LogPath, SpringUtil.getApplicationId(), path, tag).toLowerCase());
         policy.setMaxFileSize("100MB");
         policy.setMaxHistory(30);
         policy.setTotalSizeCap(FileSize.valueOf("10GB"));
@@ -93,7 +93,7 @@ public class SystemLog {
         encoder.setPattern("%d{HH:mm:ss.SSS} %-5level [%thread %file:%line] %logger - %msg%n");
         encoder.start();
         //start appender    // "/ztoutiao/logsss/" + EntitySystemBean.getInstance().systemTag + "/" + path + "/" + tag + ".logsss"
-        appender.setFile(String.format("%s/%s/%s/%s.log", LogPath, SystemBean.getInstance().getSystemTag(), path, tag));
+        appender.setFile(String.format("%s/%s/%s/%s.log", LogPath, SpringUtil.getApplicationId(), path, tag).toLowerCase());
         appender.setName("appender" + tag);
         appender.setRollingPolicy(policy);
         appender.setContext(loggerContext);

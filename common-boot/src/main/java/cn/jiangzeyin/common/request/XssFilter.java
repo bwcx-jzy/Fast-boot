@@ -1,6 +1,7 @@
 package cn.jiangzeyin.common.request;
 
-import cn.jiangzeyin.system.SystemBean;
+import cn.jiangzeyin.CommonPropertiesFinal;
+import cn.jiangzeyin.common.spring.SpringUtil;
 import cn.jiangzeyin.system.log.LogType;
 import cn.jiangzeyin.system.log.SystemLog;
 import cn.jiangzeyin.util.net.http.RequestUtil;
@@ -27,7 +28,7 @@ public class XssFilter extends CharacterEncodingFilter {
 
     private static final ThreadLocal<Long> REQUEST_TIME = new ThreadLocal<>();
     private static final ThreadLocal<StringBuffer> REQUEST_INFO = new ThreadLocal<>();
-
+    private static long request_timeout_log = -1;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -97,7 +98,12 @@ public class XssFilter extends CharacterEncodingFilter {
         }
         // 记录请求超时
         Long time = System.currentTimeMillis() - REQUEST_TIME.get();
-        if (time > SystemBean.getInstance().request_timeout_log) {
+        if (request_timeout_log == -1) {
+            request_timeout_log = StringUtil.parseLong(SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.REQUEST_TIME_OUT, "3000"));
+            if (request_timeout_log <= 0)
+                request_timeout_log = 0;
+        }
+        if (request_timeout_log > 0 && time > request_timeout_log) {
             String stringBuffer = "time:" +
                     time +
                     ",url:" +
