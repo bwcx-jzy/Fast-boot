@@ -10,28 +10,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author jiangzeyin
  */
 public final class ReflectCache {
-    final static ConcurrentHashMap<String, Field> fieldMap = new ConcurrentHashMap<>();
-    final static ConcurrentHashMap<String, Field[]> fieldsMap = new ConcurrentHashMap<>();
-    final static ConcurrentHashMap<String, Class<?>> classMap = new ConcurrentHashMap<>();
-    final static ConcurrentHashMap<String, Method> methodMap = new ConcurrentHashMap<>();
-    final static ConcurrentHashMap<String, Method[]> methodsMap = new ConcurrentHashMap<>();
-
-    /**
-     * 加载class
-     *
-     * @param className className
-     * @return class
-     * @throws ClassNotFoundException notFound
-     * @author jiangzeyin
-     */
-    public static Class<?> forName(String className) throws ClassNotFoundException {
-        Class<?> cls = classMap.get(className);
-        if (cls == null) {
-            cls = Class.forName(className);
-            classMap.put(className, cls);
-        }
-        return cls;
-    }
+    private final static ConcurrentHashMap<String, Field> fieldMap = new ConcurrentHashMap<>();
+    private final static ConcurrentHashMap<String, Field[]> fieldsMap = new ConcurrentHashMap<>();
+    private final static ConcurrentHashMap<String, Method> methodMap = new ConcurrentHashMap<>();
+    private final static ConcurrentHashMap<String, Method[]> methodsMap = new ConcurrentHashMap<>();
 
     /**
      * 获取class 所有字段

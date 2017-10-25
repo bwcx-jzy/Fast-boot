@@ -1,7 +1,5 @@
 package cn.jiangzeyin.util;
 
-import cn.jiangzeyin.util.file.FileUtil;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

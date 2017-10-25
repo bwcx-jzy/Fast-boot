@@ -3,7 +3,6 @@ package cn.jiangzeyin.common.interceptor;
 import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.common.DefaultSystemLog;
 import cn.jiangzeyin.util.PackageUtil;
-import cn.jiangzeyin.util.StringUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -35,7 +34,7 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
      * @param registry 注册
      */
     private void init(InterceptorRegistry registry) {
-        if (StringUtil.isEmpty(loadPath))
+        if (loadPath == null || loadPath.length() <= 0)
             return;
 
         List<String> list;

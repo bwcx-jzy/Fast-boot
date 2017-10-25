@@ -1,11 +1,10 @@
 package cn.jiangzeyin.controller.base;
 
 import cn.jiangzeyin.common.request.ParameterXssWrapper;
-import cn.jiangzeyin.util.FileStreamUtil;
-import cn.jiangzeyin.util.file.FileType;
+import cn.jiangzeyin.controller.multipart.MultipartFileConfig;
+import cn.jiangzeyin.util.FileUtil;
 import cn.jiangzeyin.util.ReflectUtil;
 import cn.jiangzeyin.util.StringUtil;
-import cn.jiangzeyin.util.file.FileUtil;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -27,9 +25,18 @@ import java.util.Map;
  * Created by jiangzeyin on 2017/2/13.
  */
 public abstract class AbstractMultipartFileBaseControl extends AbstractBaseControl {
-    private Map<String, String[]> parameter;
-    private MultipartHttpServletRequest multiRequest;
+    private static final ThreadLocal<Map<String, String[]>> MAP_THREAD_LOCAL_PARAMETER = new ThreadLocal<>();
+    private static final ThreadLocal<MultipartHttpServletRequest> THREAD_LOCAL_MULTIPART_HTTP_SERVLET_REQUEST = new ThreadLocal<>();
 
+    protected Map<String, String[]> getParameter() {
+        return MAP_THREAD_LOCAL_PARAMETER.get();
+    }
+
+    protected MultipartHttpServletRequest getMultiRequest() {
+        MultipartHttpServletRequest multipartHttpServletRequest = THREAD_LOCAL_MULTIPART_HTTP_SERVLET_REQUEST.get();
+        Assert.notNull(multipartHttpServletRequest);
+        return multipartHttpServletRequest;
+    }
 
     /**
      * 处理上传文件 对象
@@ -42,62 +49,30 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
     public void setReqAndRes(HttpServletRequest request, HttpSession session, HttpServletResponse response) {
         super.setReqAndRes(request, session, response);
         if (ServletFileUpload.isMultipartContent(request)) {
-            multiRequest = (MultipartHttpServletRequest) request;
-            parameter = ParameterXssWrapper.doXss(multiRequest.getParameterMap(), false);
+            THREAD_LOCAL_MULTIPART_HTTP_SERVLET_REQUEST.set((MultipartHttpServletRequest) request);
+            MAP_THREAD_LOCAL_PARAMETER.set(ParameterXssWrapper.doXss(getMultiRequest().getParameterMap(), false));
         }
     }
 
     @Override
     public HttpServletRequest getRequest() {
-        if (multiRequest == null)
+        if (getMultiRequest() == null)
             return super.getRequest();
-        return multiRequest;
+        return getMultiRequest();
     }
 
     protected MultipartFile getFile(String name) {
-        Assert.notNull(multiRequest);
-        return multiRequest.getFile(name);
+        return getMultiRequest().getFile(name);
     }
 
     protected List<MultipartFile> getFiles(String name) {
-        Assert.notNull(multiRequest);
-        return multiRequest.getFiles(name);
+        return getMultiRequest().getFiles(name);
     }
 
-
-    /**
-     * 判断文件类型
-     *
-     * @param fileTypes   types
-     * @param name        name
-     * @param inputStream inp
-     * @return boolean
-     * @throws IOException io
-     */
-    protected static boolean checkExt(FileType[] fileTypes, String name, InputStream inputStream) throws IOException {
-        Assert.notNull(inputStream);
-        if (fileTypes == null)
-            return true;
-        FileType fileType = FileStreamUtil.getFileType(inputStream);
-        String fileExt = FileUtil.getFileExt(name);
-        for (FileType item : fileTypes) {
-            if (fileType == item) {
-                if (item.getExt().equalsIgnoreCase(fileExt)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-//        boolean find = false;
-//        for (String item : ext) {
-//            if ((find = item.equalsIgnoreCase(fileExt)))
-//                return true;
-//        }
-//        return find;
-    }
 
     @Override
     public <T> T getObject(Class<T> tClass) throws IllegalAccessException, InstantiationException {
+        Map<String, String[]> parameter = getParameter();
         if (parameter == null)
             return super.getObject(tClass);
         Object object = tClass.newInstance();
@@ -120,13 +95,13 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
      * @throws IOException            y
      */
     protected <T> T getUpload(Class<T> cls, String path, String... name) throws IllegalAccessException, InstantiationException, IOException {
+        Map<String, String[]> parameter = getParameter();
         Assert.notNull(parameter);
-        Assert.notNull(multiRequest);
         if (name == null || name.length <= 0)
             return null;
         path = StringUtil.convertNULL(path);
         Object object = cls.newInstance();
-        String localPath = null;//SiteCache.currentSite.getLocalPath();
+        String localPath = MultipartFileConfig.getFileTempPath();
         //String fileTempPath = FileUtil.clearPath(ServiceInfoUtil.getTomcatTempPath() + "/" + localPath + "/" + path);
         //FileUtil.mkdirs(fileTempPath);
         //String[] paths = new String[name.length];
@@ -134,14 +109,15 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
             MultipartFile multiFile = getFile(aName);
             if (multiFile == null)
                 continue;
-            //MultipartFile multiFile = multiEntry.getValue();
             String fileName = multiFile.getOriginalFilename();
-            if (StringUtil.isEmpty(fileName))
+            if (fileName == null || fileName.length() <= 0)
                 continue;
             String filePath = FileUtil.clearPath(String.format("%s/%s/%s_%s", localPath, path, System.currentTimeMillis(), fileName));
             //File file = ;
             //FileUtil.mkdirs(file);
-            FileUtil.writeInputStream(multiFile.getInputStream(), new File(filePath));
+            boolean flag = FileUtil.writeInputStream(multiFile.getInputStream(), new File(filePath));
+            if (!flag)
+                throw new RuntimeException(filePath + " write fail");
             ReflectUtil.setFieldValue(object, aName, filePath);
         }
         doParameterMap(parameter, object);
@@ -150,6 +126,7 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
 
     @Override
     public String[] getParameters(String name) {
+        Map<String, String[]> parameter = getParameter();
         if (parameter == null)
             return super.getParameters(name);
         return parameter.get(name);
