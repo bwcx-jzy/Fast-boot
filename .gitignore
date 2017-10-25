@@ -1,5 +1,6 @@
-/.idea/workspace.xml
+.idea/workspace.xml
+target/
+src/test/
+src/main/
 common-boot/src/main/resources/
 common-boot/src/test/
-common-boot/target/
-target/
