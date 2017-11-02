@@ -1,6 +1,7 @@
 package cn.jiangzeyin.common;
 
 import cn.jiangzeyin.CommonPropertiesFinal;
+import cn.jiangzeyin.StringUtil;
 import cn.jiangzeyin.common.spring.SpringUtil;
 import cn.jiangzeyin.util.PackageUtil;
 
@@ -23,7 +24,7 @@ public class SystemInitPackageControl {
 //    public String initPackageName;
     public static void init() {
         String pageName = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.PRELOAD_PACKAGE_NAME);
-        if (pageName == null || pageName.length() > 0)
+        if (StringUtil.isEmpty(pageName))
             return;
         try {
             List<String> list = PackageUtil.getClassName(pageName);

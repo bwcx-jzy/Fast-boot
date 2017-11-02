@@ -54,8 +54,8 @@ public class DefaultSystemLog {
      *
      * @return r
      */
-    private static ConsoleAppender<ch.qos.logback.classic.spi.ILoggingEvent> initConsole() {
-        ConsoleAppender<ch.qos.logback.classic.spi.ILoggingEvent> appender = new ConsoleAppender<>();
+    private static ConsoleAppender<ILoggingEvent> initConsole() {
+        ConsoleAppender<ILoggingEvent> appender = new ConsoleAppender<>();
         PatternLayout patternLayout = new PatternLayout();
         patternLayout.setContext(loggerContext);
         patternLayout.setPattern("%date %level [%thread] %logger{10} [%file:%line]- x:\\(%X\\) %msg%n");
