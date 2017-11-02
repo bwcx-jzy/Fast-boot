@@ -1,10 +1,10 @@
 package cn.jiangzeyin.common.request;
 
 import cn.jiangzeyin.CommonPropertiesFinal;
+import cn.jiangzeyin.StringUtil;
 import cn.jiangzeyin.common.DefaultSystemLog;
 import cn.jiangzeyin.common.spring.SpringUtil;
 import cn.jiangzeyin.controller.base.RequestUtil;
-import cn.jiangzeyin.util.StringUtil;
 import org.apache.http.HttpStatus;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.springframework.web.filter.CharacterEncodingFilter;
@@ -65,7 +65,7 @@ public class XssFilter extends CharacterEncodingFilter {
                     for (int i = 0; i < value.length; i++) {
                         if (i != 0)
                             stringBuffer.append(",");
-                        stringBuffer.append(isFile ? StringUtil.getUTF8(value[i]) : value[i]);
+                        stringBuffer.append(isFile ? ParameterXssWrapper.getUTF8(value[i]) : value[i]);
                     }
                 }
                 stringBuffer.append(";");

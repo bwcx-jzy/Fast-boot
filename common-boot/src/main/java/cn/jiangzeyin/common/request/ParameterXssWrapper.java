@@ -1,10 +1,11 @@
 package cn.jiangzeyin.common.request;
 
-import cn.jiangzeyin.util.StringUtil;
+import cn.jiangzeyin.StringUtil;
 import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 /**
@@ -65,7 +66,7 @@ public class ParameterXssWrapper extends HttpServletRequestWrapper {
             if (values != null) {
                 for (int i = 0; i < values.length; i++) {
                     if (!utf8)
-                        values[i] = StringUtil.getUTF8(values[i]);
+                        values[i] = getUTF8(values[i]);
                     values[i] = StringUtil.filterHTML(values[i]);
                 }
                 valuesMap.put(key, values);
@@ -73,4 +74,15 @@ public class ParameterXssWrapper extends HttpServletRequestWrapper {
         }
         return valuesMap;
     }
+
+    public static String getUTF8(String str) {
+        if (StringUtil.isEmpty(str))
+            return "";
+        try {
+            return new String(str.getBytes("ISO-8859-1"), "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            return "";
+        }
+    }
+
 }

@@ -1,9 +1,9 @@
 package cn.jiangzeyin.controller.base;
 
 import cn.jiangzeyin.CommonPropertiesFinal;
+import cn.jiangzeyin.StringUtil;
 import cn.jiangzeyin.common.DefaultSystemLog;
 import cn.jiangzeyin.common.spring.SpringUtil;
-import cn.jiangzeyin.util.StringUtil;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -230,9 +230,13 @@ public abstract class AbstractBaseControl {
                 + fieldName.substring(startIndex + 1);
     }
 
-    private static String default_headerName = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.IP_DEFAULT_HEADER_NAME);
+    private static String default_headerName;
 
     public static String getIpAddress(HttpServletRequest request) {
+        if (default_headerName == null)
+            default_headerName = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.IP_DEFAULT_HEADER_NAME);
+        if (StringUtil.isEmpty(default_headerName))
+            throw new IllegalArgumentException("please set " + CommonPropertiesFinal.IP_DEFAULT_HEADER_NAME);
         String ipFromNginx = request.getHeader(default_headerName);
         if (ipFromNginx != null && ipFromNginx.length() > 0)
             return ipFromNginx;
