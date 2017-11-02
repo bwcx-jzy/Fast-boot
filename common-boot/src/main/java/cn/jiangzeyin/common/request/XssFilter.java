@@ -5,8 +5,8 @@ import cn.jiangzeyin.StringUtil;
 import cn.jiangzeyin.common.DefaultSystemLog;
 import cn.jiangzeyin.common.spring.SpringUtil;
 import cn.jiangzeyin.controller.base.RequestUtil;
-import org.apache.http.HttpStatus;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import javax.servlet.FilterChain;
@@ -87,7 +87,7 @@ public class XssFilter extends CharacterEncodingFilter {
     private void responseLog(HttpServletResponse response) {
         // 记录请求状态不正确
         int status = response.getStatus();
-        if (status != HttpStatus.SC_OK) {
+        if (status != HttpStatus.OK.value()) {
             String stringBuffer = "status:" +
                     status +
                     ",url:" +
