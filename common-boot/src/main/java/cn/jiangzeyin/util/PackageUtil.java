@@ -1,5 +1,7 @@
 package cn.jiangzeyin.util;
 
+import cn.jiangzeyin.StringUtil;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -79,7 +81,7 @@ public class PackageUtil {
                 }
             } else {
                 String childFilePath = childFile.getPath();
-                childFilePath = FileUtil.clearPath(childFilePath);
+                childFilePath = StringUtil.clearPath(childFilePath);
                 if (childFilePath.endsWith(".class")) {
                     childFilePath = childFilePath.substring(childFilePath.indexOf("/classes/") + 9, childFilePath.lastIndexOf("."));
                     childFilePath = childFilePath.replace("/", ".");

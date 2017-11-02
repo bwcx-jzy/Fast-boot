@@ -1,5 +1,7 @@
 package cn.jiangzeyin.controller.multipart;
 
+import cn.jiangzeyin.StringUtil;
+
 /**
  * Created by jiangzeyin on 2017/10/25.
  */
@@ -11,7 +13,7 @@ public class MultipartFileConfig {
     }
 
     public static String getFileTempPath() {
-        if (fileTempPath == null || fileTempPath.length() <= 0)
+        if (StringUtil.isEmpty(fileTempPath))
             throw new IllegalArgumentException("please set  fileTempPath");
         return fileTempPath;
     }

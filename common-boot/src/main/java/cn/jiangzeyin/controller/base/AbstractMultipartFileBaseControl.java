@@ -108,7 +108,7 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
             String fileName = multiFile.getOriginalFilename();
             if (fileName == null || fileName.length() <= 0)
                 continue;
-            String filePath = FileUtil.clearPath(String.format("%s/%s/%s_%s", localPath, path, System.currentTimeMillis(), fileName));
+            String filePath = StringUtil.clearPath(String.format("%s/%s/%s_%s", localPath, path, System.currentTimeMillis(), fileName));
             //File file = ;
             //FileUtil.mkdirs(file);
             boolean flag = FileUtil.writeInputStream(multiFile.getInputStream(), new File(filePath));

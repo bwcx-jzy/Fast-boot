@@ -49,26 +49,5 @@ public final class FileUtil {
         }
         return true;
     }
-
-    public static String clearPath(String input) {
-        input = input.replace('\\', '/');
-        return clearPath_(input);
-    }
-
-
-    private static String clearPath_(String input) {
-        int from = 0;
-        int j = input.indexOf("://");
-        if (j != -1) {
-            from = j + 3;
-        }
-        int i = input.indexOf("//", from);
-        if (i == -1) {
-            return input;
-        }
-
-        String input_ = input.substring(0, i) + "/" + input.substring(i + 2);
-        return clearPath_(input_);
-    }
 }
 

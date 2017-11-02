@@ -2,6 +2,7 @@ package cn.jiangzeyin.common;
 
 import ch.qos.logback.classic.*;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
+import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy;
@@ -20,7 +21,7 @@ public class DefaultSystemLog {
     private static final LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
     private static final Map<LogType, Logger> LOG_TYPE_LOGGER_MAP = new ConcurrentHashMap<>();
     private static final String TYPE_ERROR_TAG = "ERROR";
-    private static ConsoleAppender consoleAppender;
+    private static ConsoleAppender<ILoggingEvent> consoleAppender;
 
     public enum LogType {
         REQUEST, REQUEST_ERROR,
@@ -53,8 +54,8 @@ public class DefaultSystemLog {
      *
      * @return r
      */
-    private static ConsoleAppender initConsole() {
-        ConsoleAppender appender = new ConsoleAppender();
+    private static ConsoleAppender<ch.qos.logback.classic.spi.ILoggingEvent> initConsole() {
+        ConsoleAppender<ch.qos.logback.classic.spi.ILoggingEvent> appender = new ConsoleAppender<>();
         PatternLayout patternLayout = new PatternLayout();
         patternLayout.setContext(loggerContext);
         patternLayout.setPattern("%date %level [%thread] %logger{10} [%file:%line]- x:\\(%X\\) %msg%n");
@@ -83,7 +84,7 @@ public class DefaultSystemLog {
         //define appender
         RollingFileAppender appender = new RollingFileAppender<>();
         //policy
-        SizeAndTimeBasedRollingPolicy policy = new SizeAndTimeBasedRollingPolicy<>();
+        SizeAndTimeBasedRollingPolicy<Object> policy = new SizeAndTimeBasedRollingPolicy<>();
         policy.setContext(loggerContext);
         String logPath = "/log/cn.jiangzeyin";
         policy.setFileNamePattern(String.format("%s/%s/%s/%s-%%d{yyyy-MM-dd}.%%i.log", logPath, SpringUtil.getApplicationId(), path, tag).toLowerCase());
