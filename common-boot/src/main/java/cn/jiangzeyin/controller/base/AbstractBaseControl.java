@@ -69,13 +69,13 @@ public abstract class AbstractBaseControl {
     }
 
     /**
-     * 获取一次性session 字符串
+     * 获取session 字符串
      *
      * @param name name
      * @return str
      * @author jiangzeyin
      */
-    public String getSessionAttributeAfterRemove(String name) {
+    protected String getSessionAttribute(String name) {
         Object obj = getSession().getAttribute(name);
         getSession().removeAttribute(name);
         if (obj == null)
@@ -122,7 +122,7 @@ public abstract class AbstractBaseControl {
      * @throws IllegalAccessException y
      * @throws InstantiationException y
      */
-    public <T> T getObject(Class<T> tClass) throws IllegalAccessException, InstantiationException {
+    protected <T> T getObject(Class<T> tClass) throws IllegalAccessException, InstantiationException {
         Object obj = tClass.newInstance();
         doParameterMap(getRequest().getParameterMap(), obj);
         return (T) obj;

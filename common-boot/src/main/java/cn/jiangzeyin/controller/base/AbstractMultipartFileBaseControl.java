@@ -71,12 +71,11 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
 
 
     @Override
-    public <T> T getObject(Class<T> tClass) throws IllegalAccessException, InstantiationException {
+    protected <T> T getObject(Class<T> tClass) throws IllegalAccessException, InstantiationException {
         Map<String, String[]> parameter = getParameter();
         if (parameter == null)
             return super.getObject(tClass);
         Object object = tClass.newInstance();
-        //doObject(parameter.entrySet().iterator(), object);
         doParameterMap(parameter, object);
         return (T) object;
     }
@@ -102,9 +101,6 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
         path = StringUtil.convertNULL(path);
         Object object = cls.newInstance();
         String localPath = MultipartFileConfig.getFileTempPath();
-        //String fileTempPath = FileUtil.clearPath(ServiceInfoUtil.getTomcatTempPath() + "/" + localPath + "/" + path);
-        //FileUtil.mkdirs(fileTempPath);
-        //String[] paths = new String[name.length];
         for (String aName : name) {
             MultipartFile multiFile = getFile(aName);
             if (multiFile == null)
@@ -125,7 +121,7 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
     }
 
     @Override
-    public String[] getParameters(String name) {
+    protected String[] getParameters(String name) {
         Map<String, String[]> parameter = getParameter();
         if (parameter == null)
             return super.getParameters(name);

@@ -48,7 +48,7 @@ public class BaseApplication extends SpringApplication {
         return applicationEventClient;
     }
 
-    protected static void setApplicationEventClient(ApplicationEventClient applicationEventClient) {
+    protected void setApplicationEventClient(ApplicationEventClient applicationEventClient) {
         BaseApplication.applicationEventClient = applicationEventClient;
     }
 
