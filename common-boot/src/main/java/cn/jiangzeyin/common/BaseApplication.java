@@ -1,6 +1,7 @@
 package cn.jiangzeyin.common;
 
 import cn.jiangzeyin.CommonPropertiesFinal;
+import cn.jiangzeyin.common.spring.ApplicationEventClient;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
@@ -19,16 +20,14 @@ import java.util.Map;
 public class BaseApplication extends SpringApplication {
 
     private static Environment environment;
+    private static ApplicationEventClient applicationEventClient;
 
     public static Environment getEnvironment() {
         Assert.notNull(environment, "environment is null");
         return environment;
     }
 
-    /**
-     * @param sources sources
-     */
-    public BaseApplication(Object... sources) {
+    public BaseApplication(ApplicationEventClient applicationEventClient, Object... sources) {
         super(sources);
         // 设置加载当前包
         try {
@@ -42,6 +41,22 @@ public class BaseApplication extends SpringApplication {
             String msg = environment.getProperty(CommonPropertiesFinal.BANNER_MSG, "boot Application starting");
             out.println(msg);
         });
+        BaseApplication.applicationEventClient = applicationEventClient;
+    }
+
+    public static ApplicationEventClient getApplicationEventClient() {
+        return applicationEventClient;
+    }
+
+    protected static void setApplicationEventClient(ApplicationEventClient applicationEventClient) {
+        BaseApplication.applicationEventClient = applicationEventClient;
+    }
+
+    /**
+     * @param sources sources
+     */
+    public BaseApplication(Object... sources) {
+        this(null, sources);
     }
 
     private void setLoadPage(Class tclass) throws NoSuchFieldException, IllegalAccessException {

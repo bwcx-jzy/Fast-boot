@@ -235,9 +235,10 @@ public abstract class AbstractBaseControl {
     public static String getIpAddress(HttpServletRequest request) {
         if (default_headerName == null)
             default_headerName = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.IP_DEFAULT_HEADER_NAME);
-        if (StringUtil.isEmpty(default_headerName))
-            throw new IllegalArgumentException("please set " + CommonPropertiesFinal.IP_DEFAULT_HEADER_NAME);
-        String ipFromNginx = request.getHeader(default_headerName);
+        String ipFromNginx = null;
+        if (!StringUtil.isEmpty(default_headerName)) {
+            ipFromNginx = request.getHeader(default_headerName);
+        }
         if (ipFromNginx != null && ipFromNginx.length() > 0)
             return ipFromNginx;
         String ip = request.getHeader("x-forwarded-for");
