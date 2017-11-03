@@ -24,6 +24,7 @@ import java.util.List;
 public class InterceptorControl extends WebMvcConfigurerAdapter {
     @Value("${" + CommonPropertiesFinal.INTERCEPTOR_INIT_PACKAGE_NAME + ":}")
     private String loadPath;
+    private boolean isHash = false;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -34,18 +35,22 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
      * @param registry 注册
      */
     private void init(InterceptorRegistry registry) {
-        if (loadPath == null || loadPath.length() <= 0)
+        if (loadPath == null || loadPath.length() <= 0) {
+            loadDefault(registry);
             return;
-
+        }
         List<String> list;
         try {
             list = PackageUtil.getClassName(loadPath);
         } catch (IOException e) {
             DefaultSystemLog.ERROR().error("加载拦截器异常", e);
+            loadDefault(registry);
             return;
         }
-        if (list == null)
+        if (list == null) {
+            loadDefault(registry);
             return;
+        }
         for (String item : list) {
             Class classItem;
             try {
@@ -61,19 +66,32 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
                 continue;
             if (!BaseInterceptor.class.isAssignableFrom(classItem))
                 continue;
-            InterceptorPattens interceptorPattens = (InterceptorPattens) classItem.getAnnotation(InterceptorPattens.class);
-            if (interceptorPattens == null)
-                continue;
-            BaseInterceptor handlerInterceptor;
-            try {
-                handlerInterceptor = (BaseInterceptor) classItem.newInstance();
-            } catch (InstantiationException | IllegalAccessException e) {
-                DefaultSystemLog.ERROR().error("加载拦截器错误", e);
-                continue;
-            }
-            String[] patterns = interceptorPattens.value();
-            registry.addInterceptor(handlerInterceptor).addPathPatterns(patterns);
-            DefaultSystemLog.LOG().info("加载拦截器：" + classItem + "  " + patterns[0]);
+            loadInterceptor(classItem, registry);
         }
+        loadDefault(registry);
+    }
+
+    private void loadDefault(InterceptorRegistry registry) {
+        if (isHash)
+            return;
+        DefaultSystemLog.LOG().info("加载默认拦截器");
+        loadInterceptor(DefaultInterceptor.class, registry);
+    }
+
+    private void loadInterceptor(Class itemCls, InterceptorRegistry registry) {
+        InterceptorPattens interceptorPattens = (InterceptorPattens) itemCls.getAnnotation(InterceptorPattens.class);
+        if (interceptorPattens == null)
+            return;
+        BaseInterceptor handlerInterceptor;
+        try {
+            handlerInterceptor = (BaseInterceptor) itemCls.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            DefaultSystemLog.ERROR().error("加载拦截器错误", e);
+            return;
+        }
+        String[] patterns = interceptorPattens.value();
+        registry.addInterceptor(handlerInterceptor).addPathPatterns(patterns);
+        DefaultSystemLog.LOG().info("加载拦截器：" + itemCls + "  " + patterns[0]);
+        isHash = true;
     }
 }
