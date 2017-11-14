@@ -34,7 +34,7 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
 
     protected MultipartHttpServletRequest getMultiRequest() {
         MultipartHttpServletRequest multipartHttpServletRequest = THREAD_LOCAL_MULTIPART_HTTP_SERVLET_REQUEST.get();
-        Assert.notNull(multipartHttpServletRequest);
+        Assert.notNull(multipartHttpServletRequest, "not is Multipart");
         return multipartHttpServletRequest;
     }
 
@@ -95,7 +95,7 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
      */
     protected <T> T getUpload(Class<T> cls, String path, String... name) throws IllegalAccessException, InstantiationException, IOException {
         Map<String, String[]> parameter = getParameter();
-        Assert.notNull(parameter);
+        Assert.notNull(parameter, "parameter is null");
         if (name == null || name.length <= 0)
             return null;
         path = StringUtil.convertNULL(path);

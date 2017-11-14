@@ -25,6 +25,7 @@
         </sonatypeOssDistMgmtSnapshotsUrl>
         <fastjson.version>1.2.40</fastjson.version>
         <simple-util.version>1.0.1</simple-util.version>
+        <common-boot.version>1.1.2</common-boot.version>
     </properties>
     <dependencies>
         <dependency>
@@ -49,6 +50,11 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
                 <version>${fastjson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.jiangzeyin</groupId>
+                <artifactId>common-boot</artifactId>
+                <version>${common-boot.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
