@@ -7,14 +7,14 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.4.2.RELEASE</version>
+        <version>1.4.7.RELEASE</version>
     </parent>
     <modules>
         <module>common-boot</module>
     </modules>
     <groupId>cn.jiangzeyin</groupId>
     <artifactId>common-parent</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
     <url>http://blog.csdn.net/jiangzeyin_</url>
     <description>Spring Boot common-boot</description>
     <properties>
@@ -23,9 +23,10 @@
         <spring-boot-starter-web.version>1.4.2.RELEASE</spring-boot-starter-web.version>
         <sonatypeOssDistMgmtSnapshotsUrl>https://oss.sonatype.org/content/repositories/snapshots/
         </sonatypeOssDistMgmtSnapshotsUrl>
+        <fastjson.version>1.2.40</fastjson.version>
+        <simple-util.version>1.0.1</simple-util.version>
     </properties>
     <dependencies>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -34,7 +35,6 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.29</version>
         </dependency>
     </dependencies>
 
@@ -43,7 +43,12 @@
             <dependency>
                 <groupId>cn.jiangzeyin</groupId>
                 <artifactId>simple-util</artifactId>
-                <version>1.0.0</version>
+                <version>${simple-util.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -53,7 +58,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
