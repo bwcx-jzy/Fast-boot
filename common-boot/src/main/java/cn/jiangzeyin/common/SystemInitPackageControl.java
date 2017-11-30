@@ -17,11 +17,8 @@ import java.util.*;
 public class SystemInitPackageControl {
 
     /**
-     * //     * 系统预加载包名
-     * //
+     * 系统预加载包名
      */
-//    @Value("${server.initPackageName:com.yoke.system.init}")
-//    public String initPackageName;
     public static void init() {
         String pageName = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.PRELOAD_PACKAGE_NAME);
         if (StringUtil.isEmpty(pageName))
@@ -41,28 +38,28 @@ public class SystemInitPackageControl {
             }
             if (classList.size() <= 0)
                 return;
-            List<Map.Entry<Integer, Class>> newList = splitClass(classList);
+            List<Map.Entry<Class, Integer>> newList = splitClass(classList);
             if (newList != null)
-                for (Map.Entry<Integer, Class> item : newList)
-                    loadClass(item.getValue());
+                for (Map.Entry<Class, Integer> item : newList)
+                    loadClass(item.getKey());
         } catch (IOException e) {
             DefaultSystemLog.ERROR().error("预加载包错误", e);
         }
     }
 
     // 排序class
-    private static List<Map.Entry<Integer, Class>> splitClass(List<Class<?>> list) {
-        HashMap<Integer, Class> sortMap = new HashMap<>();
+    private static List<Map.Entry<Class, Integer>> splitClass(List<Class<?>> list) {
+        HashMap<Class, Integer> sortMap = new HashMap<>();
         for (Class item : list) {
             PreLoadClass preLoadClass = (PreLoadClass) item.getAnnotation(PreLoadClass.class);
             if (preLoadClass == null)
                 continue;
-            sortMap.put(preLoadClass.value(), item);
+            sortMap.put(item, preLoadClass.value());
         }
-        List<Map.Entry<Integer, Class>> newList = null;
+        List<Map.Entry<Class, Integer>> newList = null;
         if (sortMap.size() > 0) {
             newList = new ArrayList<>(sortMap.entrySet());
-            newList.sort(Comparator.comparing(Map.Entry::getKey));
+            newList.sort(Comparator.comparing(Map.Entry::getValue));
         }
         return newList;
     }
@@ -70,20 +67,20 @@ public class SystemInitPackageControl {
     // 排序class 中方法
     private static void loadClass(Class classT) {
         Method[] methods = classT.getMethods();
-        HashMap<Integer, Method> sortMap = new HashMap<>();
+        HashMap<Method, Integer> sortMap = new HashMap<>();
         for (Method method : methods) {
             if (Modifier.isStatic(method.getModifiers()) && Modifier.isPublic(method.getModifiers())) {
                 PreLoadMethod preLoadMethod = method.getAnnotation(PreLoadMethod.class);
                 if (preLoadMethod == null)
                     continue;
-                sortMap.put(preLoadMethod.value(), method);
+                sortMap.put(method, preLoadMethod.value());
             }
         }
         if (sortMap.size() > 0) {
-            List<Map.Entry<Integer, Method>> newList = new ArrayList<>(sortMap.entrySet());
-            newList.sort(Comparator.comparing(Map.Entry::getKey));
-            for (Map.Entry<Integer, Method> item : newList) {
-                Method method = item.getValue();
+            List<Map.Entry<Method, Integer>> newList = new ArrayList<>(sortMap.entrySet());
+            newList.sort(Comparator.comparing(Map.Entry::getValue));
+            for (Map.Entry<Method, Integer> item : newList) {
+                Method method = item.getKey();
                 try {
                     method.invoke(null);
                 } catch (IllegalAccessException | InvocationTargetException e) {
@@ -92,5 +89,4 @@ public class SystemInitPackageControl {
             }
         }
     }
-
 }
