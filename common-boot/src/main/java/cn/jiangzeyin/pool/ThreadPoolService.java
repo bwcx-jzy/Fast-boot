@@ -16,6 +16,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * create 2016-10-24
  */
 public class ThreadPoolService {
+    private ThreadPoolService() {
+    }
+
     private final static ConcurrentHashMap<Class, PoolCacheInfo> POOL_CACHE_INFO_CONCURRENT_HASH_MAP = new ConcurrentHashMap<>();
 
     /**
@@ -33,7 +36,7 @@ public class ThreadPoolService {
             // 创建线程方法
             poolCacheInfo = createPool(class1);
             POOL_CACHE_INFO_CONCURRENT_HASH_MAP.put(class1, poolCacheInfo);
-            DefaultSystemLog.LOG().info(class1 + "线程池申请成功");
+            DefaultSystemLog.LOG().info(class1 + "线程池申请成功:" + poolCacheInfo);
         }
         return poolCacheInfo.poolExecutor;
     }
@@ -107,6 +110,16 @@ public class ThreadPoolService {
             this.poolExecutor = poolExecutor;
             this.synchronousQueue = synchronousQueue;
             this.handler = handler;
+        }
+
+        @Override
+        public String toString() {
+            return poolExecutor.toString() +
+                    " MaximumPoolSize:" + poolExecutor.getMaximumPoolSize() +
+                    " CorePoolSize:" + poolExecutor.getCorePoolSize() +
+                    " LargestPoolSize:" + poolExecutor.getLargestPoolSize() +
+                    " queueSize:" + synchronousQueue.size() +
+                    " RejectedExecutionCount:" + handler.getHandlerCount();
         }
     }
 

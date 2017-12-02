@@ -41,21 +41,29 @@ public final class ObjectCache {
         }
     }
 
-    public synchronized static void put(String key, Object value) {
+    public synchronized static Object put(String key, Object value) {
+        return put(key, value, -1);
+    }
+
+    public synchronized static Object put(String key, Object value, long cacheTime) {
         if (key == null) throw new NullPointerException();
         if (value == null) throw new NullPointerException();
+        if (cacheTime < -1)
+            throw new IllegalArgumentException("cacheTime must >=0");
         CacheEntity<String, Object> cacheEntity = CONCURRENT_HASH_MAP.get(key);
         if (cacheEntity == null) {
             CacheInfo cacheInfo = CACHE_INFO_CONCURRENT_HASH_MAP.get(key);
             if (cacheInfo == null) {
-                cacheInfo = new CacheInfo(key, DEFAULT_CACHE_TIME);
+                cacheInfo = new CacheInfo(key, cacheTime == -1 ? DEFAULT_CACHE_TIME : cacheTime);
                 CACHE_INFO_CONCURRENT_HASH_MAP.put(cacheInfo.getKey(), cacheInfo);
+            } else if (cacheTime != -1) {
+                cacheInfo.cacheTime = cacheTime;
             }
             cacheEntity = new CacheEntity<>(key, value, cacheInfo);
             CONCURRENT_HASH_MAP.put(cacheEntity.getKey(), cacheEntity);
-        } else {
-            cacheEntity.setValue(value);
+            return null;
         }
+        return cacheEntity.setValue(value, cacheTime);
     }
 
     public static Object get(String key) {
@@ -95,22 +103,28 @@ public final class ObjectCache {
             this.intoTime = System.currentTimeMillis();
             return val;
         }
+
+        V setValue(V value, long cacheTime) {
+            if (cacheTime != -1)
+                this.cacheInfo.cacheTime = cacheTime;
+            return setValue(value);
+        }
     }
 
     private static class CacheInfo {
         final String key;
-        final long cacheTime;
+        long cacheTime;
 
         CacheInfo(String key, long cacheTime) {
             this.key = key;
             this.cacheTime = cacheTime;
         }
 
-        public String getKey() {
+        String getKey() {
             return key;
         }
 
-        public long getCacheTime() {
+        long getCacheTime() {
             return cacheTime;
         }
     }
