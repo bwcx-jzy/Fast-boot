@@ -1,5 +1,6 @@
 package cn.jiangzeyin.pool;
 
+import cn.jiangzeyin.StringUtil;
 import cn.jiangzeyin.common.DefaultSystemLog;
 
 import java.util.ArrayList;
@@ -16,10 +17,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * create 2016-10-24
  */
 public class ThreadPoolService {
+    private final static ConcurrentHashMap<Class, PoolCacheInfo> POOL_CACHE_INFO_CONCURRENT_HASH_MAP = new ConcurrentHashMap<>();
+
     private ThreadPoolService() {
     }
-
-    private final static ConcurrentHashMap<Class, PoolCacheInfo> POOL_CACHE_INFO_CONCURRENT_HASH_MAP = new ConcurrentHashMap<>();
 
     /**
      * 创建一个无限制线程池
@@ -41,6 +42,12 @@ public class ThreadPoolService {
         return poolCacheInfo.poolExecutor;
     }
 
+    /**
+     * 创建一个缓存线程对象
+     *
+     * @param tClass 线程池主类
+     * @return 缓存对象
+     */
     private static PoolCacheInfo createPool(Class tClass) {
         PoolConfig poolConfig = (PoolConfig) tClass.getAnnotation(PoolConfig.class);
         BlockingQueue<Runnable> blockingQueue;
@@ -75,6 +82,12 @@ public class ThreadPoolService {
         return new PoolCacheInfo(threadPoolExecutor, blockingQueue, proxyHandler);
     }
 
+    /**
+     * 获取线程池队列数
+     *
+     * @param tClass 线程池主类
+     * @return int
+     */
     public static int getPoolQueuedTasks(Class tClass) {
         PoolCacheInfo poolCacheInfo = POOL_CACHE_INFO_CONCURRENT_HASH_MAP.get(tClass);
         if (poolCacheInfo == null)
@@ -82,6 +95,12 @@ public class ThreadPoolService {
         return poolCacheInfo.blockingQueue.size();
     }
 
+    /**
+     * 获取线程池取消执行的任务数
+     *
+     * @param tclass 线程池主类
+     * @return int
+     */
     public static int getPoolRejectedExecutionCount(Class tclass) {
         PoolCacheInfo poolCacheInfo = POOL_CACHE_INFO_CONCURRENT_HASH_MAP.get(tclass);
         if (poolCacheInfo == null)
@@ -172,4 +191,43 @@ public class ThreadPoolService {
             return handlerCount.get();
         }
     }
+
+    /**
+     * 线程池工厂
+     *
+     * @author jiangzeyin
+     * create 2016-11-21
+     */
+    static class SystemThreadFactory implements ThreadFactory {
+        private static final AtomicInteger poolNumber = new AtomicInteger(1);
+        private final ThreadGroup group;
+        private final AtomicInteger threadNumber = new AtomicInteger(1);
+        private final String namePrefix;
+
+        /**
+         * @return the threadNumber
+         */
+        public int getThreadNumber() {
+            return threadNumber.get();
+        }
+
+        SystemThreadFactory(String poolName) {
+            if (StringUtil.isEmpty(poolName))
+                poolName = "pool";
+            SecurityManager s = System.getSecurityManager();
+            group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+            namePrefix = poolName + "-" + poolNumber.getAndIncrement() + "-thread-";
+        }
+
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
+            if (t.isDaemon())
+                t.setDaemon(false);
+            if (t.getPriority() != Thread.NORM_PRIORITY)
+                t.setPriority(Thread.NORM_PRIORITY);
+            return t;
+        }
+    }
+
 }
