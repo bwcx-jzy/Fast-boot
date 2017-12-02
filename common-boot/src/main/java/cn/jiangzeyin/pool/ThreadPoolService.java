@@ -43,34 +43,50 @@ public class ThreadPoolService {
 
     private static PoolCacheInfo createPool(Class tClass) {
         PoolConfig poolConfig = (PoolConfig) tClass.getAnnotation(PoolConfig.class);
-        SynchronousQueue<Runnable> synchronousQueue = new SynchronousQueue<>();
+        BlockingQueue<Runnable> blockingQueue;
+        SystemThreadFactory systemThreadFactory = new SystemThreadFactory(tClass.getName());
         ThreadPoolExecutor threadPoolExecutor;
         ProxyHandler proxyHandler;
         if (poolConfig == null) {
-            threadPoolExecutor = new ThreadPoolExecutor(0, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, synchronousQueue);
             proxyHandler = new ProxyHandler(PolicyHandler.Caller);
+            blockingQueue = new SynchronousQueue<>();
+            threadPoolExecutor = new ThreadPoolExecutor(0,
+                    Integer.MAX_VALUE,
+                    60L,
+                    TimeUnit.SECONDS,
+                    blockingQueue,
+                    systemThreadFactory,
+                    proxyHandler);
         } else {
-            threadPoolExecutor = new ThreadPoolExecutor(poolConfig.value(), poolConfig.maximumPoolSize(), poolConfig.keepAliveTime(), poolConfig.UNIT(), synchronousQueue);
             proxyHandler = new ProxyHandler(poolConfig.HANDLER());
+            int corePoolSize = poolConfig.value();
+            if (corePoolSize == 0)
+                blockingQueue = new SynchronousQueue<>();
+            else
+                blockingQueue = new LinkedBlockingQueue<>();
+            threadPoolExecutor = new ThreadPoolExecutor(corePoolSize,
+                    poolConfig.maximumPoolSize(),
+                    poolConfig.keepAliveTime(),
+                    poolConfig.UNIT(),
+                    blockingQueue,
+                    systemThreadFactory,
+                    proxyHandler);
         }
-        threadPoolExecutor.setRejectedExecutionHandler(proxyHandler);
-        SystemThreadFactory systemThreadFactory = new SystemThreadFactory(tClass.getName());
-        threadPoolExecutor.setThreadFactory(systemThreadFactory);
-        return new PoolCacheInfo(threadPoolExecutor, synchronousQueue, proxyHandler);
+        return new PoolCacheInfo(threadPoolExecutor, blockingQueue, proxyHandler);
     }
 
     public static int getPoolQueuedTasks(Class tClass) {
         PoolCacheInfo poolCacheInfo = POOL_CACHE_INFO_CONCURRENT_HASH_MAP.get(tClass);
         if (poolCacheInfo == null)
             return 0;
-        return poolCacheInfo.synchronousQueue.size();
+        return poolCacheInfo.blockingQueue.size();
     }
 
     public static int getPoolRejectedExecutionCount(Class tclass) {
         PoolCacheInfo poolCacheInfo = POOL_CACHE_INFO_CONCURRENT_HASH_MAP.get(tclass);
         if (poolCacheInfo == null)
             return 0;
-        return poolCacheInfo.handler.getHandlerCount();
+        return poolCacheInfo.handler.getRejectedExecutionCount();
     }
 
     /**
@@ -103,12 +119,12 @@ public class ThreadPoolService {
 
     private static class PoolCacheInfo {
         private final ThreadPoolExecutor poolExecutor;
-        private final SynchronousQueue<Runnable> synchronousQueue;
+        private final BlockingQueue<Runnable> blockingQueue;
         private final ProxyHandler handler;
 
-        PoolCacheInfo(ThreadPoolExecutor poolExecutor, SynchronousQueue<Runnable> synchronousQueue, ProxyHandler handler) {
+        PoolCacheInfo(ThreadPoolExecutor poolExecutor, BlockingQueue<Runnable> blockingQueue, ProxyHandler handler) {
             this.poolExecutor = poolExecutor;
-            this.synchronousQueue = synchronousQueue;
+            this.blockingQueue = blockingQueue;
             this.handler = handler;
         }
 
@@ -118,8 +134,8 @@ public class ThreadPoolService {
                     " MaximumPoolSize:" + poolExecutor.getMaximumPoolSize() +
                     " CorePoolSize:" + poolExecutor.getCorePoolSize() +
                     " LargestPoolSize:" + poolExecutor.getLargestPoolSize() +
-                    " queueSize:" + synchronousQueue.size() +
-                    " RejectedExecutionCount:" + handler.getHandlerCount();
+                    " blockingQueue:" + blockingQueue.size() +
+                    " RejectedExecutionCount:" + handler.getRejectedExecutionCount();
         }
     }
 
@@ -152,7 +168,7 @@ public class ThreadPoolService {
             rejectedExecutionHandler.rejectedExecution(r, executor);
         }
 
-        int getHandlerCount() {
+        int getRejectedExecutionCount() {
             return handlerCount.get();
         }
     }
