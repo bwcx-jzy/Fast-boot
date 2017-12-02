@@ -4,15 +4,13 @@ import java.lang.annotation.*;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by jiangzeyin on 2017/12/2.
+ * Created by jiangzeyin on 2017/12/1.
  */
 @Documented
-@Target(ElementType.FIELD)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ConfigField {
-    int value() default 5 * 60 * 1000;
-
-    int containerMaxSize() default 100;
+public @interface CacheConfig {
+    int value() default ObjectCache.DEFAULT_CACHE_TIME;
 
     TimeUnit UNIT() default TimeUnit.SECONDS;
 }

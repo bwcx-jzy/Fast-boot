@@ -48,11 +48,11 @@ public class SystemExecutorService {
     private static ThreadPoolExecutor createPool(Class tClass) {
         SynchronousQueue<Runnable> synchronousQueue = new SynchronousQueue<>();
         SYNCHRONOUS_QUEUE_CONCURRENT_HASH_MAP.put(tClass, synchronousQueue);
-        ConfigClass configClass = (ConfigClass) tClass.getAnnotation(ConfigClass.class);
-        if (configClass == null)
+        PoolConfig poolConfig = (PoolConfig) tClass.getAnnotation(PoolConfig.class);
+        if (poolConfig == null)
             return new ThreadPoolExecutor(0, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, synchronousQueue);
         else
-            return new ThreadPoolExecutor(configClass.value(), configClass.maximumPoolSize(), configClass.keepAliveTime(), TimeUnit.SECONDS, synchronousQueue);
+            return new ThreadPoolExecutor(poolConfig.value(), poolConfig.maximumPoolSize(), poolConfig.keepAliveTime(), TimeUnit.SECONDS, synchronousQueue);
     }
 
     public static int getPoolQueuedTasks(Class tClass) {

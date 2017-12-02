@@ -9,10 +9,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by jiangzeyin on 2017/12/1.
  */
 public final class ObjectCache {
-    //    private static final LinkedList<>
     private static final ConcurrentHashMap<String, CacheEntity<String, Object>> CONCURRENT_HASH_MAP = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<String, CacheInfo> CACHE_INFO_CONCURRENT_HASH_MAP = new ConcurrentHashMap<>();
-    private static final long DEFAULT_CACHE_TIME = 1000 * 60 * 10;
+    public static final int DEFAULT_CACHE_TIME = 1000 * 60 * 10;
 
     private ObjectCache() {
 
@@ -20,7 +19,7 @@ public final class ObjectCache {
 
     public static void config(Class cls) throws IllegalAccessException {
         if (cls == null) throw new NullPointerException();
-        ConfigClass configClass = (ConfigClass) cls.getAnnotation(ConfigClass.class);
+        CacheConfig cacheConfig = (CacheConfig) cls.getAnnotation(CacheConfig.class);
         Field[] fields = cls.getFields();
         for (Field field : fields) {
             if (field.getType() != String.class)
@@ -29,14 +28,14 @@ public final class ObjectCache {
                 continue;
             if (!Modifier.isFinal(field.getModifiers()))
                 continue;
-            ConfigField configField = field.getAnnotation(ConfigField.class);
+            CacheConfigField cacheConfigField = field.getAnnotation(CacheConfigField.class);
             String key = (String) field.get(null);
-            if (configField == null) {
-                long cacheTime = configClass != null ? configClass.UNIT().toMillis(configClass.value()) : DEFAULT_CACHE_TIME;
+            if (cacheConfigField == null) {
+                long cacheTime = cacheConfig != null ? cacheConfig.UNIT().toMillis(cacheConfig.value()) : DEFAULT_CACHE_TIME;
                 CacheInfo cacheInfo = new CacheInfo(key, cacheTime);
                 CACHE_INFO_CONCURRENT_HASH_MAP.put(key, cacheInfo);
             } else {
-                CacheInfo cacheInfo = new CacheInfo(key, configField.UNIT().toMillis(configField.value()));
+                CacheInfo cacheInfo = new CacheInfo(key, cacheConfigField.UNIT().toMillis(cacheConfigField.value()));
                 CACHE_INFO_CONCURRENT_HASH_MAP.put(key, cacheInfo);
             }
         }

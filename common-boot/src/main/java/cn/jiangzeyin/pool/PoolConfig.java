@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 @Documented
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ConfigClass {
+public @interface PoolConfig {
     int value() default 0;
 
     int maximumPoolSize() default Integer.MAX_VALUE;
