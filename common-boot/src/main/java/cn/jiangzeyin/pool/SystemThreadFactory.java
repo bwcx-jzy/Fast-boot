@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author jiangzeyin
  * create 2016-11-21
  */
-public class SystemThreadFactory implements ThreadFactory {
+class SystemThreadFactory implements ThreadFactory {
 
     private static final AtomicInteger poolNumber = new AtomicInteger(1);
     private final ThreadGroup group;

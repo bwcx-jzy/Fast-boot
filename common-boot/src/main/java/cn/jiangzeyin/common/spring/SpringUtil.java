@@ -4,8 +4,8 @@ import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.common.BaseApplication;
 import cn.jiangzeyin.common.DefaultSystemLog;
 import cn.jiangzeyin.common.SystemInitPackageControl;
+import cn.jiangzeyin.pool.ThreadPoolService;
 import org.springframework.beans.BeansException;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerInitializedEvent;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -13,8 +13,6 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextClosedEvent;
-import org.springframework.context.event.ContextStartedEvent;
-import org.springframework.context.event.ContextStoppedEvent;
 import org.springframework.core.env.Environment;
 import org.springframework.util.Assert;
 import org.springframework.web.context.support.ServletRequestHandledEvent;
@@ -53,31 +51,23 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
     public void onApplicationEvent(ApplicationEvent event) {
         if (applicationEventClient != null)
             applicationEventClient.onApplicationEvent(event);
-        if (event instanceof ApplicationReadyEvent) {
-            // 启动最后的预加载
+        if (event instanceof ApplicationReadyEvent) {// 启动最后的预加载
             SystemInitPackageControl.init();
-            DefaultSystemLog.LOG().info("启动完成");
+            DefaultSystemLog.LOG().info("common-boot 启动完成");
             return;
         }
-        if (event instanceof ContextStartedEvent) { // 应用启动，需要在代码动态添加监听器才可捕获
-            System.out.println("3");
-        } else if (event instanceof ContextStoppedEvent) { // 应用停止
-            System.out.println("stop");
-        } else if (event instanceof ContextClosedEvent) { // 应用关闭
-            DefaultSystemLog.LOG().info("关闭程序");
-            //SystemExecutorService.shutdown();
-        } else if (event instanceof ServletRequestHandledEvent) {
+        if (event instanceof ContextClosedEvent) { // 应用关闭
+            DefaultSystemLog.LOG().info("common-boot 关闭程序");
+            ThreadPoolService.shutdown();
+            return;
+        }
+        if (event instanceof ServletRequestHandledEvent) {
             ServletRequestHandledEvent servletRequestHandledEvent = (ServletRequestHandledEvent) event;
             if (!servletRequestHandledEvent.wasFailure()) {
                 DefaultSystemLog.LOG(DefaultSystemLog.LogType.REQUEST).info(servletRequestHandledEvent.toString());
             } else {
                 DefaultSystemLog.LOG(DefaultSystemLog.LogType.REQUEST).info("error:" + servletRequestHandledEvent.toString());
             }
-        } else if (event instanceof EmbeddedServletContainerInitializedEvent) {
-
-        } else {
-            System.out.println("else");
-            System.out.println(event);
         }
     }
 
