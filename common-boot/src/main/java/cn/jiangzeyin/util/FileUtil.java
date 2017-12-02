@@ -18,8 +18,8 @@ public final class FileUtil {
      * @throws IOException io
      */
     public static boolean writeInputStream(InputStream inputStream, File file) throws IOException {
-        Assert.notNull(inputStream);
-        Assert.notNull(file);
+        Assert.notNull(inputStream, "inputStream is null");
+        Assert.notNull(file, "file is null");
         File parent = file.getParentFile();
         if (!parent.exists())
             if (!parent.mkdirs())
