@@ -3,7 +3,6 @@ SpringBoot common boot
 
 公共的Controller 
 
-
 自动加载拦截器
 
 SpringUtil 操作集成
