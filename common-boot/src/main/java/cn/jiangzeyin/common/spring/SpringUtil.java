@@ -115,11 +115,20 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
         return getApplicationContext().getBean(name, clazz);
     }
 
-
+    /**
+     * 获取配置文件信息
+     *
+     * @return environment
+     */
     public static Environment getEnvironment() {
         return BaseApplication.getEnvironment();
     }
 
+    /**
+     * 获取程序id
+     *
+     * @return id
+     */
     public static String getApplicationId() {
         return getEnvironment().getProperty(CommonPropertiesFinal.APPLICATION_ID);
     }

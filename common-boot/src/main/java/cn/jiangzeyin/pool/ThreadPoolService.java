@@ -123,15 +123,15 @@ public class ThreadPoolService {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("name", OtherUtil.simplifyClassName(entry.getKey().getName()));
             ThreadPoolExecutor threadPoolExecutor = poolCacheInfo.poolExecutor;
-            jsonObject.put("activeCount", threadPoolExecutor.getActiveCount());
-            jsonObject.put("maximumPoolSize", threadPoolExecutor.getMaximumPoolSize());
-            jsonObject.put("corePoolSize", threadPoolExecutor.getCorePoolSize());
-            jsonObject.put("largestPoolSize", threadPoolExecutor.getLargestPoolSize());
-            jsonObject.put("completedTaskCount", threadPoolExecutor.getCompletedTaskCount());
-            jsonObject.put("taskCount", threadPoolExecutor.getTaskCount());
-            jsonObject.put("poolSize", threadPoolExecutor.getPoolSize());
-            jsonObject.put("queueSize", poolCacheInfo.blockingQueue.size());
-            jsonObject.put("rejectedExecutionCount", poolCacheInfo.handler.getRejectedExecutionCount());
+            jsonObject.put("corePoolSize", threadPoolExecutor.getCorePoolSize()); // 核心数
+            jsonObject.put("poolSize", threadPoolExecutor.getPoolSize()); // 工作集数
+            jsonObject.put("activeCount", threadPoolExecutor.getActiveCount()); // 活跃线程数
+            jsonObject.put("largestPoolSize", threadPoolExecutor.getLargestPoolSize()); // 曾经最大线程数
+            jsonObject.put("completedTaskCount", threadPoolExecutor.getCompletedTaskCount()); // 已完成数
+            jsonObject.put("taskCount", threadPoolExecutor.getTaskCount()); // 总任务数
+            jsonObject.put("queueSize", poolCacheInfo.blockingQueue.size()); // 任务队列数
+            jsonObject.put("rejectedExecutionCount", poolCacheInfo.handler.getRejectedExecutionCount()); // 拒绝任务数
+            jsonObject.put("maximumPoolSize", threadPoolExecutor.getMaximumPoolSize());// 最大线程数
             jsonArray.add(jsonObject);
         }
         return jsonArray;
