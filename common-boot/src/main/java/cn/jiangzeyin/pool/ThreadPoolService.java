@@ -1,10 +1,11 @@
 package cn.jiangzeyin.pool;
 
+import cn.jiangzeyin.OtherUtil;
 import cn.jiangzeyin.StringUtil;
 import cn.jiangzeyin.common.DefaultSystemLog;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.*;
 import java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy;
@@ -115,12 +116,25 @@ public class ThreadPoolService {
      * @author jiangzeyin
      * create 2016-11-29
      */
-    public static List<ThreadPoolExecutor> getThreadPoolExecutorInfo() {
-        List<ThreadPoolExecutor> executors = new ArrayList<>();
+    public static JSONArray getThreadPoolStatusInfo() {
+        JSONArray jsonArray = new JSONArray();
         for (Entry<Class, PoolCacheInfo> entry : POOL_CACHE_INFO_CONCURRENT_HASH_MAP.entrySet()) {
-            executors.add(entry.getValue().poolExecutor);
+            PoolCacheInfo poolCacheInfo = entry.getValue();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("name", OtherUtil.simplifyClassName(entry.getKey().getName()));
+            ThreadPoolExecutor threadPoolExecutor = poolCacheInfo.poolExecutor;
+            jsonObject.put("activeCount", threadPoolExecutor.getActiveCount());
+            jsonObject.put("maximumPoolSize", threadPoolExecutor.getMaximumPoolSize());
+            jsonObject.put("corePoolSize", threadPoolExecutor.getCorePoolSize());
+            jsonObject.put("largestPoolSize", threadPoolExecutor.getLargestPoolSize());
+            jsonObject.put("completedTaskCount", threadPoolExecutor.getCompletedTaskCount());
+            jsonObject.put("taskCount", threadPoolExecutor.getTaskCount());
+            jsonObject.put("poolSize", threadPoolExecutor.getPoolSize());
+            jsonObject.put("queueSize", poolCacheInfo.blockingQueue.size());
+            jsonObject.put("rejectedExecutionCount", poolCacheInfo.handler.getRejectedExecutionCount());
+            jsonArray.add(jsonObject);
         }
-        return executors;
+        return jsonArray;
     }
 
     /**
