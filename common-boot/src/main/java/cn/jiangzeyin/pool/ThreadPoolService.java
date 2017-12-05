@@ -31,7 +31,7 @@ public class ThreadPoolService {
      * @author jiangzeyin
      * 2016-10-24
      */
-    public synchronized static ThreadPoolExecutor newCachedThreadPool(Class class1) {
+    public synchronized static ExecutorService newCachedThreadPool(Class class1) {
         if (class1 == null) throw new NullPointerException();
         PoolCacheInfo poolCacheInfo = POOL_CACHE_INFO_CONCURRENT_HASH_MAP.get(class1);
         if (poolCacheInfo == null) {
@@ -80,7 +80,7 @@ public class ThreadPoolService {
                     systemThreadFactory,
                     proxyHandler);
         }
-        return new PoolCacheInfo(threadPoolExecutor, blockingQueue, proxyHandler);
+        return new PoolCacheInfo(threadPoolExecutor, blockingQueue, proxyHandler, systemThreadFactory);
     }
 
     /**
@@ -131,6 +131,7 @@ public class ThreadPoolService {
             jsonObject.put("taskCount", threadPoolExecutor.getTaskCount()); // 总任务数
             jsonObject.put("queueSize", poolCacheInfo.blockingQueue.size()); // 任务队列数
             jsonObject.put("rejectedExecutionCount", poolCacheInfo.handler.getRejectedExecutionCount()); // 拒绝任务数
+            jsonObject.put("maxThreadNumber", poolCacheInfo.systemThreadFactory.threadNumber.get()); // 最大线程编号
             jsonObject.put("maximumPoolSize", threadPoolExecutor.getMaximumPoolSize());// 最大线程数
             jsonArray.add(jsonObject);
         }
@@ -154,11 +155,13 @@ public class ThreadPoolService {
         private final ThreadPoolExecutor poolExecutor;
         private final BlockingQueue<Runnable> blockingQueue;
         private final ProxyHandler handler;
+        private final SystemThreadFactory systemThreadFactory;
 
-        PoolCacheInfo(ThreadPoolExecutor poolExecutor, BlockingQueue<Runnable> blockingQueue, ProxyHandler handler) {
+        PoolCacheInfo(ThreadPoolExecutor poolExecutor, BlockingQueue<Runnable> blockingQueue, ProxyHandler handler, SystemThreadFactory systemThreadFactory) {
             this.poolExecutor = poolExecutor;
             this.blockingQueue = blockingQueue;
             this.handler = handler;
+            this.systemThreadFactory = systemThreadFactory;
         }
 
         @Override
@@ -217,13 +220,6 @@ public class ThreadPoolService {
         private final ThreadGroup group;
         private final AtomicInteger threadNumber = new AtomicInteger(1);
         private final String namePrefix;
-
-        /**
-         * @return the threadNumber
-         */
-        public int getThreadNumber() {
-            return threadNumber.get();
-        }
 
         SystemThreadFactory(String poolName) {
             if (StringUtil.isEmpty(poolName))
