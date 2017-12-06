@@ -6,6 +6,7 @@ import cn.jiangzeyin.common.DefaultSystemLog;
 import cn.jiangzeyin.common.SystemInitPackageControl;
 import cn.jiangzeyin.pool.ThreadPoolService;
 import org.springframework.beans.BeansException;
+import org.springframework.boot.context.event.ApplicationFailedEvent;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -49,6 +50,12 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
      */
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
+        if (event instanceof ApplicationFailedEvent) {
+            System.err.println("启动失败");
+            ApplicationFailedEvent applicationFailedEvent = (ApplicationFailedEvent) event;
+            applicationFailedEvent.getException().printStackTrace();
+            return;
+        }
         if (applicationEventClient != null)
             applicationEventClient.onApplicationEvent(event);
         if (event instanceof ApplicationReadyEvent) {// 启动最后的预加载
