@@ -14,17 +14,38 @@ import java.util.*;
 /**
  * Created by jiangzeyin on 2017/10/24.
  */
-public class SystemInitPackageControl {
+public class CommonInitPackage {
+    private volatile static boolean init = false;
+    private static final List<Method> METHOD_LIST = new ArrayList<>();
+    private static final List<String> PACKAGE_NAME_LIST = new ArrayList<>();
 
     /**
      * 系统预加载包名
      */
     public static void init() {
+        if (init) {
+            DefaultSystemLog.LOG().info("init 包已经被初始化过啦！");
+            return;
+        }
         String pageName = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.PRELOAD_PACKAGE_NAME);
         if (StringUtil.isEmpty(pageName))
             return;
+        load(pageName);
+        init = true;
+    }
+
+    /**
+     * 初始化包
+     *
+     * @param packageName packageName
+     */
+    public static void load(String packageName) {
+        if (PACKAGE_NAME_LIST.contains(packageName)) {
+            DefaultSystemLog.LOG().info(packageName + " 包已经被初始化过啦！");
+            return;
+        }
         try {
-            List<String> list = PackageUtil.getClassName(pageName);
+            List<String> list = PackageUtil.getClassName(packageName);
             if (list == null || list.size() <= 0)
                 return;
             List<Class<?>> classList = new ArrayList<>();
@@ -42,6 +63,7 @@ public class SystemInitPackageControl {
             if (newList != null)
                 for (Map.Entry<Class, Integer> item : newList)
                     loadClass(item.getKey());
+            PACKAGE_NAME_LIST.add(packageName);
         } catch (IOException e) {
             DefaultSystemLog.ERROR().error("预加载包错误", e);
         }
@@ -81,8 +103,13 @@ public class SystemInitPackageControl {
             newList.sort(Comparator.comparing(Map.Entry::getValue));
             for (Map.Entry<Method, Integer> item : newList) {
                 Method method = item.getKey();
+                if (METHOD_LIST.contains(method)) {
+                    DefaultSystemLog.LOG().info(classT + "  " + method.getName() + "已经调用过啦");
+                    continue;
+                }
                 try {
                     method.invoke(null);
+                    METHOD_LIST.add(method);
                 } catch (IllegalAccessException | InvocationTargetException e) {
                     DefaultSystemLog.ERROR().error("预加载包错误:" + classT + "  " + method.getName() + "  执行错误", e);
                 }

@@ -14,15 +14,15 @@
     </modules>
     <groupId>cn.jiangzeyin</groupId>
     <artifactId>common-parent</artifactId>
-    <version>1.1.5</version>
+    <version>1.1.6</version>
     <url>http://blog.csdn.net/jiangzeyin_</url>
     <description>Spring Boot common-boot</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
         <fastjson.version>1.2.40</fastjson.version>
-        <simple-util.version>1.0.3</simple-util.version>
-        <common-boot.version>1.1.5</common-boot.version>
+        <simple-util.version>1.0.4</simple-util.version>
+        <common-boot.version>1.1.6</common-boot.version>
         <job.version>1.0.3</job.version>
     </properties>
     <dependencies>

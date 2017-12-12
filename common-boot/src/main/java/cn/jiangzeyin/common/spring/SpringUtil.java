@@ -3,7 +3,7 @@ package cn.jiangzeyin.common.spring;
 import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.common.BaseApplication;
 import cn.jiangzeyin.common.DefaultSystemLog;
-import cn.jiangzeyin.common.SystemInitPackageControl;
+import cn.jiangzeyin.common.CommonInitPackage;
 import cn.jiangzeyin.pool.ThreadPoolService;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
@@ -59,7 +59,7 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
         if (applicationEventClient != null)
             applicationEventClient.onApplicationEvent(event);
         if (event instanceof ApplicationReadyEvent) {// 启动最后的预加载
-            SystemInitPackageControl.init();
+            CommonInitPackage.init();
             DefaultSystemLog.LOG().info("common-boot 启动完成");
             return;
         }
