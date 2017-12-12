@@ -7,12 +7,14 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="common-boot" />
+        <module name="common-redis" />
         <module name="commonboot" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="common-boot" target="1.8" />
       <module name="common-parent" target="1.8" />
+      <module name="common-redis" target="1.8" />
       <module name="commonboot" target="1.8" />
     </bytecodeTargetLevel>
   </component>

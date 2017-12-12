@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/common-boot/common-boot.iml" filepath="$PROJECT_DIR$/common-boot/common-boot.iml" />
       <module fileurl="file://$PROJECT_DIR$/common-parent.iml" filepath="$PROJECT_DIR$/common-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/common-redis/common-redis.iml" filepath="$PROJECT_DIR$/common-redis/common-redis.iml" />
     </modules>
   </component>
 </project>
