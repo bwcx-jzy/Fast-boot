@@ -6,6 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
@@ -13,10 +14,11 @@ import java.lang.reflect.Proxy;
 import java.util.Map;
 
 /**
+ * 程序启动辅助类
+ *
  * @author jiangzeyin
  * Created by jiangzeyin on 2017/1/10.
  */
-
 public class BaseApplication extends SpringApplication {
 
     private static Environment environment;
@@ -31,7 +33,7 @@ public class BaseApplication extends SpringApplication {
         super(sources);
         // 设置加载当前包
         try {
-            setLoadPage((Class) sources[0]);
+            addLoadPage((Class) sources[0], "cn.jiangzeyin");
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -41,13 +43,18 @@ public class BaseApplication extends SpringApplication {
             String msg = environment.getProperty(CommonPropertiesFinal.BANNER_MSG, "boot Application starting");
             out.println(msg);
         });
-        BaseApplication.applicationEventClient = applicationEventClient;
+        setApplicationEventClient(applicationEventClient);
     }
 
     public static ApplicationEventClient getApplicationEventClient() {
         return applicationEventClient;
     }
 
+    /**
+     * 设置程序启动监听
+     *
+     * @param applicationEventClient applicationEventClient
+     */
     protected void setApplicationEventClient(ApplicationEventClient applicationEventClient) {
         BaseApplication.applicationEventClient = applicationEventClient;
     }
@@ -59,16 +66,26 @@ public class BaseApplication extends SpringApplication {
         this(null, sources);
     }
 
-    private void setLoadPage(Class tclass) throws NoSuchFieldException, IllegalAccessException {
+    /**
+     * 给程序添加默认包
+     *
+     * @param tclass      注解类
+     * @param packageName 包名
+     * @throws NoSuchFieldException   e
+     * @throws IllegalAccessException e
+     */
+    protected void addLoadPage(Class tclass, String packageName) throws NoSuchFieldException, IllegalAccessException {
+        if (StringUtils.isEmpty(packageName))
+            throw new IllegalArgumentException("packageName");
         ComponentScan componentScan = (ComponentScan) tclass.getAnnotation(ComponentScan.class);
+        if (componentScan == null)
+            throw new RuntimeException("please add ComponentScan");
         InvocationHandler invocationHandler = Proxy.getInvocationHandler(componentScan);
         Field value = invocationHandler.getClass().getDeclaredField("memberValues");
         value.setAccessible(true);
         Map<String, Object> memberValues = (Map<String, Object>) value.get(invocationHandler);
         String[] values = (String[]) memberValues.get("value");
-        String[] newValues = new String[values.length + 1];
-        System.arraycopy(values, 0, newValues, 0, values.length);
-        newValues[newValues.length - 1] = "cn.jiangzeyin";
+        String[] newValues = StringUtils.mergeStringArrays(values, new String[]{packageName});
         memberValues.put("value", newValues);
     }
 }

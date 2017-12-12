@@ -57,7 +57,7 @@
                 <version>${job.version}</version>
             </dependency>
             <dependency>
-                <groupId>cn.jiangzeyin.yokead</groupId>
+                <groupId>cn.jiangzeyin</groupId>
                 <artifactId>common-redis</artifactId>
                 <version>${common-redis.version}</version>
             </dependency>
