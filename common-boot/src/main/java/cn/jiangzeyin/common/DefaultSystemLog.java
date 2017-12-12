@@ -87,7 +87,8 @@ public class DefaultSystemLog {
         SizeAndTimeBasedRollingPolicy<Object> policy = new SizeAndTimeBasedRollingPolicy<>();
         policy.setContext(loggerContext);
         String logPath = "/log/cn.jiangzeyin";
-        policy.setFileNamePattern(String.format("%s/%s/%s/%s-%%d{yyyy-MM-dd}.%%i.log", logPath, SpringUtil.getApplicationId(), path, tag).toLowerCase());
+        String filePath = String.format("%s/%s/%s/%s", logPath, SpringUtil.getApplicationId(), path, tag).toLowerCase();
+        policy.setFileNamePattern(String.format("%s-%%d{yyyy-MM-dd}.%%i.log", filePath));
         policy.setMaxFileSize(FileSize.valueOf("100MB"));
         policy.setMaxHistory(30);
         policy.setTotalSizeCap(FileSize.valueOf("10GB"));
@@ -98,7 +99,7 @@ public class DefaultSystemLog {
         encoder.setContext(loggerContext);
         encoder.setPattern("%d{HH:mm:ss.SSS} %-5level [%thread %file:%line] %logger - %msg%n");
         encoder.start();
-        appender.setFile(String.format("%s/%s/%s/%s.log", logPath, SpringUtil.getApplicationId(), path, tag).toLowerCase());
+        appender.setFile(String.format("%s.log", filePath));
         appender.setName("appender" + tag);
         appender.setRollingPolicy(policy);
         appender.setContext(loggerContext);
