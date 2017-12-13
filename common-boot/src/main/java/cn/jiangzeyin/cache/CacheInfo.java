@@ -13,7 +13,7 @@ import static cn.jiangzeyin.cache.ObjectCache.DEFAULT_CACHE_TIME;
  */
 class CacheInfo {
     private final String key;
-    // 毫秒
+    // 秒
     private long cacheTime;
 
     CacheInfo(String key, long cacheTime) {
@@ -49,13 +49,13 @@ class CacheInfo {
             CacheConfigField cacheConfigField = field.getAnnotation(CacheConfigField.class);
             String key = (String) field.get(null);
             if (cacheConfigField == null) {
-                // 毫秒
-                long cacheTime = cacheConfig != null ? cacheConfig.UNIT().toMillis(cacheConfig.value()) : DEFAULT_CACHE_TIME;
+                // 秒
+                long cacheTime = cacheConfig != null ? cacheConfig.UNIT().toSeconds(cacheConfig.value()) : DEFAULT_CACHE_TIME;
                 CacheInfo cacheInfo = new CacheInfo(key, cacheTime);
                 map.put(key, cacheInfo);
             } else {
-                // 毫秒
-                CacheInfo cacheInfo = new CacheInfo(key, cacheConfigField.UNIT().toMillis(cacheConfigField.value()));
+                // 秒
+                CacheInfo cacheInfo = new CacheInfo(key, cacheConfigField.UNIT().toSeconds(cacheConfigField.value()));
                 map.put(key, cacheInfo);
             }
         }

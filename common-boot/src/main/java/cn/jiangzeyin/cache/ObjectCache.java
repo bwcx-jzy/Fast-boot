@@ -9,8 +9,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class ObjectCache {
     private static final ConcurrentHashMap<String, CacheEntity<String, Object>> CONCURRENT_HASH_MAP = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<String, CacheInfo> CACHE_INFO_CONCURRENT_HASH_MAP = new ConcurrentHashMap<>();
-    // 默认10分钟  毫秒单位
-    public static final int DEFAULT_CACHE_TIME = 1000 * 60 * 10;
+    // 默认10分钟  秒单位
+    public static final int DEFAULT_CACHE_TIME = 60 * 10;
 
     private ObjectCache() {
 
@@ -60,7 +60,7 @@ public final class ObjectCache {
         CacheEntity(K key, V value, CacheInfo cacheInfo) {
             this.key = key;
             this.value = value;
-            this.intoTime = System.currentTimeMillis();
+            this.intoTime = getCurrentTime();
             this.cacheInfo = cacheInfo;
         }
 
@@ -69,7 +69,7 @@ public final class ObjectCache {
         }
 
         public V getValue() {
-            long existTime = System.currentTimeMillis() - intoTime;
+            long existTime = getCurrentTime() - intoTime;
             if (existTime > cacheInfo.getCacheTime())
                 return null;
             return value;
@@ -79,7 +79,7 @@ public final class ObjectCache {
             if (value == null) throw new NullPointerException();
             V val = this.value;
             this.value = value;
-            this.intoTime = System.currentTimeMillis();
+            this.intoTime = getCurrentTime();
             return val;
         }
 
@@ -88,5 +88,9 @@ public final class ObjectCache {
                 this.cacheInfo.setCacheTime(cacheTime);
             return setValue(value);
         }
+    }
+
+    private static long getCurrentTime() {
+        return System.currentTimeMillis() / 1000L;
     }
 }

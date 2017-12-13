@@ -40,8 +40,8 @@ public class RedisObjectCache {
             if (wildcardField == null)
                 continue;
             String key = (String) field.get(null);
-            // 毫秒
-            long cacheTime = wildcardField.UNIT().toMillis(wildcardField.value());
+            // 秒
+            long cacheTime = wildcardField.UNIT().toSeconds(wildcardField.value());
             CacheInfo cacheInfo = new CacheInfo(key, cacheTime);
             map.put(key, cacheInfo);
         }
@@ -74,7 +74,7 @@ public class RedisObjectCache {
             if (cacheInfo == null)
                 cacheInfo = wildcard(key);
             long time = cacheInfo == null ? ObjectCache.DEFAULT_CACHE_TIME : cacheInfo.getCacheTime();
-            valueOperations.set(key, object, time, TimeUnit.MILLISECONDS);
+            valueOperations.set(key, object, time, TimeUnit.SECONDS);
         }
         return object;
     }

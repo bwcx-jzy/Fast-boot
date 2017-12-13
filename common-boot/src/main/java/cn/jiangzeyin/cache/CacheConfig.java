@@ -12,5 +12,5 @@ import java.util.concurrent.TimeUnit;
 public @interface CacheConfig {
     int value() default ObjectCache.DEFAULT_CACHE_TIME;
 
-    TimeUnit UNIT() default TimeUnit.MILLISECONDS;
+    TimeUnit UNIT() default TimeUnit.SECONDS;
 }
