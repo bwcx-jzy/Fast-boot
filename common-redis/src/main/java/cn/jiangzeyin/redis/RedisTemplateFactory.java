@@ -28,4 +28,17 @@ public class RedisTemplateFactory {
     public static StringRedisTemplate getStringRedisTemplate() {
         return getStringRedisTemplate(RedisConnectionFactoryPool.getDefaultDatabase());
     }
+
+    public static <K, V> RedisTemplate<K, V> getRedisTemplate(int database) {
+        String key = "key_value_" + database;
+        RedisTemplate<K, V> template = REDIS_TEMPLATE_CONCURRENT_HASH_MAP.get(key);
+        if (template != null && template instanceof StringRedisTemplate)
+            return template;
+        template = new RedisTemplate<>();
+        RedisConnectionFactory connectionFactory = RedisConnectionFactoryPool.getRedisConnectionFactory(database);
+        template.setConnectionFactory(connectionFactory);
+        template.afterPropertiesSet();
+        REDIS_TEMPLATE_CONCURRENT_HASH_MAP.put(key, template);
+        return template;
+    }
 }
