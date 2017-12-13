@@ -8,10 +8,12 @@ import java.util.Map;
 import static cn.jiangzeyin.cache.ObjectCache.DEFAULT_CACHE_TIME;
 
 /**
+ * 缓存信息实体
  * Created by jiangzeyin on 2017/12/12.
  */
 class CacheInfo {
     private final String key;
+    // 毫秒
     private long cacheTime;
 
     CacheInfo(String key, long cacheTime) {
