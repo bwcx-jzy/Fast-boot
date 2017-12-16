@@ -94,4 +94,4 @@ shutdown() 关闭所有线程池
 
 > 针对SpringBoot封装的一个 common redis
 
-简单调用redis 缓存
+简单调用redis 缓存 基于SpringBoot 中redis 管理
