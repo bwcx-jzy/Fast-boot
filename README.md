@@ -90,3 +90,8 @@ getPoolQueuedTasks(Class tClass)  获取线程池队列数
 getPoolRejectedExecutionCount(Class tclass) 获取线程池取消执行的任务数
 
 shutdown() 关闭所有线程池
+
+
+> 针对SpringBoot封装的一个 common redis
+
+简单调用redis 缓存
