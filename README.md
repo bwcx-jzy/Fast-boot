@@ -15,7 +15,7 @@
    程序会对指定包下就行拦截器扫描创建 请配置
    interceptor.initPackageName 属性
 
-   所有拦截器请继承  cn.jiangzeyin.common.interceptor.BaseInterceptor  该类主要实现公共Controller 属性自动解析和记录请求错误信息
+   所有拦截器请继承  cn.jiangzeyin.common.interceptor.BaseInterceptor 并且添加 cn.jiangzeyin.common.interceptor.InterceptorPattens 注解来实现控制拦截哪些url  该类主要实现公共Controller 属性自动解析和记录请求错误信息
 
  **SpringUtil 操作集成** 
  
@@ -92,7 +92,8 @@ getPoolRejectedExecutionCount(Class tclass) 获取线程池取消执行的任务
 shutdown() 关闭所有线程池
 
 
-注：如果需要common-boot 程序生效 需要将SpringBoot Application 类继承 或者直接使用 
+**注**：
+如果需要common-boot 程序生效 需要将SpringBoot Application 类继承 或者直接使用 
 cn.jiangzeyin.common.BaseApplication 来启动程序
 
 > 针对SpringBoot封装的一个 common redis
