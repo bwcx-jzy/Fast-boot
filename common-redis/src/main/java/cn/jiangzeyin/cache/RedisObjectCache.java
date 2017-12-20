@@ -1,99 +1,90 @@
 package cn.jiangzeyin.cache;
 
-import cn.jiangzeyin.redis.RedisTemplateFactory;
+import cn.jiangzeyin.redis.RedisCacheManagerFactory;
+import org.springframework.cache.Cache;
+import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
+import java.util.Objects;
 
 /**
  * Created by jiangzeyin on 2017/12/12.
  */
 public class RedisObjectCache {
-    // 普通缓存key
-    private static final ConcurrentHashMap<String, CacheInfo> CACHE_INFO_CONCURRENT_HASH_MAP = new ConcurrentHashMap<>();
-    private static final ConcurrentHashMap<String, CacheInfo> WILDCARD_MAP = new ConcurrentHashMap<>();
-    private static int defaultDatabase = 0;
-    private static DataSource dataSource;
-    private volatile static RedisTemplate<String, Object> redisTemplate;
 
-    public static void config(Class cls, int database, DataSource source) throws IllegalAccessException {
-        CACHE_INFO_CONCURRENT_HASH_MAP.putAll(CacheInfo.loadClass(cls));
-        defaultDatabase = database;
-        dataSource = source;
-        Map<String, CacheInfo> map = new HashMap<>();
-        Field[] fields = cls.getFields();
-        for (Field field : fields) {
-            if (field.getType() != String.class)
-                continue;
-            if (!Modifier.isStatic(field.getModifiers()))
-                continue;
-            if (!Modifier.isFinal(field.getModifiers()))
-                continue;
-            CacheConfigWildcardField wildcardField = field.getAnnotation(CacheConfigWildcardField.class);
-            if (wildcardField == null)
-                continue;
-            String key = (String) field.get(null);
-            // 秒
-            long cacheTime = wildcardField.UNIT().toSeconds(wildcardField.value());
-            CacheInfo cacheInfo = new CacheInfo(key, cacheTime);
-            map.put(key, cacheInfo);
-        }
-        WILDCARD_MAP.putAll(map);
-    }
-
-    private static void doRedisTemplate() {
-        if (redisTemplate == null) {
-            synchronized (RedisObjectCache.class) {
-                if (redisTemplate == null) {
-                    redisTemplate = RedisTemplateFactory.getRedisTemplate(defaultDatabase);
-                }
-            }
-        }
-    }
-
+    /**
+     * 获取默认数据库中的value
+     *
+     * @param key 获取的key
+     * @return object
+     */
     public static Object get(String key) {
-        if (key == null) throw new NullPointerException();
-        doRedisTemplate();
-        ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
-        Object object = valueOperations.get(key);
+        int defaultDatabase = RedisCacheConfig.getDefaultDatabase();
+        if (defaultDatabase < 0)
+            throw new RuntimeException("please config");
+        return get(key, defaultDatabase);
+    }
+
+    /**
+     * 获取指定数据库中的value
+     *
+     * @param key      key
+     * @param database 数据库编号
+     * @return object
+     */
+    public static Object get(String key, int database) {
+        Objects.requireNonNull(key);
+        if (database < 0)
+            throw new RuntimeException("database error");
+        RedisCacheManager redisCacheManager = RedisCacheManagerFactory.getRedisCacheManager(database);
+        String group = RedisCacheConfig.getKeyGroup(key);
+        Cache cache = redisCacheManager.getCache(group);
+        Cache.ValueWrapper valueWrapper = cache.get(key);
+        Object object = null;
+        if (valueWrapper != null)
+            object = valueWrapper.get();
         if (object != null)
             return object;
+        RedisCacheConfig.DataSource dataSource = RedisCacheConfig.getDataSource();
         if (dataSource == null)
             return null;
-        object = dataSource.get(key);
+        object = dataSource.get(key, database);
         if (object != null) {
-            // 缓存到redis 中
-            CacheInfo cacheInfo = CACHE_INFO_CONCURRENT_HASH_MAP.get(key);
-            if (cacheInfo == null)
-                cacheInfo = wildcard(key);
-            long time = cacheInfo == null ? ObjectCache.DEFAULT_CACHE_TIME : cacheInfo.getCacheTime();
-            valueOperations.set(key, object, time, TimeUnit.SECONDS);
+            cache.put(key, object);
         }
         return object;
     }
 
-    private static CacheInfo wildcard(String key) {
-        Enumeration<String> enumeration = WILDCARD_MAP.keys();
-        while (enumeration.hasMoreElements()) {
-            String next = enumeration.nextElement();
-            if (key.startsWith(next))
-                return WILDCARD_MAP.get(key);
-        }
-        return null;
+    public static void set(String key, Object object) {
+        int defaultDatabase = RedisCacheConfig.getDefaultDatabase();
+        if (defaultDatabase < 0)
+            throw new RuntimeException("please config");
+        set(key, object, defaultDatabase);
     }
 
-    /**
-     * redis 数据源接口
-     */
-    public interface DataSource {
-        // 根据key 获取数据
-        Object get(String key);
+    public static void set(String key, Object object, int database) {
+        Objects.requireNonNull(key, "key");
+        Objects.requireNonNull(object, "object");
+        if (database < 0)
+            throw new RuntimeException("database error");
+        RedisCacheManager redisCacheManager = RedisCacheManagerFactory.getRedisCacheManager(database);
+        String group = RedisCacheConfig.getKeyGroup(key);
+        Cache cache = redisCacheManager.getCache(group);
+        cache.put(key, object);
+    }
+
+    public static void delete(String key) {
+        int defaultDatabase = RedisCacheConfig.getDefaultDatabase();
+        if (defaultDatabase < 0)
+            throw new RuntimeException("please config");
+        delete(key, defaultDatabase);
+    }
+
+    public static void delete(String key, int database) {
+        Objects.requireNonNull(key);
+        if (database < 0)
+            throw new RuntimeException("database error");
+        RedisTemplate redisTemplate = RedisCacheManagerFactory.getRedisTemplate(database);
+        redisTemplate.delete(key);
     }
 }

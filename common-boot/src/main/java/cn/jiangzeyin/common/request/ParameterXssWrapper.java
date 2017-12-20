@@ -1,7 +1,7 @@
 package cn.jiangzeyin.common.request;
 
 import cn.jiangzeyin.StringUtil;
-import org.springframework.util.Assert;
+import cn.jiangzeyin.common.DefaultSystemLog;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -56,7 +56,7 @@ public class ParameterXssWrapper extends HttpServletRequestWrapper {
      * @return 结果
      */
     public static Map<String, String[]> doXss(Map<String, String[]> map, boolean utf8) {
-        Assert.notNull(map);
+        Objects.requireNonNull(map);
         Iterator<Map.Entry<String, String[]>> iterator = map.entrySet().iterator();
         Map<String, String[]> valuesMap = new HashMap<>();
         while (iterator.hasNext()) {
@@ -81,6 +81,7 @@ public class ParameterXssWrapper extends HttpServletRequestWrapper {
         try {
             return new String(str.getBytes("ISO-8859-1"), "utf-8");
         } catch (UnsupportedEncodingException e) {
+            DefaultSystemLog.ERROR().error("iso-8859-1 to utf-8 失败", e);
             return "";
         }
     }

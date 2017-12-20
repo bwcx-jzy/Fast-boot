@@ -10,7 +10,9 @@ import java.util.concurrent.TimeUnit;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CacheConfigWildcardField {
-    int value() default ObjectCache.DEFAULT_CACHE_TIME;
+    int value();
+
+    long time() default ObjectCache.DEFAULT_CACHE_TIME;
 
     TimeUnit UNIT() default TimeUnit.SECONDS;
 }
