@@ -22,12 +22,18 @@ public class TomcatInitBean {
     @Bean
     public EmbeddedServletContainerCustomizer containerCustomizer() {
         return container -> {
-            Integer timout = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.TOMCAT_SESSION_TIME_OUT, Integer.class);
-            if (timout != null)
-                container.setSessionTimeout(timout, TimeUnit.MINUTES);//单位为分钟
+            Integer timOut = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.TOMCAT_SESSION_TIME_OUT, Integer.class);
+            if (timOut != null) {
+                container.setSessionTimeout(timOut, TimeUnit.MINUTES);//单位为分钟
+            }
         };
     }
 
+    /**
+     * session cookie 名称
+     *
+     * @return servletContext
+     */
     @Bean
     public ServletContextInitializer servletContextInitializer() {
         return servletContext -> {

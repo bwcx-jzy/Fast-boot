@@ -92,6 +92,9 @@ getPoolRejectedExecutionCount(Class tclass) 获取线程池取消执行的任务
 shutdown() 关闭所有线程池
 
 
+注：如果需要common-boot 程序生效 需要将SpringBoot Application 类继承 或者直接使用 
+cn.jiangzeyin.common.BaseApplication 来启动程序
+
 > 针对SpringBoot封装的一个 common redis
 
 简单调用redis 缓存 基于SpringBoot 中redis 管理

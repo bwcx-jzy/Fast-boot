@@ -25,7 +25,7 @@
         <simple-util.version>1.0.4</simple-util.version>
         <common-boot.version>1.1.6</common-boot.version>
         <common-redis.version>1.0.0</common-redis.version>
-        <job.version>1.0.3</job.version>
+        <job.version>1.0.5</job.version>
     </properties>
     <dependencies>
         <dependency>
