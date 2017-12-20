@@ -20,6 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by jiangzeyin on 2017/12/12.
+ *
+ * @since 1.0.0
  */
 public class RedisCacheManagerFactory {
     private static final ConcurrentHashMap<String, RedisCacheManager> REDIS_CACHE_MANAGER_CONCURRENT_HASH_MAP = new ConcurrentHashMap<>();

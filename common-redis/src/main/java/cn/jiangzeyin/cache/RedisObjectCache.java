@@ -9,6 +9,8 @@ import java.util.Objects;
 
 /**
  * Created by jiangzeyin on 2017/12/12.
+ *
+ * @since 1.0.0
  */
 public class RedisObjectCache {
 

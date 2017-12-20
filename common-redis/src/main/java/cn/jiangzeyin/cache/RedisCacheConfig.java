@@ -8,6 +8,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by jiangzeyin on 2017/12/20.
+ *
+ * @since 1.0.1
  */
 public class RedisCacheConfig {
     // 普通缓存key

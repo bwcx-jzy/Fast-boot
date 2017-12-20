@@ -6,11 +6,13 @@ import cn.jiangzeyin.util.PackageUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.io.IOException;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -90,8 +92,14 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
             return;
         }
         String[] patterns = interceptorPattens.value();
-        registry.addInterceptor(handlerInterceptor).addPathPatterns(patterns);
-        DefaultSystemLog.LOG().info("加载拦截器：" + itemCls + "  " + patterns[0]);
+        // 注册
+        InterceptorRegistration registration = registry.addInterceptor(handlerInterceptor);
+        registration.addPathPatterns(patterns);
+        // 排除
+        String[] exclude = interceptorPattens.exclude();
+        if (exclude.length > 0)
+            registration.excludePathPatterns(exclude);
+        DefaultSystemLog.LOG().info("加载拦截器：" + itemCls + "  " + Arrays.toString(patterns) + "  " + Arrays.toString(exclude));
         isHash = true;
     }
 }

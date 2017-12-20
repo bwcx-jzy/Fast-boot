@@ -10,4 +10,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface InterceptorPattens {
     String[] value() default {"/**"};
+
+    String[] exclude() default {};
 }
