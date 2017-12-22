@@ -108,14 +108,14 @@ public class RedisCacheConfig {
      * @param key key
      * @return group
      */
-    public static String getKeyGroup(String key) {
+    public static String getKeyGroup(String key, int database) {
         if (convertKey == null)
             return "default";
-        return convertKey.getGroup(key);
+        return convertKey.getGroup(key, database);
     }
 
     public interface ConvertKey {
-        String getGroup(String key);
+        String getGroup(String key, int database);
     }
 
     /**

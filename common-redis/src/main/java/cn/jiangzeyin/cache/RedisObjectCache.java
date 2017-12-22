@@ -39,7 +39,7 @@ public class RedisObjectCache {
         if (database < 0)
             throw new RuntimeException("database error");
         RedisCacheManager redisCacheManager = RedisCacheManagerFactory.getRedisCacheManager(database);
-        String group = RedisCacheConfig.getKeyGroup(key);
+        String group = RedisCacheConfig.getKeyGroup(key, database);
         Cache cache = redisCacheManager.getCache(group);
         Cache.ValueWrapper valueWrapper = cache.get(key);
         Object object = null;
@@ -70,7 +70,7 @@ public class RedisObjectCache {
         if (database < 0)
             throw new RuntimeException("database error");
         RedisCacheManager redisCacheManager = RedisCacheManagerFactory.getRedisCacheManager(database);
-        String group = RedisCacheConfig.getKeyGroup(key);
+        String group = RedisCacheConfig.getKeyGroup(key, database);
         Cache cache = redisCacheManager.getCache(group);
         cache.put(key, object);
     }
@@ -88,5 +88,20 @@ public class RedisObjectCache {
             throw new RuntimeException("database error");
         RedisTemplate redisTemplate = RedisCacheManagerFactory.getRedisTemplate(database);
         redisTemplate.delete(key);
+    }
+
+    public static boolean hasKey(String key) {
+        int defaultDatabase = RedisCacheConfig.getDefaultDatabase();
+        if (defaultDatabase < 0)
+            throw new RuntimeException("please config");
+        return hasKey(key, defaultDatabase);
+    }
+
+    public static boolean hasKey(String key, int database) {
+        Objects.requireNonNull(key);
+        if (database < 0)
+            throw new RuntimeException("database error");
+        RedisTemplate redisTemplate = RedisCacheManagerFactory.getRedisTemplate(database);
+        return redisTemplate.hasKey(key);
     }
 }

@@ -49,7 +49,12 @@ public class RedisCacheManagerFactory {
 
     public static RedisTemplate getRedisTemplate(int database) {
         String key = "key_value_" + database;
-        return REDIS_TEMPLATE_CONCURRENT_HASH_MAP.get(key);
+        RedisTemplate template = REDIS_TEMPLATE_CONCURRENT_HASH_MAP.get(key);
+        if (template == null) {
+            getRedisCacheManager(database);
+            template = REDIS_TEMPLATE_CONCURRENT_HASH_MAP.get(key);
+        }
+        return template;
     }
 
     private static class CustomizedRedisCacheManager extends RedisCacheManager {
