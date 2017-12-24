@@ -45,10 +45,23 @@ public class RedisCacheConfig {
         loadClass(cls);
     }
 
+    /**
+     * 缓存时间优先级第二
+     *
+     * @param database 数据库名
+     * @return 缓存时间
+     */
     public static Map<String, Long> getExpires(int database) {
         return CACHE_INFO_CONCURRENT_HASH_MAP.get(database);
     }
 
+    /**
+     * 获取缓存时间时，优先获取group
+     *
+     * @param database 数据库编号
+     * @param group    组名
+     * @return 缓存时间
+     */
     public static Long getGroupExpires(int database, String group) {
         Map<String, Long> map = CACHE_INFO_CONCURRENT_HASH_MAP.get(database);
         if (map == null)
@@ -56,6 +69,12 @@ public class RedisCacheConfig {
         return map.get(group);
     }
 
+    /**
+     * 获取缓存时间时，优先级最低
+     *
+     * @param database 数据库编号
+     * @return 缓存时间
+     */
     public static Long getDefaultExpireTime(int database) {
         if (defaultExpireTime == null)
             return (long) ObjectCache.DEFAULT_CACHE_TIME;
@@ -97,7 +116,11 @@ public class RedisCacheConfig {
                 long cacheTime = wildcardField.UNIT().toSeconds(wildcardField.time());
                 map.put(key, cacheTime);
             } else if (type == Map.class) {
-                defaultExpireTime = (Map) field.get(null);
+                Map map = (Map) field.get(null);
+                if (defaultExpireTime == null)
+                    defaultExpireTime = map;
+                else
+                    defaultExpireTime.putAll(map);
             }
         }
     }
