@@ -1,6 +1,7 @@
 package cn.jiangzeyin.util;
 
 import cn.jiangzeyin.StringUtil;
+import cn.jiangzeyin.common.DefaultSystemLog;
 
 import java.io.File;
 import java.io.IOException;
@@ -105,9 +106,13 @@ public class PackageUtil {
         String[] jarInfo = jarPath.split("!");
         String jarFilePath = jarInfo[0].substring(jarInfo[0].indexOf("/"));
         jarFilePath = URLDecoder.decode(jarFilePath, "UTF-8");//UrlDecode.getURLDecode(jarFilePath);
+        // 判断是否为文件，
+        File jarFileInfo = new File(jarFilePath);
+        if (!jarFileInfo.isFile())
+            return myClassName;
         String packagePath = jarInfo[1].substring(1);
         try {
-            JarFile jarFile = new JarFile(jarFilePath);
+            JarFile jarFile = new JarFile(jarFileInfo);
             Enumeration<JarEntry> entrys = jarFile.entries();
             while (entrys.hasMoreElements()) {
                 JarEntry jarEntry = entrys.nextElement();
@@ -134,7 +139,7 @@ public class PackageUtil {
                 }
             }
         } catch (Exception e) {
-            //DefaultSystemLog.Log(LogType.systemInfo, e.getMessage(), e);
+            DefaultSystemLog.ERROR().error("package util", e);
         }
         return myClassName;
     }

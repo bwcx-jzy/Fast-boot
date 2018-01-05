@@ -85,7 +85,8 @@ public class BaseApplication extends SpringApplication {
         value.setAccessible(true);
         Map<String, Object> memberValues = (Map<String, Object>) value.get(invocationHandler);
         String[] values = (String[]) memberValues.get("value");
-        String[] newValues = StringUtils.mergeStringArrays(values, new String[]{packageName});
+        String[] newValues = new String[]{packageName};
+        newValues = StringUtils.mergeStringArrays(values, newValues);
         memberValues.put("value", newValues);
     }
 }
