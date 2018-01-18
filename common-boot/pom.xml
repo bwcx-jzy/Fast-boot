@@ -12,6 +12,10 @@
     <version>1.1.7</version>
     <dependencies>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
             <groupId>cn.jiangzeyin</groupId>
             <artifactId>simple-util</artifactId>
         </dependency>
