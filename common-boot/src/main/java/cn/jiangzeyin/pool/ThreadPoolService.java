@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author jiangzeyin
  * create 2016-10-24
  */
-public class ThreadPoolService {
+public final class ThreadPoolService {
     private final static ConcurrentHashMap<Class, PoolCacheInfo> POOL_CACHE_INFO_CONCURRENT_HASH_MAP = new ConcurrentHashMap<>();
 
     private ThreadPoolService() {
@@ -53,12 +53,12 @@ public class ThreadPoolService {
         PoolConfig poolConfig = (PoolConfig) tClass.getAnnotation(PoolConfig.class);
         BlockingQueue<Runnable> blockingQueue;
         SystemThreadFactory systemThreadFactory = new SystemThreadFactory(tClass.getName());
-        ThreadPoolExecutor threadPoolExecutor;
+        ThreadPoolExecutor_Pool threadPoolExecutor;
         ProxyHandler proxyHandler;
         if (poolConfig == null) {
             proxyHandler = new ProxyHandler(PolicyHandler.Caller);
             blockingQueue = new SynchronousQueue<>();
-            threadPoolExecutor = new ThreadPoolExecutor(0,
+            threadPoolExecutor = new ThreadPoolExecutor_Pool(0,
                     Integer.MAX_VALUE,
                     60L,
                     TimeUnit.SECONDS,
@@ -72,13 +72,16 @@ public class ThreadPoolService {
                 blockingQueue = new SynchronousQueue<>();
             else
                 blockingQueue = new LinkedBlockingQueue<>();
-            threadPoolExecutor = new ThreadPoolExecutor(corePoolSize,
+            // 构建对象
+            threadPoolExecutor = new ThreadPoolExecutor_Pool(corePoolSize,
                     poolConfig.maximumPoolSize(),
                     poolConfig.keepAliveTime(),
                     poolConfig.UNIT(),
                     blockingQueue,
                     systemThreadFactory,
                     proxyHandler);
+            // 获取线程队列最大值
+            threadPoolExecutor.setQueueMaxSize(poolConfig.queueMaxSize());
         }
         return new PoolCacheInfo(threadPoolExecutor, blockingQueue, proxyHandler, systemThreadFactory);
     }
@@ -152,12 +155,12 @@ public class ThreadPoolService {
     }
 
     private static class PoolCacheInfo {
-        private final ThreadPoolExecutor poolExecutor;
+        private final ThreadPoolExecutor_Pool poolExecutor;
         private final BlockingQueue<Runnable> blockingQueue;
         private final ProxyHandler handler;
         private final SystemThreadFactory systemThreadFactory;
 
-        PoolCacheInfo(ThreadPoolExecutor poolExecutor, BlockingQueue<Runnable> blockingQueue, ProxyHandler handler, SystemThreadFactory systemThreadFactory) {
+        PoolCacheInfo(ThreadPoolExecutor_Pool poolExecutor, BlockingQueue<Runnable> blockingQueue, ProxyHandler handler, SystemThreadFactory systemThreadFactory) {
             this.poolExecutor = poolExecutor;
             this.blockingQueue = blockingQueue;
             this.handler = handler;
@@ -240,4 +243,50 @@ public class ThreadPoolService {
         }
     }
 
+    private static class ThreadPoolExecutor_Pool extends ThreadPoolExecutor {
+        private int queueMaxSize = 0;
+
+        ThreadPoolExecutor_Pool(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue, ThreadFactory threadFactory, RejectedExecutionHandler handler) {
+            super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, handler);
+        }
+
+        void setQueueMaxSize(int queueMaxSize) {
+            this.queueMaxSize = queueMaxSize;
+        }
+
+        @Override
+        public void execute(Runnable command) {
+            checkQueueSize();
+            super.execute(command);
+        }
+
+        @Override
+        public Future<?> submit(Runnable task) {
+            checkQueueSize();
+            return super.submit(task);
+        }
+
+        @Override
+        public <T> Future<T> submit(Callable<T> task) {
+            checkQueueSize();
+            return super.submit(task);
+        }
+
+        @Override
+        public <T> Future<T> submit(Runnable task, T result) {
+            checkQueueSize();
+            return super.submit(task, result);
+        }
+
+        /**
+         * 判断队列数最大值
+         */
+        private void checkQueueSize() {
+            if (queueMaxSize > 0) {
+                int queueSize = getQueue().size();
+                if (queueSize > queueMaxSize)
+                    throw new RuntimeException("queue size :" + queueSize + "  >" + queueMaxSize);
+            }
+        }
+    }
 }
