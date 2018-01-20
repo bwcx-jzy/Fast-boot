@@ -116,11 +116,12 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
         if (!StringUtil.isEmpty(resourceHandler)) {
             String[] handler = StringUtil.stringToArray(resourceHandler, ",");
             resourceHandlerRegistration = registry.addResourceHandler(handler);
-        }
-        String resourceLocation = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.INTERCEPTOR_RESOURCE_LOCATION);
-        if (resourceHandlerRegistration != null && !StringUtil.isEmpty(resourceLocation)) {
-            String[] location = StringUtil.stringToArray(resourceLocation, ",");
-            resourceHandlerRegistration.addResourceLocations(location);
+            // 资源文件路径
+            String resourceLocation = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.INTERCEPTOR_RESOURCE_LOCATION);
+            if (resourceHandlerRegistration != null && !StringUtil.isEmpty(resourceLocation)) {
+                String[] location = StringUtil.stringToArray(resourceLocation, ",");
+                resourceHandlerRegistration.addResourceLocations(location);
+            }
         }
     }
 }
