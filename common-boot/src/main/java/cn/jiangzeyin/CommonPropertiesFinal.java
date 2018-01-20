@@ -24,7 +24,14 @@ public abstract class CommonPropertiesFinal {
     public static final String INTERCEPTOR = "interceptor";
     // 加载指定包名下的拦截器
     public static final String INTERCEPTOR_INIT_PACKAGE_NAME = INTERCEPTOR + ".initPackageName";
-
+    /**
+     * 拦截器静态资源url路径
+     */
+    public static final String INTERCEPTOR_RESOURCE_HANDLER = INTERCEPTOR + ".resourceHandler";
+    /**
+     * 拦截器静态资源文件路径
+     */
+    public static final String INTERCEPTOR_RESOURCE_LOCATION = INTERCEPTOR + ".resourceLocation";
     public static final String PRELOAD = "preload";
     // 预加载指定包下面的class
     public static final String PRELOAD_PACKAGE_NAME = PRELOAD + ".packageName";

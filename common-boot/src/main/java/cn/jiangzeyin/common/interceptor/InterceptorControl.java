@@ -1,14 +1,13 @@
 package cn.jiangzeyin.common.interceptor;
 
 import cn.jiangzeyin.CommonPropertiesFinal;
+import cn.jiangzeyin.StringUtil;
 import cn.jiangzeyin.common.DefaultSystemLog;
+import cn.jiangzeyin.common.spring.SpringUtil;
 import cn.jiangzeyin.util.PackageUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.*;
 
 import java.io.IOException;
 import java.lang.reflect.Modifier;
@@ -49,7 +48,7 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
             loadDefault(registry);
             return;
         }
-        if (list == null) {
+        if (list == null || list.size() <= 0) {
             loadDefault(registry);
             return;
         }
@@ -103,5 +102,25 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
             registration.excludePathPatterns(exclude);
         DefaultSystemLog.LOG().info("加载拦截器：" + itemCls + "  " + Arrays.toString(patterns) + "  " + Arrays.toString(exclude));
         isHash = true;
+    }
+
+    /**
+     * 静态资源配置
+     *
+     * @param registry 注册器
+     */
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        String resourceHandler = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.INTERCEPTOR_RESOURCE_HANDLER);
+        ResourceHandlerRegistration resourceHandlerRegistration = null;
+        if (!StringUtil.isEmpty(resourceHandler)) {
+            String[] handler = StringUtil.stringToArray(resourceHandler, ",");
+            resourceHandlerRegistration = registry.addResourceHandler(handler);
+        }
+        String resourceLocation = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.INTERCEPTOR_RESOURCE_LOCATION);
+        if (resourceHandlerRegistration != null && !StringUtil.isEmpty(resourceLocation)) {
+            String[] location = StringUtil.stringToArray(resourceLocation, ",");
+            resourceHandlerRegistration.addResourceLocations(location);
+        }
     }
 }

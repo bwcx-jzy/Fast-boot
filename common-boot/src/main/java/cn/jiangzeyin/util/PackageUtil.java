@@ -57,8 +57,7 @@ public class PackageUtil {
             }
         }
         fileNames.addAll(getClassNameByJars(((URLClassLoader) loader).getURLs(), packagePath, childPackage));
-        List<String> newList = new ArrayList<>(new HashSet<>(fileNames));
-        return newList;
+        return new ArrayList<>(new HashSet<>(fileNames));
     }
 
     /**
