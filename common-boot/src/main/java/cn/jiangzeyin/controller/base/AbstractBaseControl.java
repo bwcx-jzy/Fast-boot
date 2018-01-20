@@ -232,6 +232,12 @@ public abstract class AbstractBaseControl {
 
     private static String default_headerName;
 
+    /**
+     * 获取ip 地址
+     *
+     * @param request req
+     * @return ip 信息
+     */
     public static String getIpAddress(HttpServletRequest request) {
         if (default_headerName == null)
             default_headerName = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.IP_DEFAULT_HEADER_NAME);

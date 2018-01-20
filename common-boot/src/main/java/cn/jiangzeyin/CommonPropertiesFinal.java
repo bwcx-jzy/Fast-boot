@@ -4,25 +4,45 @@ package cn.jiangzeyin;
  * Created by jiangzeyin on 2017/8/25.
  */
 public abstract class CommonPropertiesFinal {
-    // 程序启动banner 文字信息
+    /**
+     * 程序启动banner 文字信息
+     */
     public static final String BANNER_MSG = "banner.msg";
-    // 当前程序定义一个id
+    /**
+     * 当前程序定义一个id
+     */
     public static final String APPLICATION_ID = "applicationId";
-
+    /**
+     * 请求的相关配置
+     */
     public static final String REQUEST = "request";
-    // 拦截器中记录超时请求时长
+    /**
+     * 拦截器中记录超时请求时长
+     */
     public static final String REQUEST_TIME_OUT = REQUEST + ".timeout";
-
+    /**
+     * tomcat 配置
+     */
     public static final String TOMCAT = "tomcat";
-    // 自定义浏览器中存储session id cookie 名称
+    /**
+     * 自定义浏览器中存储session id cookie 名称
+     */
     public static final String TOMCAT_SESSION_COOKIE_NAME = TOMCAT + ".sessionCookieName";
-    // 定义session 过期时间 单位分钟
+    /**
+     * 定义session 过期时间 单位分钟
+     */
     public static final String TOMCAT_SESSION_TIME_OUT = TOMCAT + ".sessionTimeOut";
-    // 自定义外部代理中已经获取到的ip header 信息名称（比如nginx 中代理）
+    /**
+     * 自定义外部代理中已经获取到的ip header 信息名称（比如nginx 中代理）
+     */
     public static final String IP_DEFAULT_HEADER_NAME = "ip.defaultHeaderName";
-
-    public static final String INTERCEPTOR = "interceptor";
-    // 加载指定包名下的拦截器
+    /**
+     * 拦截器配置
+     */
+    private static final String INTERCEPTOR = "interceptor";
+    /**
+     * 加载指定包名下的拦截器
+     */
     public static final String INTERCEPTOR_INIT_PACKAGE_NAME = INTERCEPTOR + ".initPackageName";
     /**
      * 拦截器静态资源url路径
@@ -32,8 +52,13 @@ public abstract class CommonPropertiesFinal {
      * 拦截器静态资源文件路径
      */
     public static final String INTERCEPTOR_RESOURCE_LOCATION = INTERCEPTOR + ".resourceLocation";
-    public static final String PRELOAD = "preload";
-    // 预加载指定包下面的class
+    /**
+     * 预加载
+     */
+    private static final String PRELOAD = "preload";
+    /**
+     * 预加载指定包下面的class
+     */
     public static final String PRELOAD_PACKAGE_NAME = PRELOAD + ".packageName";
     // 预加载class的 方法名
     //public static final String PRELOAD_METHOD_NAME = PRELOAD + ".methodName";

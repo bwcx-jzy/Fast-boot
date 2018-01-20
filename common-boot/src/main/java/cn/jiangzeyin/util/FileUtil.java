@@ -12,6 +12,8 @@ import java.io.*;
 public final class FileUtil {
 
     /**
+     * 将流写入文件中
+     *
      * @param inputStream inp
      * @param file        file
      * @return boolean
