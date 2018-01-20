@@ -11,6 +11,7 @@ import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -56,7 +57,8 @@ public class PackageUtil {
             }
         }
         fileNames.addAll(getClassNameByJars(((URLClassLoader) loader).getURLs(), packagePath, childPackage));
-        return fileNames;
+        List<String> newList = new ArrayList<>(new HashSet<>(fileNames));
+        return newList;
     }
 
     /**

@@ -63,6 +63,8 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
             }
             if (classItem == null)
                 continue;
+            if (classItem == DefaultInterceptor.class)
+                continue;
             boolean isAbstract = Modifier.isAbstract(classItem.getModifiers());
             if (isAbstract)
                 continue;
