@@ -123,22 +123,28 @@ public final class ThreadPoolService {
         JSONArray jsonArray = new JSONArray();
         for (Entry<Class, PoolCacheInfo> entry : POOL_CACHE_INFO_CONCURRENT_HASH_MAP.entrySet()) {
             PoolCacheInfo poolCacheInfo = entry.getValue();
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("name", OtherUtil.simplifyClassName(entry.getKey().getName()));
-            ThreadPoolExecutor threadPoolExecutor = poolCacheInfo.poolExecutor;
-            jsonObject.put("corePoolSize", threadPoolExecutor.getCorePoolSize()); // 核心数
-            jsonObject.put("poolSize", threadPoolExecutor.getPoolSize()); // 工作集数
-            jsonObject.put("activeCount", threadPoolExecutor.getActiveCount()); // 活跃线程数
-            jsonObject.put("largestPoolSize", threadPoolExecutor.getLargestPoolSize()); // 曾经最大线程数
-            jsonObject.put("completedTaskCount", threadPoolExecutor.getCompletedTaskCount()); // 已完成数
-            jsonObject.put("taskCount", threadPoolExecutor.getTaskCount()); // 总任务数
-            jsonObject.put("queueSize", poolCacheInfo.blockingQueue.size()); // 任务队列数
-            jsonObject.put("rejectedExecutionCount", poolCacheInfo.handler.getRejectedExecutionCount()); // 拒绝任务数
-            jsonObject.put("maxThreadNumber", poolCacheInfo.systemThreadFactory.threadNumber.get()); // 最大线程编号
-            jsonObject.put("maximumPoolSize", threadPoolExecutor.getMaximumPoolSize());// 最大线程数
+            String name = OtherUtil.simplifyClassName(entry.getKey().getName());
+            JSONObject jsonObject = convertInfo(name, poolCacheInfo);
             jsonArray.add(jsonObject);
         }
         return jsonArray;
+    }
+
+    private static JSONObject convertInfo(String name, PoolCacheInfo poolCacheInfo) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("name", name);
+        ThreadPoolExecutor threadPoolExecutor = poolCacheInfo.poolExecutor;
+        jsonObject.put("corePoolSize", threadPoolExecutor.getCorePoolSize()); // 核心数
+        jsonObject.put("poolSize", threadPoolExecutor.getPoolSize()); // 工作集数
+        jsonObject.put("activeCount", threadPoolExecutor.getActiveCount()); // 活跃线程数
+        jsonObject.put("largestPoolSize", threadPoolExecutor.getLargestPoolSize()); // 曾经最大线程数
+        jsonObject.put("completedTaskCount", threadPoolExecutor.getCompletedTaskCount()); // 已完成数
+        jsonObject.put("taskCount", threadPoolExecutor.getTaskCount()); // 总任务数
+        jsonObject.put("queueSize", poolCacheInfo.blockingQueue.size()); // 任务队列数
+        jsonObject.put("rejectedExecutionCount", poolCacheInfo.handler.getRejectedExecutionCount()); // 拒绝任务数
+        jsonObject.put("maxThreadNumber", poolCacheInfo.systemThreadFactory.threadNumber.get()); // 最大线程编号
+        jsonObject.put("maximumPoolSize", threadPoolExecutor.getMaximumPoolSize());// 最大线程数
+        return jsonObject;
     }
 
     /**
@@ -151,6 +157,9 @@ public final class ThreadPoolService {
         for (Entry<Class, PoolCacheInfo> entry : POOL_CACHE_INFO_CONCURRENT_HASH_MAP.entrySet()) {
             DefaultSystemLog.LOG().info(String.format("关闭%s使用的线程池", entry.getKey()));
             entry.getValue().poolExecutor.shutdown();
+            String name = OtherUtil.simplifyClassName(entry.getKey().getName());
+            JSONObject jsonObject = convertInfo(name, entry.getValue());
+            DefaultSystemLog.LOG().info("关闭完成:" + jsonObject);
         }
     }
 

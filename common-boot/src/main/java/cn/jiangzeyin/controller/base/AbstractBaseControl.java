@@ -4,11 +4,13 @@ import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.StringUtil;
 import cn.jiangzeyin.common.DefaultSystemLog;
 import cn.jiangzeyin.common.spring.SpringUtil;
+import org.springframework.http.HttpHeaders;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Iterator;
@@ -111,6 +113,17 @@ public abstract class AbstractBaseControl {
 
     protected int getParameterInt(String name) {
         return getParameterInt(name, 0);
+    }
+
+    /**
+     * 获取来源的url 参数
+     *
+     * @return map
+     * @throws UnsupportedEncodingException 编码异常
+     */
+    protected Map<String, String> getRefererParameter() throws UnsupportedEncodingException {
+        String referer = getHeader(HttpHeaders.REFERER);
+        return RequestUtil.convertUrlMap(referer);
     }
 
     /**
