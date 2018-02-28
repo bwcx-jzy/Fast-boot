@@ -27,7 +27,17 @@ public class XssFilter extends CharacterEncodingFilter {
 
     private static final ThreadLocal<Long> REQUEST_TIME = new ThreadLocal<>();
     private static final ThreadLocal<StringBuffer> REQUEST_INFO = new ThreadLocal<>();
+    private static final ThreadLocal<Map<String, String>> REQUEST_HEADER_MAP = new ThreadLocal<>();
+    private static final ThreadLocal<Map<String, String[]>> REQUEST_PARAMETERS_MAP = new ThreadLocal<>();
     private static long request_timeout_log = -1;
+
+    public static Map<String, String> getRequestHeader() {
+        return REQUEST_HEADER_MAP.get();
+    }
+
+    public static Map<String, String[]> getRequestParameters() {
+        return REQUEST_PARAMETERS_MAP.get();
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -49,7 +59,9 @@ public class XssFilter extends CharacterEncodingFilter {
     private void requestLog(HttpServletRequest request, boolean isFile) {
         // 获取请求信息
         Map<String, String> header = RequestUtil.getHeaderMapValues(request);
+        REQUEST_HEADER_MAP.set(header);
         Map<String, String[]> parameters = request.getParameterMap();
+        REQUEST_PARAMETERS_MAP.set(parameters);
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append(request.getRequestURI());
         //.append(",ip:").append(RequestUtil.getIpAddress(request))

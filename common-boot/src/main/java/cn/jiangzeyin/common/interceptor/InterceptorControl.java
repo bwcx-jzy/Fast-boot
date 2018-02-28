@@ -2,7 +2,9 @@ package cn.jiangzeyin.common.interceptor;
 
 import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.StringUtil;
+import cn.jiangzeyin.common.BaseApplication;
 import cn.jiangzeyin.common.DefaultSystemLog;
+import cn.jiangzeyin.common.spring.ApplicationEventClient;
 import cn.jiangzeyin.common.spring.SpringUtil;
 import cn.jiangzeyin.util.PackageUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -74,9 +76,24 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
         loadDefault(registry);
     }
 
+    private void loadApplicationInterceptor(InterceptorRegistry registry) {
+        ApplicationEventClient applicationEventClient = BaseApplication.getApplicationEventClient();
+        if (applicationEventClient != null) {
+            List<Class> list = applicationEventClient.getApplicationInterceptor();
+            if (list != null && list.size() > 0) {
+                for (Class item : list) {
+                    loadInterceptor(item, registry);
+                }
+            }
+        }
+    }
+
     private void loadDefault(InterceptorRegistry registry) {
-        if (isHash)
+        if (isHash) {
+            loadApplicationInterceptor(registry);
             return;
+        }
+        loadApplicationInterceptor(registry);
         DefaultSystemLog.LOG().info("加载默认拦截器");
         loadInterceptor(DefaultInterceptor.class, registry);
     }
@@ -112,7 +129,7 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         String resourceHandler = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.INTERCEPTOR_RESOURCE_HANDLER);
-        ResourceHandlerRegistration resourceHandlerRegistration = null;
+        ResourceHandlerRegistration resourceHandlerRegistration;
         if (!StringUtil.isEmpty(resourceHandler)) {
             String[] handler = StringUtil.stringToArray(resourceHandler, ",");
             resourceHandlerRegistration = registry.addResourceHandler(handler);
