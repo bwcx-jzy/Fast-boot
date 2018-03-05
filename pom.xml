@@ -9,10 +9,6 @@
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>1.4.7.RELEASE</version>
     </parent>
-    <modules>
-        <module>common-boot</module>
-        <module>common-redis</module>
-    </modules>
     <groupId>cn.jiangzeyin</groupId>
     <artifactId>common-parent</artifactId>
     <version>1.1.7</version>
