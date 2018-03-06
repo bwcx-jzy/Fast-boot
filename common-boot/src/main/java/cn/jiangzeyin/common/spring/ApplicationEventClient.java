@@ -1,6 +1,7 @@
 package cn.jiangzeyin.common.spring;
 
 import org.springframework.context.ApplicationEvent;
+import org.springframework.http.converter.HttpMessageConverter;
 
 import java.util.List;
 
@@ -27,4 +28,11 @@ public interface ApplicationEventClient {
      * @return 拦截器数组
      */
     List<Class> getApplicationInterceptor();
+
+    /**
+     * 消息转换器
+     *
+     * @return 装换器
+     */
+    List<HttpMessageConverter<?>> getMessageConverters();
 }

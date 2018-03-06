@@ -9,6 +9,7 @@ import cn.jiangzeyin.common.spring.SpringUtil;
 import cn.jiangzeyin.util.PackageUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.*;
 
 import java.io.IOException;
@@ -50,7 +51,7 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
             loadDefault(registry);
             return;
         }
-        if (list == null || list.size() <= 0) {
+        if (list.size() <= 0) {
             loadDefault(registry);
             return;
         }
@@ -138,6 +139,18 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
             if (resourceHandlerRegistration != null && !StringUtil.isEmpty(resourceLocation)) {
                 String[] location = StringUtil.stringToArray(resourceLocation, ",");
                 resourceHandlerRegistration.addResourceLocations(location);
+            }
+        }
+    }
+
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        super.configureMessageConverters(converters);
+        ApplicationEventClient applicationEventClient = BaseApplication.getApplicationEventClient();
+        if (applicationEventClient != null) {
+            List<HttpMessageConverter<?>> httpMessageConverterList = applicationEventClient.getMessageConverters();
+            if (httpMessageConverterList != null) {
+                converters.addAll(httpMessageConverterList);
             }
         }
     }
