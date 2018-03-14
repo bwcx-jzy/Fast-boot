@@ -2,6 +2,12 @@
 
 > 针对SpringBoot封装的一个 common boot
 
+如果需要common-boot 程序生效 需要将SpringBoot Application 类继承 或者直接使用 
+cn.jiangzeyin.common.BaseApplication 来启动程序
+
+当控制台日志打印出：“common-boot 启动完成”时说明common-boot 程序已经正常加载可以使用模块中的功能
+------------------------------------------------
+
  **公共的Controller** 
  
 使用ThreadLocal 记录当前请求的request session respone
@@ -91,7 +97,3 @@ getPoolRejectedExecutionCount(Class tclass) 获取线程池取消执行的任务
 
 shutdown() 关闭所有线程池
 
-
-**注**：
-如果需要common-boot 程序生效 需要将SpringBoot Application 类继承 或者直接使用 
-cn.jiangzeyin.common.BaseApplication 来启动程序
