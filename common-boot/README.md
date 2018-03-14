@@ -2,13 +2,12 @@
 
 > 针对SpringBoot封装的一个 common boot
 
-如果需要common-boot 程序生效 需要将SpringBoot Application 类继承 或者直接使用 
-cn.jiangzeyin.common.BaseApplication 来启动程序
+如果需要common-boot 程序生效 需要将SpringBoot启动的 Application 类继承 cn.jiangzeyin.common.BaseApplication 并且调用对象run方法 来启动程序
 
 当控制台日志打印出：“common-boot 启动完成”时说明common-boot 程序已经正常加载可以使用模块中的功能
 -------------------------------------------------------
 
- #模块中特有功能说明：
+ # 模块中特有功能说明：
  
  **公共的Controller** 
  
