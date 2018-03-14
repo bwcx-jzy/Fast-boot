@@ -18,6 +18,10 @@
 
 # 1.common-boot
 
+> 此模块主要封装Boot 程序的常用工具和内存缓存
+>
+>如：公共的Controller、自动化拦截器、启动加载资源接口、线程池管理
+
 **maven坐标**
 
     <dependency>
@@ -29,6 +33,9 @@
 地址：https://gitee.com/jiangzeyin/common-parent/tree/master/common-boot
 
 # 2.common-redis
+
+> 此模块主要是封装了SpringBoot 里面包含Redis 的操作支持动态指定使用数据库编号
+
 
 **maven坐标**
 
