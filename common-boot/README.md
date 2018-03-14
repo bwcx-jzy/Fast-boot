@@ -6,8 +6,10 @@
 cn.jiangzeyin.common.BaseApplication 来启动程序
 
 当控制台日志打印出：“common-boot 启动完成”时说明common-boot 程序已经正常加载可以使用模块中的功能
-------------------------------------------------
+-------------------------------------------------------
 
+ #模块中特有功能说明：
+ 
  **公共的Controller** 
  
 使用ThreadLocal 记录当前请求的request session respone
