@@ -1,4 +1,4 @@
-#common-parent 
+# common-parent 
 > 针对SpringBoot 封装的一系列的快捷包
 
 **maven 坐标**
@@ -16,7 +16,7 @@
 
 子项目：
 
-#1.common-boot
+# 1.common-boot
 
 **maven坐标**
 
@@ -28,7 +28,7 @@
 
 地址：https://gitee.com/jiangzeyin/common-parent/tree/master/common-boot
 
-#2.common-redis
+# 2.common-redis
 
 **maven坐标**
 
