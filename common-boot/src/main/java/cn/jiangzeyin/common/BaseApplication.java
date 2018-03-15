@@ -19,7 +19,7 @@ import java.util.Map;
  * @author jiangzeyin
  * Created by jiangzeyin on 2017/1/10.
  */
-public class BaseApplication extends SpringApplication {
+public abstract class BaseApplication extends SpringApplication {
 
     private static Environment environment;
     private static ApplicationEventClient applicationEventClient;
@@ -29,11 +29,23 @@ public class BaseApplication extends SpringApplication {
         return environment;
     }
 
+    /**
+     * 监听程序启动状态
+     *
+     * @param applicationEventClient 监听接口
+     * @param sources                source
+     */
     public BaseApplication(ApplicationEventClient applicationEventClient, Object... sources) {
         super(sources);
+        if (sources == null || sources.length <= 0)
+            throw new IllegalArgumentException("please set sources");
+        Object object = sources[0];
+        if (!(object instanceof Class)) {
+            throw new IllegalArgumentException("sources index 0  must with class");
+        }
         // 设置加载当前包
         try {
-            addLoadPage((Class) sources[0], "cn.jiangzeyin");
+            addLoadPage((Class) object, "cn.jiangzeyin");
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -45,6 +57,16 @@ public class BaseApplication extends SpringApplication {
         });
         setApplicationEventClient(applicationEventClient);
     }
+
+    /**
+     * 默认启动
+     *
+     * @param sources sources
+     */
+    public BaseApplication(Object... sources) {
+        this(null, sources);
+    }
+
 
     public static ApplicationEventClient getApplicationEventClient() {
         return applicationEventClient;
@@ -59,12 +81,6 @@ public class BaseApplication extends SpringApplication {
         BaseApplication.applicationEventClient = applicationEventClient;
     }
 
-    /**
-     * @param sources sources
-     */
-    public BaseApplication(Object... sources) {
-        this(null, sources);
-    }
 
     /**
      * 给程序添加默认包
