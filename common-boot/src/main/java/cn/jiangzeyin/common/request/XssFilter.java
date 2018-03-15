@@ -99,7 +99,7 @@ public class XssFilter extends CharacterEncodingFilter {
     private void responseLog(HttpServletResponse response) {
         // 记录请求状态不正确
         int status = response.getStatus();
-        if (status != HttpStatus.OK.value()) {
+        if (status != HttpStatus.OK.value() && status != HttpStatus.FOUND.value()) {
             String stringBuffer = "status:" +
                     status +
                     ",url:" +
