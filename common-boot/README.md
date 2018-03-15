@@ -20,6 +20,10 @@
 
  # 模块中特有功能说明：
  
+ 此模块是基于SpringBoot 配置封装具体配置属性请参照：cn.jiangzeyin.CommonPropertiesFinal 的静态字段
+ 
+ 属性字段请配置：application.properties
+ 
  **公共的Controller** 
  
 使用ThreadLocal 记录当前请求的request session respone
