@@ -84,8 +84,9 @@ cn.jiangzeyin.common.BaseApplication  该类主要实现对该程序进行初始
   如果没有配置 默认缓存时间为10分钟
   
  **线程池基本服务** 
- cn.jiangzeyin.pool.ThreadPoolService 注意负责线程池的创建和统一管理
- newCachedThreadPool(Class class1) 创建线程池 参数为线程池需要负责类 如需要配置线程池相关参数 则需要对class 增加注解 cn.jiangzeyin.pool.PoolConfig
+ 
+   cn.jiangzeyin.pool.ThreadPoolService 注意负责线程池的创建和统一管理
+   newCachedThreadPool(Class class1) 创建线程池 参数为线程池需要负责类 如需要配置线程池相关参数 则需要对class 增加注解 cn.jiangzeyin.pool.PoolConfig
 
     @Documented
     @Target(ElementType.TYPE)
@@ -106,10 +107,7 @@ cn.jiangzeyin.common.BaseApplication  该类主要实现对该程序进行初始
         // 线程池拒绝执行处理策略
         PolicyHandler HANDLER() default PolicyHandler.Caller;
     }
-
-getPoolQueuedTasks(Class tClass)  获取线程池队列数
-
-getPoolRejectedExecutionCount(Class tclass) 获取线程池取消执行的任务数
-
-shutdown() 关闭所有线程池
+  getPoolQueuedTasks(Class tClass)  获取线程池队列数
+  getPoolRejectedExecutionCount(Class tclass) 获取线程池取消执行的任务数
+  shutdown() 关闭所有线程池
 
