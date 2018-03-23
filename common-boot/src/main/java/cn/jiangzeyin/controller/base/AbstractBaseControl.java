@@ -79,10 +79,29 @@ public abstract class AbstractBaseControl {
      */
     protected String getSessionAttribute(String name) {
         Object obj = getSession().getAttribute(name);
-        getSession().removeAttribute(name);
         if (obj == null)
             return "";
         return obj.toString();
+    }
+
+    /**
+     * 移除session 值
+     *
+     * @param name name
+     * @author jiangzeyin
+     */
+    protected void removeSessionAttribute(String name) {
+        getSession().removeAttribute(name);
+    }
+
+    /**
+     * 设置session 字符串
+     *
+     * @param name   name
+     * @param object 值
+     */
+    protected void setSessionAttribute(String name, Object object) {
+        getSession().setAttribute(name, object);
     }
 
     protected String getCookieValue(String name) {
@@ -90,7 +109,6 @@ public abstract class AbstractBaseControl {
         if (cookie == null)
             return "";
         return cookie.getValue();
-
     }
 
     protected String getParameter(String name) {
