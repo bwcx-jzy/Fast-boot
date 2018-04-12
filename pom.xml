@@ -22,7 +22,6 @@
         <simple-util.version>1.0.4</simple-util.version>
         <common-boot.version>1.1.8</common-boot.version>
         <common-redis.version>1.0.1</common-redis.version>
-        <job.version>1.0.6</job.version>
     </properties>
 
     <dependencyManagement>
@@ -41,11 +40,6 @@
                 <groupId>cn.jiangzeyin</groupId>
                 <artifactId>common-boot</artifactId>
                 <version>${common-boot.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.jiangzeyin</groupId>
-                <artifactId>job</artifactId>
-                <version>${job.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.jiangzeyin</groupId>
@@ -107,6 +101,7 @@
                 <version>1.6</version>
                 <executions>
                     <execution>
+                        <id>verify-gpg</id>
                         <phase>verify</phase>
                         <goals>
                             <goal>sign</goal>

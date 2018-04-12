@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.*;
 
 /**
@@ -91,12 +92,16 @@ public class CommonInitPackage {
         Method[] methods = classT.getMethods();
         HashMap<Method, Integer> sortMap = new HashMap<>();
         for (Method method : methods) {
-            if (Modifier.isStatic(method.getModifiers()) && Modifier.isPublic(method.getModifiers())) {
-                PreLoadMethod preLoadMethod = method.getAnnotation(PreLoadMethod.class);
-                if (preLoadMethod == null)
-                    continue;
+            PreLoadMethod preLoadMethod = method.getAnnotation(PreLoadMethod.class);
+            if (preLoadMethod == null)
+                continue;
+            Type type = method.getGenericReturnType();
+            int modifiers = method.getModifiers();
+            Type[] parameters = method.getParameterTypes();
+            if (parameters == null && Void.TYPE.equals(type) && Modifier.isStatic(modifiers) && Modifier.isPrivate(modifiers)) {
                 sortMap.put(method, preLoadMethod.value());
-            }
+            } else
+                throw new IllegalArgumentException(classT + "  " + method + "  " + PreLoadMethod.class + " must use empty parameters static void private");
         }
         if (sortMap.size() > 0) {
             List<Map.Entry<Method, Integer>> newList = new ArrayList<>(sortMap.entrySet());
