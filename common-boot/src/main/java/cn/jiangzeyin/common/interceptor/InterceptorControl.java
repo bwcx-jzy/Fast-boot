@@ -2,8 +2,8 @@ package cn.jiangzeyin.common.interceptor;
 
 import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.StringUtil;
-import cn.jiangzeyin.common.BaseApplication;
 import cn.jiangzeyin.common.DefaultSystemLog;
+import cn.jiangzeyin.common.SpringApplicationBuilder;
 import cn.jiangzeyin.common.spring.ApplicationEventClient;
 import cn.jiangzeyin.common.spring.SpringUtil;
 import cn.jiangzeyin.util.PackageUtil;
@@ -78,12 +78,14 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
     }
 
     private void loadApplicationInterceptor(InterceptorRegistry registry) {
-        ApplicationEventClient applicationEventClient = BaseApplication.getApplicationEventClient();
-        if (applicationEventClient != null) {
-            List<Class> list = applicationEventClient.getApplicationInterceptor();
-            if (list != null && list.size() > 0) {
-                for (Class item : list) {
-                    loadInterceptor(item, registry);
+        List<ApplicationEventClient> applicationEventClients = SpringApplicationBuilder.getInstance().getApplicationEventClients();
+        if (applicationEventClients != null) {
+            for (ApplicationEventClient applicationEventClient : applicationEventClients) {
+                List<Class> list = applicationEventClient.getApplicationInterceptor();
+                if (list != null && list.size() > 0) {
+                    for (Class item : list) {
+                        loadInterceptor(item, registry);
+                    }
                 }
             }
         }
@@ -146,11 +148,13 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         super.configureMessageConverters(converters);
-        ApplicationEventClient applicationEventClient = BaseApplication.getApplicationEventClient();
-        if (applicationEventClient != null) {
-            List<HttpMessageConverter<?>> httpMessageConverterList = applicationEventClient.getMessageConverters();
-            if (httpMessageConverterList != null) {
-                converters.addAll(httpMessageConverterList);
+        List<ApplicationEventClient> applicationEventClients = SpringApplicationBuilder.getInstance().getApplicationEventClients();
+        if (applicationEventClients != null) {
+            for (ApplicationEventClient applicationEventClient : applicationEventClients) {
+                List<HttpMessageConverter<?>> httpMessageConverterList = applicationEventClient.getMessageConverters();
+                if (httpMessageConverterList != null) {
+                    converters.addAll(httpMessageConverterList);
+                }
             }
         }
     }

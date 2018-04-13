@@ -11,7 +11,7 @@ public abstract class CommonPropertiesFinal {
     /**
      * 当前程序定义一个id
      */
-    public static final String APPLICATION_ID = "applicationId";
+    public static final String APPLICATION_ID = "spring.application.name";
     /**
      * 请求的相关配置
      */

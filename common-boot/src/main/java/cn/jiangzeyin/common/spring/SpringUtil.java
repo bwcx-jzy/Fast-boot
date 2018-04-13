@@ -1,9 +1,9 @@
 package cn.jiangzeyin.common.spring;
 
 import cn.jiangzeyin.CommonPropertiesFinal;
-import cn.jiangzeyin.common.BaseApplication;
-import cn.jiangzeyin.common.DefaultSystemLog;
 import cn.jiangzeyin.common.CommonInitPackage;
+import cn.jiangzeyin.common.DefaultSystemLog;
+import cn.jiangzeyin.common.SpringApplicationBuilder;
 import cn.jiangzeyin.pool.ThreadPoolService;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
@@ -18,6 +18,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.util.Assert;
 import org.springframework.web.context.support.ServletRequestHandledEvent;
 
+import java.util.List;
+
 /**
  * @author jiangzeyin
  * Created by jiangzeyin on 2017/1/5.
@@ -26,7 +28,7 @@ import org.springframework.web.context.support.ServletRequestHandledEvent;
 public class SpringUtil implements ApplicationListener, ApplicationContextAware {
 
     private static ApplicationContext applicationContext;
-    private ApplicationEventClient applicationEventClient;
+    private List<ApplicationEventClient> applicationEventClients;
 
     /**
      * 容器加载完成
@@ -38,9 +40,11 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         SpringUtil.applicationContext = applicationContext;
         DefaultSystemLog.init();
-        applicationEventClient = BaseApplication.getApplicationEventClient();
-        if (applicationEventClient != null)
-            applicationEventClient.applicationLoad();
+        applicationEventClients = SpringApplicationBuilder.getInstance().getApplicationEventClients();
+        if (applicationEventClients != null) {
+            for (ApplicationEventClient applicationEventClient : applicationEventClients)
+                applicationEventClient.applicationLoad();
+        }
     }
 
     /**
@@ -56,8 +60,10 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
             applicationFailedEvent.getException().printStackTrace();
             return;
         }
-        if (applicationEventClient != null)
-            applicationEventClient.onApplicationEvent(event);
+        if (applicationEventClients != null) {
+            for (ApplicationEventClient applicationEventClient : applicationEventClients)
+                applicationEventClient.onApplicationEvent(event);
+        }
         if (event instanceof ApplicationReadyEvent) {// 启动最后的预加载
             CommonInitPackage.init();
             DefaultSystemLog.LOG().info("common-boot 启动完成");
@@ -128,7 +134,7 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
      * @return environment
      */
     public static Environment getEnvironment() {
-        return BaseApplication.getEnvironment();
+        return SpringApplicationBuilder.getInstance().getEnvironment();
     }
 
     /**
