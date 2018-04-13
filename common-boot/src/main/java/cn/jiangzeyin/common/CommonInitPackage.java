@@ -89,7 +89,7 @@ public class CommonInitPackage {
 
     // 排序class 中方法
     private static void loadClass(Class classT) {
-        Method[] methods = classT.getMethods();
+        Method[] methods = classT.getDeclaredMethods();
         HashMap<Method, Integer> sortMap = new HashMap<>();
         for (Method method : methods) {
             PreLoadMethod preLoadMethod = method.getAnnotation(PreLoadMethod.class);
@@ -98,7 +98,7 @@ public class CommonInitPackage {
             Type type = method.getGenericReturnType();
             int modifiers = method.getModifiers();
             Type[] parameters = method.getParameterTypes();
-            if (parameters == null && Void.TYPE.equals(type) && Modifier.isStatic(modifiers) && Modifier.isPrivate(modifiers)) {
+            if ((parameters == null || parameters.length <= 0) && Void.TYPE.equals(type) && Modifier.isStatic(modifiers) && Modifier.isPrivate(modifiers)) {
                 sortMap.put(method, preLoadMethod.value());
             } else
                 throw new IllegalArgumentException(classT + "  " + method + "  " + PreLoadMethod.class + " must use empty parameters static void private");
@@ -113,6 +113,7 @@ public class CommonInitPackage {
                     continue;
                 }
                 try {
+                    method.setAccessible(true);
                     method.invoke(null);
                     METHOD_LIST.add(method);
                 } catch (IllegalAccessException | InvocationTargetException e) {
