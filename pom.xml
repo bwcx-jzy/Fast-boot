@@ -11,7 +11,7 @@
     </parent>
     <groupId>cn.jiangzeyin</groupId>
     <artifactId>common-parent</artifactId>
-    <version>1.1.8</version>
+    <version>1.1.9</version>
     <name>Spring Boot Common Parent</name>
     <url>http://blog.csdn.net/jiangzeyin_</url>
     <description>Spring Boot common-boot</description>
@@ -20,7 +20,7 @@
         <java.version>1.8</java.version>
         <fastjson.version>1.2.40</fastjson.version>
         <simple-util.version>1.0.6</simple-util.version>
-        <common-boot.version>1.1.8</common-boot.version>
+        <common-boot.version>1.1.9</common-boot.version>
         <common-redis.version>1.0.1</common-redis.version>
     </properties>
 
