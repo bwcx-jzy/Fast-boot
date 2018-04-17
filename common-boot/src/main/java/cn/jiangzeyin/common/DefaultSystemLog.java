@@ -88,7 +88,7 @@ public class DefaultSystemLog {
         policy.setContext(loggerContext);
         String logPath = "/log/cn.jiangzeyin";
         String filePath = String.format("%s/%s/%s/%s", logPath, SpringUtil.getApplicationId(), path, tag).toLowerCase();
-        policy.setFileNamePattern(String.format("%s-%%d{yyyy-MM-dd}.%%i.log", filePath));
+        policy.setFileNamePattern(String.format("%s-%%d{yyyy-MM-dd}.%%event.log", filePath));
         policy.setMaxFileSize(FileSize.valueOf("100MB"));
         policy.setMaxHistory(30);
         policy.setTotalSizeCap(FileSize.valueOf("10GB"));

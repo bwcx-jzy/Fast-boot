@@ -63,6 +63,15 @@ public class JsonMessage implements Serializable {
         return JSONObject.toJSONString(this);
     }
 
+    public static JSONObject toJson(int code, String msg) {
+        JsonMessage jsonMessage = new JsonMessage(code, msg);
+        return (JSONObject) JSONObject.toJSON(jsonMessage);
+    }
+
+    public static JSONObject toJson(int code, String msg, Object data) {
+        JsonMessage jsonMessage = new JsonMessage(code, msg, data);
+        return (JSONObject) JSONObject.toJSON(jsonMessage);
+    }
 
     /**
      * @param code code
@@ -71,7 +80,7 @@ public class JsonMessage implements Serializable {
      * @author jiangzeyin
      */
     public static String getString(int code, String msg) {
-        return new JsonMessage(code, msg).toString();
+        return toJson(code, msg).toString();
     }
 
     /**
@@ -82,6 +91,6 @@ public class JsonMessage implements Serializable {
      * @author jiangzeyin
      */
     public static String getString(int code, String msg, Object data) {
-        return new JsonMessage(code, msg, data).toString();
+        return toJson(code, msg, data).toString();
     }
 }

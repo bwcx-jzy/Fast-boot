@@ -1,7 +1,7 @@
 //package cn.jiangzeyin.common;
 //
 //import cn.jiangzeyin.CommonPropertiesFinal;
-//import cn.jiangzeyin.common.spring.ApplicationEventClient;
+//import cn.jiangzeyin.common.spring.event.ApplicationEventClient;
 //import org.springframework.boot.SpringApplication;
 //import org.springframework.context.annotation.ComponentScan;
 //import org.springframework.core.env.Environment;

@@ -4,6 +4,8 @@ import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.common.CommonInitPackage;
 import cn.jiangzeyin.common.DefaultSystemLog;
 import cn.jiangzeyin.common.SpringApplicationBuilder;
+import cn.jiangzeyin.common.spring.event.ApplicationEventClient;
+import cn.jiangzeyin.common.spring.event.ApplicationEventLoad;
 import cn.jiangzeyin.pool.ThreadPoolService;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
@@ -28,7 +30,6 @@ import java.util.List;
 public class SpringUtil implements ApplicationListener, ApplicationContextAware {
 
     private static ApplicationContext applicationContext;
-    private List<ApplicationEventClient> applicationEventClients;
 
     /**
      * 容器加载完成
@@ -40,10 +41,10 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         SpringUtil.applicationContext = applicationContext;
         DefaultSystemLog.init();
-        applicationEventClients = SpringApplicationBuilder.getInstance().getApplicationEventClients();
-        if (applicationEventClients != null) {
-            for (ApplicationEventClient applicationEventClient : applicationEventClients)
-                applicationEventClient.applicationLoad();
+        List<ApplicationEventLoad> applicationEventLoads = SpringApplicationBuilder.getInstance().getApplicationEventLoads();
+        if (applicationEventLoads != null) {
+            for (ApplicationEventLoad applicationEventLoad : applicationEventLoads)
+                applicationEventLoad.applicationLoad();
         }
     }
 
@@ -60,6 +61,7 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
             applicationFailedEvent.getException().printStackTrace();
             return;
         }
+        List<ApplicationEventClient> applicationEventClients = SpringApplicationBuilder.getInstance().getApplicationEventClients();
         if (applicationEventClients != null) {
             for (ApplicationEventClient applicationEventClient : applicationEventClients)
                 applicationEventClient.onApplicationEvent(event);

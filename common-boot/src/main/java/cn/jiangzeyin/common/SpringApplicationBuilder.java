@@ -1,9 +1,12 @@
 package cn.jiangzeyin.common;
 
 import cn.jiangzeyin.CommonPropertiesFinal;
-import cn.jiangzeyin.common.spring.ApplicationEventClient;
+import cn.jiangzeyin.common.interceptor.BaseInterceptor;
+import cn.jiangzeyin.common.spring.event.ApplicationEventClient;
+import cn.jiangzeyin.common.spring.event.ApplicationEventLoad;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
@@ -35,6 +38,19 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
      * 程序监听事件
      */
     private List<ApplicationEventClient> applicationEventClients;
+
+    /**
+     * 程序加载完成
+     */
+    private List<ApplicationEventLoad> applicationEventLoads;
+    /**
+     *
+     */
+    private List<Class<? extends BaseInterceptor>> interceptorClass;
+    /**
+     *
+     */
+    private List<HttpMessageConverter<?>> httpMessageConverters;
 
     /**
      * 创建启动对象
@@ -84,6 +100,42 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
         return applicationEventClients;
     }
 
+    public List<ApplicationEventLoad> getApplicationEventLoads() {
+        return applicationEventLoads;
+    }
+
+    public List<Class<? extends BaseInterceptor>> getInterceptorClass() {
+        return interceptorClass;
+    }
+
+    public List<HttpMessageConverter<?>> getHttpMessageConverters() {
+        return httpMessageConverters;
+    }
+
+    public SpringApplicationBuilder addHttpMessageConverter(HttpMessageConverter<?> httpMessageConverter) {
+        Objects.requireNonNull(httpMessageConverter);
+        if (httpMessageConverters == null)
+            this.httpMessageConverters = new ArrayList<>();
+        this.httpMessageConverters.add(httpMessageConverter);
+        return this;
+    }
+
+    public SpringApplicationBuilder addInterceptor(Class<? extends BaseInterceptor> cls) {
+        Objects.requireNonNull(cls);
+        if (interceptorClass == null)
+            this.interceptorClass = new ArrayList<>();
+        this.interceptorClass.add(cls);
+        return this;
+    }
+
+    public SpringApplicationBuilder addApplicationEventLoad(ApplicationEventLoad applicationEventLoad) {
+        Objects.requireNonNull(applicationEventLoad);
+        if (applicationEventLoads == null)
+            this.applicationEventLoads = new ArrayList<>();
+        this.applicationEventLoads.add(applicationEventLoad);
+        return this;
+    }
+
     /**
      * 添加程序事件监听
      *
@@ -105,7 +157,7 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
      * @throws NoSuchFieldException   e
      * @throws IllegalAccessException e
      */
-    public void addLoadPage(String packageName) throws NoSuchFieldException, IllegalAccessException {
+    public SpringApplicationBuilder addLoadPage(String packageName) throws NoSuchFieldException, IllegalAccessException {
         if (StringUtils.isEmpty(packageName))
             throw new IllegalArgumentException("packageName");
         ComponentScan componentScan = (ComponentScan) applicationClass.getAnnotation(ComponentScan.class);
@@ -119,5 +171,6 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
         String[] newValues = new String[]{packageName};
         newValues = StringUtils.mergeStringArrays(values, newValues);
         memberValues.put("value", newValues);
+        return this;
     }
 }

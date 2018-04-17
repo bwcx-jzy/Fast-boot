@@ -43,7 +43,7 @@
  
    cn.jiangzeyin.common.spring.SpringUtil 主要对Spring容器简单管理  getBean()  getEnvironment() 
    
- 同时提供SpringBoot 程序监听接口  cn.jiangzeyin.common.spring.ApplicationEventClient  在创建SpringBoot Application类时，请继承
+ 同时提供SpringBoot 程序监听接口  cn.jiangzeyin.common.spring.event.ApplicationEventClient  在创建SpringBoot Application类时，请继承
 cn.jiangzeyin.common.BaseApplication  该类主要实现对该程序进行初始化和接口注入
 
 > **启动自动加载资源接口** 
