@@ -112,6 +112,12 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
         return httpMessageConverters;
     }
 
+    /**
+     * 添加响应转换器
+     *
+     * @param httpMessageConverter converter
+     * @return this
+     */
     public SpringApplicationBuilder addHttpMessageConverter(HttpMessageConverter<?> httpMessageConverter) {
         Objects.requireNonNull(httpMessageConverter);
         if (httpMessageConverters == null)
@@ -120,6 +126,12 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
         return this;
     }
 
+    /**
+     * 添加默认拦截器
+     *
+     * @param cls cls
+     * @return this
+     */
     public SpringApplicationBuilder addInterceptor(Class<? extends BaseInterceptor> cls) {
         Objects.requireNonNull(cls);
         if (interceptorClass == null)
@@ -128,6 +140,12 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
         return this;
     }
 
+    /**
+     * 添加容器启动监听
+     *
+     * @param applicationEventLoad 监听接口
+     * @return this
+     */
     public SpringApplicationBuilder addApplicationEventLoad(ApplicationEventLoad applicationEventLoad) {
         Objects.requireNonNull(applicationEventLoad);
         if (applicationEventLoads == null)

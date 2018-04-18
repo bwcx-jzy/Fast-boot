@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
+ * 默认的xss拦截器
  * Created by jiangzeyin on 2017/3/31.
  */
 @Configuration

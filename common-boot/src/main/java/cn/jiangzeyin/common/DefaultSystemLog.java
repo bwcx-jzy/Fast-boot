@@ -129,7 +129,9 @@ public class DefaultSystemLog {
     public static Logger LOG(LogType type) {
         Logger logger = LOG_TYPE_LOGGER_MAP.get(type);
         if (logger == null && LogType.DEFAULT != type)
-            return LOG(LogType.DEFAULT);
+            logger = LOG(LogType.DEFAULT);
+        if (logger == null)
+            throw new IllegalArgumentException("not find");
         return logger;
     }
 

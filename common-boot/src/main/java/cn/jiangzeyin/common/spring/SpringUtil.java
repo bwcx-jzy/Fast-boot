@@ -23,6 +23,8 @@ import org.springframework.web.context.support.ServletRequestHandledEvent;
 import java.util.List;
 
 /**
+ * 通用的Spring Context util
+ *
  * @author jiangzeyin
  * Created by jiangzeyin on 2017/1/5.
  */

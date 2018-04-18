@@ -13,6 +13,7 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 /**
+ * 控制初始化
  * Created by jiangzeyin on 2017/10/24.
  */
 public class CommonInitPackage {
