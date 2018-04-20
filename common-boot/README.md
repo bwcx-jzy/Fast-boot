@@ -2,17 +2,21 @@
 
 > 针对SpringBoot封装的一个 common boot
 
-如果需要common-boot 程序生效 需要将SpringBoot启动的 Application 类继承 cn.jiangzeyin.common.BaseApplication  并且重写BaseApplication 的两个构造方法
- > public BaseApplication(ApplicationEventClient applicationEventClient, Object... sources)
- >  
- > 此构造方法第一个参数为程序启动监听接口，第二个参数为org.springframework.boot.SpringApplication对象的构造方法参数，一般传入自己程序的Application类的class
+如果需要common-boot 程序生效 需要使用cn.jiangzeyin.common.SpringApplicationBuilder.createBuilder() 来创建Application 参数一般传入程序主类，程序主类需要添加扫描包的注解 ComponentScan
+
+ 然后调用run方法 传入main 方法中的字符串数据 来启动程序
  
+ addHttpMessageConverter();
  
- > public BaseApplication(Object... sources)
- >
- > 此构造方法参数为org.springframework.boot.SpringApplication对象的构造方法参数，一般传入自己程序的Application类的class
+ addInterceptor();
  
- 然后调用对象run方法 传入main 方法中的字符串数据 来启动程序
+ addApplicationEventLoad();
+ 
+ addApplicationEventClient();
+ 
+ addLoadPage();
+ 
+ 请根据实际使用情况来调用
 
 当控制台日志打印出：“common-boot 启动完成”时说明common-boot 程序已经正常加载可以使用模块中的功能
 -------------------------------------------------------

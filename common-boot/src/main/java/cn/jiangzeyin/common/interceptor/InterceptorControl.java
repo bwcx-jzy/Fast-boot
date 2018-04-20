@@ -13,6 +13,7 @@ import org.springframework.web.servlet.config.annotation.*;
 
 import java.io.IOException;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,6 +29,8 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
     @Value("${" + CommonPropertiesFinal.INTERCEPTOR_INIT_PACKAGE_NAME + ":}")
     private String loadPath;
     private boolean isHash = false;
+
+    private static final List<Class> LOAD_OK = new ArrayList<>();
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -96,6 +99,10 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
     }
 
     private void loadInterceptor(Class itemCls, InterceptorRegistry registry) {
+        if (LOAD_OK.contains(itemCls)) {
+            DefaultSystemLog.LOG().info("重复注入拦截器" + itemCls);
+            return;
+        }
         InterceptorPattens interceptorPattens = (InterceptorPattens) itemCls.getAnnotation(InterceptorPattens.class);
         if (interceptorPattens == null)
             return;
@@ -114,6 +121,7 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
         String[] exclude = interceptorPattens.exclude();
         if (exclude.length > 0)
             registration.excludePathPatterns(exclude);
+        LOAD_OK.add(itemCls);
         DefaultSystemLog.LOG().info("加载拦截器：" + itemCls + "  " + Arrays.toString(patterns) + "  " + Arrays.toString(exclude));
         isHash = true;
     }
