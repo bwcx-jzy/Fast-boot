@@ -11,6 +11,8 @@ import java.io.*;
  */
 public final class FileUtil {
 
+    public static int EACH_LEN = 1024 * 1024;
+
     /**
      * 将流写入文件中
      *
@@ -30,19 +32,12 @@ public final class FileUtil {
         try {
             outputStream = new DataOutputStream(new FileOutputStream(file));
             int len = inputStream.available();
-            //判断长度是否大于1M
-            if (len <= 1024 * 1024) {
-                byte[] bytes = new byte[len];
-                int rLen = inputStream.read(bytes);
-                if (rLen > 0)
-                    outputStream.write(bytes);
-            } else {
-                int byteCount;
-                //1M逐个读取
-                byte[] bytes = new byte[1024 * 1024];
-                while ((byteCount = inputStream.read(bytes)) != -1) {
-                    outputStream.write(bytes, 0, byteCount);
-                }
+            //判断长度是否大于1M  如果大于1M逐个读取
+            int byteLen = len > EACH_LEN ? EACH_LEN : len;
+            byte[] bytes = new byte[byteLen];
+            int byteCount;
+            while ((byteCount = inputStream.read(bytes)) != -1) {
+                outputStream.write(bytes, 0, byteCount);
             }
         } finally {
             inputStream.close();
