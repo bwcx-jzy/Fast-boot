@@ -1,8 +1,7 @@
 package cn.jiangzeyin.util;
 
-import org.springframework.util.Assert;
-
 import java.io.*;
+import java.util.Objects;
 
 /**
  * 文件操作工具类
@@ -18,12 +17,11 @@ public final class FileUtil {
      *
      * @param inputStream inp
      * @param file        file
-     * @return boolean
      * @throws IOException io
      */
-    public static boolean writeInputStream(InputStream inputStream, File file) throws IOException {
-        Assert.notNull(inputStream, "inputStream is null");
-        Assert.notNull(file, "file is null");
+    public static void writeInputStream(InputStream inputStream, File file) throws IOException {
+        Objects.requireNonNull(inputStream, "inputStream is null");
+        Objects.requireNonNull(file, "file is null");
         File parent = file.getParentFile();
         if (!parent.exists())
             if (!parent.mkdirs())
@@ -44,7 +42,35 @@ public final class FileUtil {
             if (outputStream != null)
                 outputStream.close();
         }
-        return true;
     }
+
+//    public static boolean deleteDirectory(File dir) {
+//        if (!dir.exists())
+//            return true;
+//        Queue<File> queue = new LinkedBlockingQueue<>();
+//        queue.add(dir);
+//        System.out.println(dir.getPath());
+//        while (!queue.isEmpty()) {
+//            File file = queue.poll();
+//            File[] files = file.listFiles();
+//            if (files != null && files.length > 0) {
+//                Collections.addAll(queue, files);
+////                    queue.add()
+//                //queue.element()
+////                    queue.offer(Arrays.asList(files));
+//                //queue.add(file);
+//                //queue.add(file);
+//                //stack.push(file);
+//                FileUtils.deleteDirectory();
+//                System.out.println(file.getPath());
+//            } else if (!file.delete()) {
+//                System.err.println(file.getPath());
+//                return false;
+//            }
+//            System.out.println("ml" + file.getPath() + "  " + queue.size());
+//        }
+//        return true;
+//    }
+
 }
 
