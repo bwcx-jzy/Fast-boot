@@ -9,17 +9,17 @@
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>1.4.7.RELEASE</version>
     </parent>
-    <groupId>cn.jiangzeyin</groupId>
+    <groupId>cn.jiangzeyin.fast-boot</groupId>
     <artifactId>common-parent</artifactId>
     <version>1.1.11</version>
-    <name>Spring Boot Common Parent</name>
+    <name>Spring Boot fast-boot</name>
     <url>http://blog.csdn.net/jiangzeyin_</url>
-    <description>Spring Boot common-boot</description>
+    <description>Spring Boot fast-boot</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
         <fastjson.version>1.2.40</fastjson.version>
-        <simple-util.version>1.0.6</simple-util.version>
+        <simple-util.version>1.0.7</simple-util.version>
         <common-boot.version>1.1.11</common-boot.version>
         <common-redis.version>1.0.3</common-redis.version>
     </properties>
@@ -37,12 +37,12 @@
                 <version>${fastjson.version}</version>
             </dependency>
             <dependency>
-                <groupId>cn.jiangzeyin</groupId>
+                <groupId>cn.jiangzeyin.fast-boot</groupId>
                 <artifactId>common-boot</artifactId>
                 <version>${common-boot.version}</version>
             </dependency>
             <dependency>
-                <groupId>cn.jiangzeyin</groupId>
+                <groupId>cn.jiangzeyin.fast-boot</groupId>
                 <artifactId>common-redis</artifactId>
                 <version>${common-redis.version}</version>
             </dependency>

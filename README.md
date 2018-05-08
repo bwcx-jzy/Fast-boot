@@ -4,7 +4,7 @@
 **maven 坐标**
 
     <dependency>
-        <groupId>cn.jiangzeyin</groupId>
+        <groupId>cn.jiangzeyin.fast-boot</groupId>
         <artifactId>common-parent</artifactId>
         <version>VSESION</version>
     </dependency>
@@ -25,7 +25,7 @@
 **maven坐标**
 
     <dependency>
-        <groupId>cn.jiangzeyin</groupId>
+        <groupId>cn.jiangzeyin.fast-boot</groupId>
         <artifactId>common-boot</artifactId>
     </dependency>
 
@@ -40,7 +40,7 @@
 **maven坐标**
 
     <dependency>
-        <groupId>cn.jiangzeyin</groupId>
+        <groupId>cn.jiangzeyin.fast-boot</groupId>
         <artifactId>common-redis</artifactId>
     </dependency>
 
