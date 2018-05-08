@@ -21,7 +21,7 @@ import java.util.jar.JarFile;
  *
  * @author jiangzeyin
  */
-public class PackageUtil {
+public final class PackageUtil {
 
     /**
      * 获取某包下（包括该包的所有子包）所有类

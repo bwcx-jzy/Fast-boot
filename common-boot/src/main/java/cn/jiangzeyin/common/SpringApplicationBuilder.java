@@ -60,11 +60,11 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
      * @throws NoSuchFieldException   e
      * @throws IllegalAccessException e
      */
-    public static SpringApplicationBuilder createBuilder(Object... sources) throws NoSuchFieldException, IllegalAccessException {
+    public static SpringApplicationBuilder createBuilder(Object... sources) throws Exception {
         return new SpringApplicationBuilder(sources);
     }
 
-    protected SpringApplicationBuilder(Object... sources) throws NoSuchFieldException, IllegalAccessException {
+    protected SpringApplicationBuilder(Object... sources) throws Exception {
         super(sources);
         if (applicationBuilder != null)
             throw new IllegalArgumentException("duplicate create");
