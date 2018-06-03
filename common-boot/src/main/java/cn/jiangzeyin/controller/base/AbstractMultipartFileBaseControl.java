@@ -55,7 +55,7 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
     }
 
     @Override
-    public HttpServletRequest getRequest() {
+    protected HttpServletRequest getRequest() {
         if (getMultiRequest() == null)
             return super.getRequest();
         return getMultiRequest();

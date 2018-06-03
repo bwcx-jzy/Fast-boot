@@ -5,6 +5,9 @@ import cn.jiangzeyin.StringUtil;
 import cn.jiangzeyin.common.DefaultSystemLog;
 import cn.jiangzeyin.common.spring.SpringUtil;
 import org.springframework.http.HttpHeaders;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -24,28 +27,11 @@ public abstract class AbstractBaseControl {
     private static final ThreadLocal<HttpServletRequest> HTTP_SERVLET_REQUEST_THREAD_LOCAL = new ThreadLocal<>();
     private static final ThreadLocal<HttpSession> HTTP_SESSION_THREAD_LOCAL = new ThreadLocal<>();
     private static final ThreadLocal<HttpServletResponse> HTTP_SERVLET_RESPONSE_THREAD_LOCAL = new ThreadLocal<>();
-
+    /**
+     * ip 地址
+     */
     protected String ip;
 
-    public HttpServletResponse getResponse() {
-        return HTTP_SERVLET_RESPONSE_THREAD_LOCAL.get();
-    }
-
-    public HttpSession getSession() {
-        return HTTP_SESSION_THREAD_LOCAL.get();
-    }
-
-    public HttpServletRequest getRequest() {
-        return HTTP_SERVLET_REQUEST_THREAD_LOCAL.get();
-    }
-
-    protected Object getAttribute(String name) {
-        return getRequest().getAttribute(name);
-    }
-
-    protected void setAttribute(String name, Object object) {
-        getRequest().setAttribute(name, object);
-    }
 
     /**
      * 拦截器注入
@@ -62,13 +48,70 @@ public abstract class AbstractBaseControl {
         response.setCharacterEncoding("UTF-8");
     }
 
+    /**
+     * 二次回调
+     */
+    public void reLoad() {
+
+    }
+
+    protected HttpServletResponse getResponse() {
+        HttpServletResponse response = HTTP_SERVLET_RESPONSE_THREAD_LOCAL.get();
+        if (response == null) {
+            ServletRequestAttributes requestAttributes = getRequestAttributes();
+            if (requestAttributes == null)
+                return null;
+            response = requestAttributes.getResponse();
+        }
+        return response;
+    }
+
+    private static ServletRequestAttributes getRequestAttributes() {
+        RequestAttributes attributes;
+        try {
+            attributes = RequestContextHolder.currentRequestAttributes();
+        } catch (IllegalStateException e) {
+            // TODO: handle exception
+            DefaultSystemLog.ERROR().error("获取req失败", e);
+            return null;
+        }
+        return (ServletRequestAttributes) attributes;
+    }
+
+    protected HttpSession getSession() {
+        HttpSession session = HTTP_SESSION_THREAD_LOCAL.get();
+        if (session == null) {
+            HttpServletRequest request = getRequest();
+            if (request != null)
+                session = request.getSession();
+        }
+        return session;
+    }
+
+    protected HttpServletRequest getRequest() {
+        HttpServletRequest request = HTTP_SERVLET_REQUEST_THREAD_LOCAL.get();
+        if (request == null) {
+            ServletRequestAttributes sra = getRequestAttributes();
+            if (sra == null)
+                return null;
+            request = sra.getRequest();
+        }
+        return request;
+    }
+
+    protected Object getAttribute(String name) {
+        return getRequest().getAttribute(name);
+    }
+
+    protected void setAttribute(String name, Object object) {
+        getRequest().setAttribute(name, object);
+    }
+
+
     protected String getHeader(String name) {
         return getRequest().getHeader(name);
     }
 
-    public void reLoad() {
-
-    }
 
     /**
      * 获取session 字符串
@@ -78,10 +121,17 @@ public abstract class AbstractBaseControl {
      * @author jiangzeyin
      */
     protected String getSessionAttribute(String name) {
-        Object obj = getSession().getAttribute(name);
-        if (obj == null)
-            return "";
-        return obj.toString();
+        return StringUtil.convertNULL(getSessionAttributeObj(name));
+    }
+
+    /**
+     * 获取session 中对象
+     *
+     * @param name name
+     * @return obj
+     */
+    protected Object getSessionAttributeObj(String name) {
+        return getSession().getAttribute(name);
     }
 
     /**
@@ -231,7 +281,7 @@ public abstract class AbstractBaseControl {
             } else {
                 DefaultSystemLog.ERROR().error("没有设置:" + type, new RuntimeException());
             }
-            System.out.println(type + "  " + name + "  " + value);
+            //System.out.println(type + "  " + name + "  " + value);
         } catch (Exception e) {
             DefaultSystemLog.ERROR().error("创建对象错误", e);
         }
