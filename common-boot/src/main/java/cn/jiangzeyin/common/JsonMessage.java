@@ -75,6 +75,10 @@ public class JsonMessage implements Serializable {
         return JSONObject.toJSONString(this);
     }
 
+    public JSONObject toJson() {
+        return (JSONObject) JSONObject.toJSON(this);
+    }
+
     /**
      * 输出格式化后的json 字符串
      *
@@ -85,13 +89,12 @@ public class JsonMessage implements Serializable {
     }
 
     public static JSONObject toJson(int code, String msg) {
-        JsonMessage jsonMessage = new JsonMessage(code, msg);
-        return (JSONObject) JSONObject.toJSON(jsonMessage);
+        return toJson(code, msg, null);
     }
 
     public static JSONObject toJson(int code, String msg, Object data) {
         JsonMessage jsonMessage = new JsonMessage(code, msg, data);
-        return (JSONObject) JSONObject.toJSON(jsonMessage);
+        return jsonMessage.toJson();
     }
 
     /**
@@ -101,7 +104,7 @@ public class JsonMessage implements Serializable {
      * @author jiangzeyin
      */
     public static String getString(int code, String msg) {
-        return toJson(code, msg).toString();
+        return getString(code, msg, null);
     }
 
     /**
