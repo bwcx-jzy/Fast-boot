@@ -66,8 +66,11 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
 
     protected SpringApplicationBuilder(Object... sources) throws Exception {
         super(sources);
-        if (applicationBuilder != null)
-            throw new IllegalArgumentException("duplicate create");
+        if (applicationBuilder != null) {
+            String name = Thread.currentThread().getName();
+            if (!"restartedMain".equalsIgnoreCase(name))
+                throw new IllegalArgumentException("duplicate create");
+        }
         if (sources == null || sources.length <= 0)
             throw new IllegalArgumentException("please set sources");
         Object object = sources[0];
