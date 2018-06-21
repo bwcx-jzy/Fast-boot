@@ -257,11 +257,9 @@ public abstract class AbstractBaseControl {
         try {
             Method method = getMethod(tClass, name, type);
             if (type == int.class || type == Integer.class) {
-                try {
-                    Integer integer = Integer.valueOf(value);
-                    method.invoke(obj, integer);
-                } catch (NumberFormatException ignored) {
-                }
+                method.invoke(obj, Integer.valueOf(value));
+            } else if (type == long.class || type == Long.class) {
+                method.invoke(obj, Long.valueOf(value));
             } else if (type == String.class) {
                 method.invoke(obj, value);
             } else if (AbstractBaseControl.class.isAssignableFrom(type)) {
@@ -273,13 +271,9 @@ public abstract class AbstractBaseControl {
                 } catch (NumberFormatException ignored) {
                 }
             } else if (type == Double.class || type == double.class) {
-                try {
-                    Double double_v = Double.valueOf(value);
-                    method.invoke(obj, double_v);
-                } catch (NumberFormatException ignored) {
-                }
+                method.invoke(obj, Double.valueOf(value));
             } else {
-                DefaultSystemLog.ERROR().error("没有设置:" + type, new RuntimeException());
+                method.invoke(obj, value);
             }
             //System.out.println(type + "  " + name + "  " + value);
         } catch (Exception e) {
