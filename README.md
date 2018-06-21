@@ -9,7 +9,7 @@
         <version>VSESION</version>
     </parent>
 
-注：VSESION 请更换为最新的版本号
+注：VSESION 请更换为公共maven库最新的版本号
 
 
 博客地址：http://blog.csdn.net/jiangzeyin_/article/details/78709043
