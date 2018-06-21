@@ -14,6 +14,8 @@
 
 博客地址：http://blog.csdn.net/jiangzeyin_/article/details/78709043
 
+javadoc：https://apidoc.gitee.com/jiangzeyin/common-parent/
+
 子项目：
 
 # 1.common-boot
