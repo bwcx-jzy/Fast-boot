@@ -3,11 +3,11 @@
 
 **maven 坐标**
 
-    <dependency>
+    <parent>
         <groupId>cn.jiangzeyin.fast-boot</groupId>
         <artifactId>common-parent</artifactId>
         <version>VSESION</version>
-    </dependency>
+    </parent>
 
 注：VSESION 请更换为最新的版本号
 

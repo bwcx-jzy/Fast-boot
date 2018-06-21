@@ -1,2 +1,6 @@
 .idea/workspace.xml
 target/
+common-boot/target/
+common-redis/target/
+common-boot/src/test/
+common-redis/src/test/
