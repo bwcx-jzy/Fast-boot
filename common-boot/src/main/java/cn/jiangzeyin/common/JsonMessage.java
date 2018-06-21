@@ -1,8 +1,12 @@
 package cn.jiangzeyin.common;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializeConfig;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.fastjson.serializer.ToStringSerializer;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 
 /**
  * 通用的json 数据格式
@@ -14,6 +18,14 @@ public class JsonMessage implements Serializable {
     public static final String CODE = "code";
     public static final String MSG = "msg";
     public static final String DATA = "data";
+
+    static {
+        SerializeConfig serializeConfig = SerializeConfig.globalInstance;
+        serializeConfig.put(Long.class, ToStringSerializer.instance);
+        serializeConfig.put(long.class, ToStringSerializer.instance);
+        serializeConfig.put(BigInteger.class, ToStringSerializer.instance);
+        serializeConfig.put(Long.TYPE, ToStringSerializer.instance);
+    }
 
     private int code;
     private String msg;
@@ -61,6 +73,15 @@ public class JsonMessage implements Serializable {
     public String toString() {
         // TODO Auto-generated method stub
         return JSONObject.toJSONString(this);
+    }
+
+    /**
+     * 输出格式化后的json 字符串
+     *
+     * @return 字符串
+     */
+    public String toFormatJson() {
+        return JSONObject.toJSONString(this, SerializerFeature.PrettyFormat);
     }
 
     public static JSONObject toJson(int code, String msg) {

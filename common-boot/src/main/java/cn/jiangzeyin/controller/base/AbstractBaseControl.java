@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -262,6 +263,10 @@ public abstract class AbstractBaseControl {
                 method.invoke(obj, Long.valueOf(value));
             } else if (type == String.class) {
                 method.invoke(obj, value);
+            } else if (type == BigDecimal.class) {
+                method.invoke(obj, BigDecimal.valueOf(Long.parseLong(value)));
+            } else if (type == float.class || type == Float.class) {
+                method.invoke(obj, Float.valueOf(value));
             } else if (AbstractBaseControl.class.isAssignableFrom(type)) {
                 Object type_obj = type.newInstance();
                 Method setIdMethod = getMethod(type_obj.getClass(), "Id", Integer.class);//type.getDeclaredMethod();
@@ -273,7 +278,7 @@ public abstract class AbstractBaseControl {
             } else if (type == Double.class || type == double.class) {
                 method.invoke(obj, Double.valueOf(value));
             } else {
-                method.invoke(obj, value);
+                DefaultSystemLog.ERROR().error("未设置对应数据类型:" + type, new RuntimeException());
             }
             //System.out.println(type + "  " + name + "  " + value);
         } catch (Exception e) {
