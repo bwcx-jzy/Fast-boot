@@ -67,8 +67,7 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
     protected SpringApplicationBuilder(Object... sources) throws Exception {
         super(sources);
         if (applicationBuilder != null) {
-            String name = Thread.currentThread().getName();
-            if (!"restartedMain".equalsIgnoreCase(name))
+            if (!isRestart())
                 throw new IllegalArgumentException("duplicate create");
         }
         if (sources == null || sources.length <= 0)
@@ -193,5 +192,10 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
         newValues = StringUtils.mergeStringArrays(values, newValues);
         memberValues.put("value", newValues);
         return this;
+    }
+
+    public static boolean isRestart() {
+        String name = Thread.currentThread().getName();
+        return "restartedMain".equalsIgnoreCase(name);
     }
 }

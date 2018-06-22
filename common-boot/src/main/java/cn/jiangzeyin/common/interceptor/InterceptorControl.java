@@ -99,7 +99,7 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
     }
 
     private void loadInterceptor(Class itemCls, InterceptorRegistry registry) {
-        if (LOAD_OK.contains(itemCls)) {
+        if (LOAD_OK.contains(itemCls) && !SpringApplicationBuilder.isRestart()) {
             DefaultSystemLog.LOG().info("重复注入拦截器" + itemCls);
             return;
         }
