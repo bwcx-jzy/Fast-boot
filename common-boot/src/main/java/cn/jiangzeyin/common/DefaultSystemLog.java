@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * 系统日志
+ *
  * @author jiangzeyin
  * Created by jiangzeyin on 2017/2/3.
  */

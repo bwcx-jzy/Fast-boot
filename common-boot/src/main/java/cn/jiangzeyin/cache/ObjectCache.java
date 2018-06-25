@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * 内存缓存
  * Created by jiangzeyin on 2017/12/1.
  */
 public final class ObjectCache {

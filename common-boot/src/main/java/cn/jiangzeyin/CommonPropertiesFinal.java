@@ -1,6 +1,7 @@
 package cn.jiangzeyin;
 
 /**
+ * 配置属性字段
  * Created by jiangzeyin on 2017/8/25.
  */
 public abstract class CommonPropertiesFinal {

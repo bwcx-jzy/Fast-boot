@@ -194,6 +194,11 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
         return this;
     }
 
+    /**
+     * 判断是否已热部署
+     *
+     * @return true 热部署
+     */
     public static boolean isRestart() {
         String name = Thread.currentThread().getName();
         return "restartedMain".equalsIgnoreCase(name);
