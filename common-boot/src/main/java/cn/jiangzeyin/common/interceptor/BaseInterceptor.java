@@ -1,8 +1,6 @@
 package cn.jiangzeyin.common.interceptor;
 
 import cn.jiangzeyin.common.DefaultSystemLog;
-import cn.jiangzeyin.controller.base.AbstractBaseControl;
-import cn.jiangzeyin.controller.base.AbstractMultipartFileBaseControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -26,7 +24,7 @@ public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
     protected HttpSession session;
     protected ServletContext application;
     protected String url;
-    private AbstractBaseControl abstractBaseControl;
+    private CallbackController callbackController;
 
 
     @Override
@@ -40,11 +38,11 @@ public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
             HandlerMethod handlerMethod = (HandlerMethod) handler;
             Object object = handlerMethod.getBean();
             Class controlClass = object.getClass();
-            // 文件上传
-            if (AbstractMultipartFileBaseControl.class.isAssignableFrom(controlClass)) {
-                AbstractMultipartFileBaseControl abstractMultipartFileBaseControl = (AbstractMultipartFileBaseControl) object;
-                abstractMultipartFileBaseControl.setReqAndRes(this.request, this.session, this.response);
-                abstractBaseControl = abstractMultipartFileBaseControl;
+            //  controller
+            if (CallbackController.class.isAssignableFrom(controlClass)) {
+                CallbackController callbackController = (CallbackController) object;
+                callbackController.resetInfo(this.request, this.session, this.response);
+                this.callbackController = callbackController;
             }
         }
         return true;
@@ -54,8 +52,8 @@ public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
      * 第二次回调
      */
     protected void reload() {
-        if (abstractBaseControl != null)
-            abstractBaseControl.reLoad();
+        if (callbackController != null)
+            callbackController.reload();
     }
 
     @Override

@@ -155,4 +155,12 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
             converters.addAll(httpMessageConverters);
         }
     }
+
+    /**
+     * 默认的拦截器
+     * Created by jiangzeyin on 2017/11/3.
+     */
+    @InterceptorPattens
+    static class DefaultInterceptor extends BaseInterceptor {
+    }
 }

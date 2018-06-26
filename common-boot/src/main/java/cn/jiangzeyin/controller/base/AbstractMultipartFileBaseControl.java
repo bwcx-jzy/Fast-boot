@@ -52,7 +52,9 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
      * @param session  ses
      * @param response res
      */
-    public void setReqAndRes(HttpServletRequest request, HttpSession session, HttpServletResponse response) {
+    @Override
+    public void resetInfo(HttpServletRequest request, HttpSession session, HttpServletResponse response) {
+        super.resetInfo(request, session, response);
         THREAD_LOCAL_MULTIPART_HTTP_SERVLET_REQUEST.set(null);
     }
 
@@ -99,9 +101,9 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
     protected String[] upload(String... name) throws IOException {
         Objects.requireNonNull(name);
         String[] path = new String[name.length];
+        String localPath = MultipartFileConfig.getFileTempPath();
         for (int i = 0, len = path.length; i < len; i++) {
             String item = name[i];
-            String localPath = MultipartFileConfig.getFileTempPath();
             MultipartFile multiFile = getFile(item);
             if (multiFile == null)
                 continue;
