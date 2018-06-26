@@ -19,34 +19,45 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 
 /**
+ * base
+ * 公共的获取参数
+ *
  * @author jiangzeyin
  * Created by jiangzeyin on 2017/1/12.
  */
 public abstract class AbstractBaseControl {
-    private static final ThreadLocal<HttpServletRequest> HTTP_SERVLET_REQUEST_THREAD_LOCAL = new ThreadLocal<>();
-    private static final ThreadLocal<HttpSession> HTTP_SESSION_THREAD_LOCAL = new ThreadLocal<>();
-    private static final ThreadLocal<HttpServletResponse> HTTP_SERVLET_RESPONSE_THREAD_LOCAL = new ThreadLocal<>();
+    //private static final ThreadLocal<HttpServletRequest> HTTP_SERVLET_REQUEST_THREAD_LOCAL = new ThreadLocal<>();
+    //private static final ThreadLocal<HttpSession> HTTP_SESSION_THREAD_LOCAL = new ThreadLocal<>();
+    //private static final ThreadLocal<HttpServletResponse> HTTP_SERVLET_RESPONSE_THREAD_LOCAL = new ThreadLocal<>();
     /**
      * ip 地址
      */
-    protected String ip;
+    private String ip;
 
 
-    /**
-     * 拦截器注入
-     *
-     * @param request  req
-     * @param session  ses
-     * @param response rep
-     */
-    public void setReqAndRes(HttpServletRequest request, HttpSession session, HttpServletResponse response) {
-        HTTP_SERVLET_REQUEST_THREAD_LOCAL.set(request);
-        HTTP_SESSION_THREAD_LOCAL.set(session);
-        HTTP_SERVLET_RESPONSE_THREAD_LOCAL.set(response);
-        this.ip = getIpAddress(request);
-        response.setCharacterEncoding("UTF-8");
+//    /**
+//     * 拦截器注入
+//     *
+//     * @param request  req
+//     * @param session  ses
+//     * @param response rep
+//     */
+//    public void setReqAndRes(HttpServletRequest request, HttpSession session, HttpServletResponse response) {
+//        //HTTP_SERVLET_REQUEST_THREAD_LOCAL.set(request);
+//        //HTTP_SESSION_THREAD_LOCAL.set(session);
+//        //HTTP_SERVLET_RESPONSE_THREAD_LOCAL.set(response);
+//        this.ip = getIpAddress(request);
+//        response.setCharacterEncoding("UTF-8");
+//    }
+
+    public String getIp() {
+        if (StringUtil.isEmpty(ip)) {
+            this.ip = getIpAddress(getRequest());
+        }
+        return this.ip;
     }
 
     /**
@@ -57,46 +68,34 @@ public abstract class AbstractBaseControl {
     }
 
     protected HttpServletResponse getResponse() {
-        HttpServletResponse response = HTTP_SERVLET_RESPONSE_THREAD_LOCAL.get();
-        if (response == null) {
-            ServletRequestAttributes requestAttributes = getRequestAttributes();
-            if (requestAttributes == null)
-                return null;
-            response = requestAttributes.getResponse();
-        }
+        HttpServletResponse response = getRequestAttributes().getResponse();
+        Objects.requireNonNull(response, "null");
         return response;
     }
 
     private static ServletRequestAttributes getRequestAttributes() {
-        RequestAttributes attributes;
+        RequestAttributes attributes = null;
         try {
             attributes = RequestContextHolder.currentRequestAttributes();
         } catch (IllegalStateException e) {
             // TODO: handle exception
             DefaultSystemLog.ERROR().error("获取req失败", e);
-            return null;
         }
-        return (ServletRequestAttributes) attributes;
+        Objects.requireNonNull(attributes);
+        if (attributes instanceof ServletRequestAttributes)
+            return (ServletRequestAttributes) attributes;
+        throw new IllegalArgumentException("error");
     }
 
     protected HttpSession getSession() {
-        HttpSession session = HTTP_SESSION_THREAD_LOCAL.get();
-        if (session == null) {
-            HttpServletRequest request = getRequest();
-            if (request != null)
-                session = request.getSession();
-        }
+        HttpSession session = getRequest().getSession();
+        Objects.requireNonNull(session, "null");
         return session;
     }
 
     protected HttpServletRequest getRequest() {
-        HttpServletRequest request = HTTP_SERVLET_REQUEST_THREAD_LOCAL.get();
-        if (request == null) {
-            ServletRequestAttributes sra = getRequestAttributes();
-            if (sra == null)
-                return null;
-            request = sra.getRequest();
-        }
+        HttpServletRequest request = getRequestAttributes().getRequest();
+        Objects.requireNonNull(request, "null");
         return request;
     }
 
@@ -170,7 +169,13 @@ public abstract class AbstractBaseControl {
         return getRequest().getParameterValues(name);
     }
 
-
+    /**
+     * 获取指定参数名的值
+     *
+     * @param name 参数名
+     * @param def  默认值
+     * @return str
+     */
     protected String getParameter(String name, String def) {
         String value = getRequest().getParameter(name);
         return value == null ? def : value;
@@ -182,6 +187,21 @@ public abstract class AbstractBaseControl {
 
     protected int getParameterInt(String name) {
         return getParameterInt(name, 0);
+    }
+
+    protected long getParameterLong(String name, long def) {
+        String value = getParameter(name);
+        if (value == null)
+            return def;
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException ignored) {
+        }
+        return def;
+    }
+
+    protected long getParameterLong(String name) {
+        return getParameterLong(name, 0L);
     }
 
     /**

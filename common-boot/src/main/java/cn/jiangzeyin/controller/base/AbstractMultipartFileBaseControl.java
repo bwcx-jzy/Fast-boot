@@ -4,11 +4,10 @@ import cn.jiangzeyin.StringUtil;
 import cn.jiangzeyin.SystemClock;
 import cn.jiangzeyin.common.request.ParameterXssWrapper;
 import cn.jiangzeyin.controller.multipart.MultipartFileConfig;
-import cn.jiangzeyin.util.FileUtil;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
-import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,32 +25,24 @@ import java.util.Objects;
  * Created by jiangzeyin on 2017/2/13.
  */
 public abstract class AbstractMultipartFileBaseControl extends AbstractBaseControl {
-    private static final ThreadLocal<Map<String, String[]>> MAP_THREAD_LOCAL_PARAMETER = new ThreadLocal<>();
-    private static final ThreadLocal<MultipartHttpServletRequest> THREAD_LOCAL_MULTIPART_HTTP_SERVLET_REQUEST = new ThreadLocal<>();
 
-    protected Map<String, String[]> getParameter() {
-        Map<String, String[]> map = MAP_THREAD_LOCAL_PARAMETER.get();
-        if (map == null) {
-            try {
-                map = ParameterXssWrapper.doXss(getMultiRequest().getParameterMap(), false);
-                MAP_THREAD_LOCAL_PARAMETER.set(map);
-            } catch (Exception ignored) {
-            }
-        }
-        return map;
-    }
+    private static final ThreadLocal<MultipartHttpServletRequest> THREAD_LOCAL_MULTIPART_HTTP_SERVLET_REQUEST = new ThreadLocal<>();
 
     protected MultipartHttpServletRequest getMultiRequest() {
         MultipartHttpServletRequest multipartHttpServletRequest = THREAD_LOCAL_MULTIPART_HTTP_SERVLET_REQUEST.get();
-        if (multipartHttpServletRequest == null) {
-            HttpServletRequest request = super.getRequest();
+        if (multipartHttpServletRequest != null)
+            return multipartHttpServletRequest;
+        HttpServletRequest request = super.getRequest();
+        if (ServletFileUpload.isMultipartContent(request)) {
             if (request instanceof MultipartHttpServletRequest) {
-                multipartHttpServletRequest = (MultipartHttpServletRequest) request;
-                THREAD_LOCAL_MULTIPART_HTTP_SERVLET_REQUEST.set(multipartHttpServletRequest);
+                return (MultipartHttpServletRequest) request;
             }
+            multipartHttpServletRequest = new StandardMultipartHttpServletRequest(request);
+            THREAD_LOCAL_MULTIPART_HTTP_SERVLET_REQUEST.set(multipartHttpServletRequest);
+            return multipartHttpServletRequest;
+        } else {
+            throw new IllegalArgumentException("not is Multipart");
         }
-        Assert.notNull(multipartHttpServletRequest, "not is Multipart");
-        return multipartHttpServletRequest;
     }
 
     /**
@@ -61,16 +52,8 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
      * @param session  ses
      * @param response res
      */
-    @Override
     public void setReqAndRes(HttpServletRequest request, HttpSession session, HttpServletResponse response) {
-        super.setReqAndRes(request, session, response);
-        if (ServletFileUpload.isMultipartContent(request)) {
-            THREAD_LOCAL_MULTIPART_HTTP_SERVLET_REQUEST.set((MultipartHttpServletRequest) request);
-            MAP_THREAD_LOCAL_PARAMETER.set(ParameterXssWrapper.doXss(getMultiRequest().getParameterMap(), false));
-        } else {
-            THREAD_LOCAL_MULTIPART_HTTP_SERVLET_REQUEST.set(null);
-            MAP_THREAD_LOCAL_PARAMETER.set(null);
-        }
+        THREAD_LOCAL_MULTIPART_HTTP_SERVLET_REQUEST.set(null);
     }
 
     @Override
@@ -102,6 +85,13 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
         return (T) object;
     }
 
+    /**
+     * 接收文件
+     *
+     * @param name 字段名称
+     * @return 保存位置
+     * @throws IOException IO
+     */
     protected String upload(String name) throws IOException {
         return upload(new String[]{name})[0];
     }
@@ -119,10 +109,21 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
             if (fileName == null || fileName.length() <= 0)
                 continue;
             String filePath = StringUtil.clearPath(String.format("%s/%s_%s", localPath, SystemClock.now(), fileName));
-            FileUtil.writeInputStream(multiFile.getInputStream(), new File(filePath));
+            multiFile.transferTo(new File(filePath));
+            //FileUtil.writeInputStream(multiFile.getInputStream(), new File(filePath));
             path[i] = filePath;
         }
         return path;
+    }
+
+    private Map<String, String[]> getParameter() {
+        Map<String, String[]> map = getRequest().getParameterMap();
+        boolean doXss = Boolean.valueOf(String.valueOf(getAttribute("ParameterXssWrapper.doXss")));
+        if (!doXss) {
+            map = ParameterXssWrapper.doXss(map, false);
+            setAttribute("ParameterXssWrapper.doXss", true);
+        }
+        return map;
     }
 
     @Override
@@ -154,5 +155,22 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
     protected int getParameterInt(String name, int def) {
         String value = getParameter(name);
         return StringUtil.parseInt(value, def);
+    }
+
+    @Override
+    protected long getParameterLong(String name) {
+        return getParameterLong(name, 0L);
+    }
+
+    @Override
+    protected long getParameterLong(String name, long def) {
+        String value = getParameter(name);
+        if (value == null)
+            return def;
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException ignored) {
+        }
+        return def;
     }
 }

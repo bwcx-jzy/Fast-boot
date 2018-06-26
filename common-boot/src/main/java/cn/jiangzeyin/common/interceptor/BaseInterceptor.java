@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
+ * 公共的拦截器
+ *
  * @author jiangzeyin
  * Created by jiangzeyin on 2017/2/17.
  */
@@ -29,28 +31,28 @@ public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        this.session = request.getSession();
-        this.application = session.getServletContext();
         this.request = request;
         this.response = response;
+        this.session = request.getSession();
+        this.application = session.getServletContext();
         this.url = request.getRequestURI();
         if (handler instanceof HandlerMethod) {
             HandlerMethod handlerMethod = (HandlerMethod) handler;
-            Class controlClass = ((HandlerMethod) handler).getBean().getClass();
             Object object = handlerMethod.getBean();
+            Class controlClass = object.getClass();
             // 文件上传
             if (AbstractMultipartFileBaseControl.class.isAssignableFrom(controlClass)) {
                 AbstractMultipartFileBaseControl abstractMultipartFileBaseControl = (AbstractMultipartFileBaseControl) object;
                 abstractMultipartFileBaseControl.setReqAndRes(this.request, this.session, this.response);
                 abstractBaseControl = abstractMultipartFileBaseControl;
-            } else if (AbstractBaseControl.class.isAssignableFrom(controlClass)) {
-                abstractBaseControl = (AbstractBaseControl) object;
-                abstractBaseControl.setReqAndRes(this.request, this.session, this.response);
             }
         }
         return true;
     }
 
+    /**
+     * 第二次回调
+     */
     protected void reload() {
         if (abstractBaseControl != null)
             abstractBaseControl.reLoad();

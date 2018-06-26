@@ -9,6 +9,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 /**
+ * xss 注入拦截
+ *
  * @author jiangzeyin
  * Created by jiangzeyin on 2017/2/4.
  */
@@ -51,11 +53,11 @@ public class ParameterXssWrapper extends HttpServletRequestWrapper {
     /**
      * 处理xss 问题
      *
-     * @param map  map
-     * @param utf8 utf8
+     * @param map         map
+     * @param convertUtf8 utf8
      * @return 结果
      */
-    public static Map<String, String[]> doXss(Map<String, String[]> map, boolean utf8) {
+    public static Map<String, String[]> doXss(Map<String, String[]> map, boolean convertUtf8) {
         Objects.requireNonNull(map);
         Iterator<Map.Entry<String, String[]>> iterator = map.entrySet().iterator();
         Map<String, String[]> valuesMap = new HashMap<>();
@@ -63,19 +65,26 @@ public class ParameterXssWrapper extends HttpServletRequestWrapper {
             Map.Entry<String, String[]> entry = iterator.next();
             String key = entry.getKey();
             String[] values = entry.getValue();
+            values = doXss(values, convertUtf8);
             if (values != null) {
-                for (int i = 0; i < values.length; i++) {
-                    if (!utf8)
-                        values[i] = getUTF8(values[i]);
-                    values[i] = StringUtil.filterHTML(values[i]);
-                }
                 valuesMap.put(key, values);
             }
         }
         return valuesMap;
     }
 
-    public static String getUTF8(String str) {
+    private static String[] doXss(String[] values, boolean convertUtf8) {
+        if (values == null)
+            return null;
+        for (int i = 0; i < values.length; i++) {
+            if (!convertUtf8)
+                values[i] = getUTF8(values[i]);
+            values[i] = StringUtil.filterHTML(values[i]);
+        }
+        return values;
+    }
+
+    static String getUTF8(String str) {
         if (StringUtil.isEmpty(str))
             return "";
         try {
@@ -85,5 +94,4 @@ public class ParameterXssWrapper extends HttpServletRequestWrapper {
             return "";
         }
     }
-
 }
