@@ -29,7 +29,7 @@ import java.util.Objects;
  * @author jiangzeyin
  * Created by jiangzeyin on 2017/1/12.
  */
-public abstract class AbstractBaseControl implements CallbackController {
+public abstract class AbstractBaseControl extends CallbackController {
     //private static final ThreadLocal<HttpServletRequest> HTTP_SERVLET_REQUEST_THREAD_LOCAL = new ThreadLocal<>();
     //private static final ThreadLocal<HttpSession> HTTP_SESSION_THREAD_LOCAL = new ThreadLocal<>();
     //private static final ThreadLocal<HttpServletResponse> HTTP_SERVLET_RESPONSE_THREAD_LOCAL = new ThreadLocal<>();
@@ -41,27 +41,16 @@ public abstract class AbstractBaseControl implements CallbackController {
 
     /**
      * 拦截器注入
-     *
-     * @param request  req
-     * @param session  ses
-     * @param response rep
      */
     @Override
-    public void resetInfo(HttpServletRequest request, HttpSession session, HttpServletResponse response) {
+    public void resetInfo() {
         //HTTP_SERVLET_REQUEST_THREAD_LOCAL.set(request);
         //HTTP_SESSION_THREAD_LOCAL.set(session);
         //HTTP_SERVLET_RESPONSE_THREAD_LOCAL.set(response);
-        this.ip = getIpAddress(request);
-        response.setCharacterEncoding("UTF-8");
+        //this.ip = getIpAddress(request);
+        //response.setCharacterEncoding("UTF-8");
     }
 
-    /**
-     * 二次回调
-     */
-    @Override
-    public void reload() {
-
-    }
 
     public String getIp() {
         if (StringUtil.isEmpty(ip)) {

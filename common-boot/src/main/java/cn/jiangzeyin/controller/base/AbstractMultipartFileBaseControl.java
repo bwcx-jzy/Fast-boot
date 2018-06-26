@@ -10,8 +10,6 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -47,14 +45,9 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
 
     /**
      * 处理上传文件 对象
-     *
-     * @param request  req
-     * @param session  ses
-     * @param response res
      */
     @Override
-    public void resetInfo(HttpServletRequest request, HttpSession session, HttpServletResponse response) {
-        super.resetInfo(request, session, response);
+    public void resetInfo() {
         THREAD_LOCAL_MULTIPART_HTTP_SERVLET_REQUEST.set(null);
     }
 

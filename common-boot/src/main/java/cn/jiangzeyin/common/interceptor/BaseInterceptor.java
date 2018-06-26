@@ -40,9 +40,8 @@ public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
             Class controlClass = object.getClass();
             //  controller
             if (CallbackController.class.isAssignableFrom(controlClass)) {
-                CallbackController callbackController = (CallbackController) object;
-                callbackController.resetInfo(this.request, this.session, this.response);
-                this.callbackController = callbackController;
+                // callbackController.resetInfo(this.request, this.session, this.response);
+                this.callbackController = (CallbackController) object;
             }
         }
         return true;
@@ -53,7 +52,7 @@ public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
      */
     protected void reload() {
         if (callbackController != null)
-            callbackController.reload();
+            callbackController.resetInfo();
     }
 
     @Override
