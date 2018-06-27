@@ -1,6 +1,7 @@
 package cn.jiangzeyin.common.spring;
 
 import cn.jiangzeyin.CommonPropertiesFinal;
+import cn.jiangzeyin.common.request.XssFilter;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
@@ -9,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * tomcat
  * Created by jiangzeyin on 2017/3/31.
  */
 @Configuration
@@ -41,5 +43,18 @@ public class TomcatInitBean {
             if (name != null && name.length() > 0)
                 servletContext.getSessionCookieConfig().setName(name);
         };
+    }
+
+    /**
+     * 编码拦截器
+     *
+     * @return xss
+     */
+    @Bean
+    public XssFilter characterEncodingFilter() {
+        XssFilter characterEncodingFilter = new XssFilter();
+        characterEncodingFilter.setEncoding("UTF-8");
+        characterEncodingFilter.setForceEncoding(true);
+        return characterEncodingFilter;
     }
 }
