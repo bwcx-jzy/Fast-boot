@@ -45,6 +45,7 @@ public abstract class AbstractBaseControl extends CallbackController {
      */
     @Override
     public void resetInfo() {
+        super.resetInfo();
         //HTTP_SERVLET_REQUEST_THREAD_LOCAL.set(request);
         //HTTP_SESSION_THREAD_LOCAL.set(session);
         //HTTP_SERVLET_RESPONSE_THREAD_LOCAL.set(response);
@@ -52,20 +53,20 @@ public abstract class AbstractBaseControl extends CallbackController {
         //response.setCharacterEncoding("UTF-8");
     }
 
-
-    public String getIp() {
+    /**
+     * 获取请求的ip 地址
+     *
+     * @return ip
+     */
+    protected String getIp() {
         if (StringUtil.isEmpty(ip)) {
             this.ip = getIpAddress(getRequest());
         }
         return this.ip;
     }
 
-
     protected HttpServletResponse getResponse() {
         HttpServletResponse response = getRequestAttributes().getResponse();
-        if (response == null) {
-            response = BaseInterceptor.getResponse();
-        }
         Objects.requireNonNull(response, "response null");
         return response;
     }
@@ -85,9 +86,9 @@ public abstract class AbstractBaseControl extends CallbackController {
     }
 
     protected HttpSession getSession() {
-        HttpSession session = getRequest().getSession();
+        HttpSession session = getRequestAttributes().getRequest().getSession();
         if (session == null) {
-            session = BaseInterceptor.getRequest().getSession();
+            session = BaseInterceptor.getSession();
         }
         Objects.requireNonNull(session, "session null");
         return session;
@@ -95,51 +96,16 @@ public abstract class AbstractBaseControl extends CallbackController {
 
     protected HttpServletRequest getRequest() {
         HttpServletRequest request = getRequestAttributes().getRequest();
-        if (request == null) {
-            request = BaseInterceptor.getRequest();
-        }
         Objects.requireNonNull(request, "request null");
         return request;
     }
 
     protected Object getAttribute(String name) {
-        return getRequest().getAttribute(name);
+        return getRequestAttributes().getAttribute(name, RequestAttributes.SCOPE_REQUEST);
     }
 
     protected void setAttribute(String name, Object object) {
-        HttpServletRequest request = getRequest();
-        //System.out.println(Request.class.isAssignableFrom(request.getClass()));
-        //System.out.println(request.getClass());
-        try {
-            request.setAttribute(name, object);
-            return;
-        } catch (NullPointerException ignored) {
-            request = BaseInterceptor.getRequest();
-//            if (request instanceof ServletRequestWrapper) {
-//                ServletRequestWrapper servletRequestWrapper = (ServletRequestWrapper) request;
-//                ServletRequest servletRequest = servletRequestWrapper.getRequest();
-//                if (servletRequest instanceof RequestFacade) {
-//                    RequestFacade requestFacade = (RequestFacade) servletRequest;
-//                    Field field = null;
-//                    try {
-//                        field = RequestFacade.class.getDeclaredField("request");
-//                    } catch (NoSuchFieldException ignored2) {
-//                    }
-//                    if (field != null) {
-//                        field.setAccessible(true);
-//                        Request request1 = (Request) field.get(requestFacade);
-//                        if (request1 != null) {
-//                            request1
-//                        }
-//                    }
-//                }
-//            }
-        }
-
-        if (request != null)
-            request.setAttribute(name, object);
-        else
-            throw new RuntimeException("set error");
+        getRequestAttributes().setAttribute(name, object, RequestAttributes.SCOPE_REQUEST);
     }
 
 
@@ -166,7 +132,7 @@ public abstract class AbstractBaseControl extends CallbackController {
      * @return obj
      */
     protected Object getSessionAttributeObj(String name) {
-        return getSession().getAttribute(name);
+        return getRequestAttributes().getAttribute(name, RequestAttributes.SCOPE_SESSION);
     }
 
     /**
@@ -176,7 +142,7 @@ public abstract class AbstractBaseControl extends CallbackController {
      * @author jiangzeyin
      */
     protected void removeSessionAttribute(String name) {
-        getSession().removeAttribute(name);
+        getRequestAttributes().removeAttribute(name, RequestAttributes.SCOPE_SESSION);
     }
 
     /**
@@ -186,7 +152,7 @@ public abstract class AbstractBaseControl extends CallbackController {
      * @param object 值
      */
     protected void setSessionAttribute(String name, Object object) {
-        getSession().setAttribute(name, object);
+        getRequestAttributes().setAttribute(name, object, RequestAttributes.SCOPE_SESSION);
     }
 
     protected String getCookieValue(String name) {

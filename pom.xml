@@ -11,7 +11,7 @@
     </parent>
     <groupId>cn.jiangzeyin.fast-boot</groupId>
     <artifactId>common-parent</artifactId>
-    <version>1.1.17</version>
+    <version>1.1.16</version>
     <name>Fast-boot</name>
     <url>http://blog.csdn.net/jiangzeyin_</url>
     <description>Spring Boot fast-boot</description>
@@ -20,9 +20,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
         <fastjson.version>1.2.47</fastjson.version>
-        <simple-util.version>1.0.10</simple-util.version>
-        <common-boot.version>1.1.17</common-boot.version>
-        <common-redis.version>1.1.17</common-redis.version>
+        <simple-util.version>1.0.11</simple-util.version>
+
+        <common-boot.version>1.1.16</common-boot.version>
+        <common-redis.version>1.1.16</common-redis.version>
     </properties>
     <modules>
         <module>common-boot</module>

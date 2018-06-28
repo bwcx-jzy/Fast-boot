@@ -27,20 +27,11 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
     private static final ThreadLocal<MultipartHttpServletRequest> THREAD_LOCAL_MULTIPART_HTTP_SERVLET_REQUEST = new ThreadLocal<>();
 
     protected MultipartHttpServletRequest getMultiRequest() {
-        MultipartHttpServletRequest multipartHttpServletRequest = THREAD_LOCAL_MULTIPART_HTTP_SERVLET_REQUEST.get();
-        if (multipartHttpServletRequest != null)
-            return multipartHttpServletRequest;
-        HttpServletRequest request = super.getRequest();
-        if (ServletFileUpload.isMultipartContent(request)) {
-            if (request instanceof MultipartHttpServletRequest) {
-                return (MultipartHttpServletRequest) request;
-            }
-            multipartHttpServletRequest = new StandardMultipartHttpServletRequest(request);
-            THREAD_LOCAL_MULTIPART_HTTP_SERVLET_REQUEST.set(multipartHttpServletRequest);
-            return multipartHttpServletRequest;
-        } else {
-            throw new IllegalArgumentException("not is Multipart");
+        HttpServletRequest request = getRequest();
+        if (request instanceof MultipartHttpServletRequest) {
+            return (MultipartHttpServletRequest) request;
         }
+        throw new IllegalArgumentException("not MultipartHttpServletRequest");
     }
 
     /**
@@ -48,16 +39,20 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
      */
     @Override
     public void resetInfo() {
+        super.resetInfo();
         THREAD_LOCAL_MULTIPART_HTTP_SERVLET_REQUEST.set(null);
     }
 
     @Override
     protected HttpServletRequest getRequest() {
-        HttpServletRequest request;
-        try {
-            request = getMultiRequest();
-        } catch (Exception e) {
-            return super.getRequest();
+        HttpServletRequest request = super.getRequest();
+        if (ServletFileUpload.isMultipartContent(request)) {
+            MultipartHttpServletRequest multipartHttpServletRequest = THREAD_LOCAL_MULTIPART_HTTP_SERVLET_REQUEST.get();
+            if (multipartHttpServletRequest != null)
+                return multipartHttpServletRequest;
+            multipartHttpServletRequest = new StandardMultipartHttpServletRequest(request);
+            THREAD_LOCAL_MULTIPART_HTTP_SERVLET_REQUEST.set(multipartHttpServletRequest);
+            request = multipartHttpServletRequest;
         }
         return request;
     }

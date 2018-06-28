@@ -26,26 +26,21 @@ public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
     protected String url;
     private CallbackController callbackController;
 
-    private static final ThreadLocal<HttpServletRequest> HTTP_SERVLET_REQUEST_THREAD_LOCAL = new ThreadLocal<>();
-    private static final ThreadLocal<HttpServletResponse> HTTP_SERVLET_RESPONSE_THREAD_LOCAL = new ThreadLocal<>();
+
+    private static final ThreadLocal<HttpSession> HTTP_SESSION_THREAD_LOCAL = new ThreadLocal<>();
 
 
-    public static HttpServletRequest getRequest() {
-        return HTTP_SERVLET_REQUEST_THREAD_LOCAL.get();
-    }
-
-    public static HttpServletResponse getResponse() {
-        return HTTP_SERVLET_RESPONSE_THREAD_LOCAL.get();
+    public static HttpSession getSession() {
+        return HTTP_SESSION_THREAD_LOCAL.get();
     }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        HTTP_SERVLET_REQUEST_THREAD_LOCAL.set(request);
-        HTTP_SERVLET_RESPONSE_THREAD_LOCAL.set(response);
         this.request = request;
         this.response = response;
         this.session = request.getSession();
         this.application = session.getServletContext();
+        HTTP_SESSION_THREAD_LOCAL.set(this.session);
         this.url = request.getRequestURI();
         if (handler instanceof HandlerMethod) {
             HandlerMethod handlerMethod = (HandlerMethod) handler;
