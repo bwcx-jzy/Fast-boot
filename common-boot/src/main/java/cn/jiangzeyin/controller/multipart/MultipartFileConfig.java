@@ -3,6 +3,7 @@ package cn.jiangzeyin.controller.multipart;
 import cn.jiangzeyin.StringUtil;
 
 /**
+ * 上传文件保存路径
  * Created by jiangzeyin on 2017/10/25.
  */
 public class MultipartFileConfig {

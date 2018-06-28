@@ -4,14 +4,13 @@ import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.common.interceptor.BaseInterceptor;
 import cn.jiangzeyin.common.spring.event.ApplicationEventClient;
 import cn.jiangzeyin.common.spring.event.ApplicationEventLoad;
+import cn.jiangzeyin.util.PackageUtil;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.util.StringUtils;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Proxy;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -83,6 +82,7 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
             out.println(msg);
         });
         addLoadPage("cn.jiangzeyin");
+        //loadProperties();
         SpringApplicationBuilder.applicationBuilder = this;
     }
 
@@ -202,5 +202,40 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
     public static boolean isRestart() {
         String name = Thread.currentThread().getName();
         return "restartedMain".equalsIgnoreCase(name);
+    }
+
+    /**
+     * 加载配置
+     *
+     * @throws Exception e
+     */
+    public void loadProperties(String packageName) throws Exception {
+        List<String> list = PackageUtil.getClassName(packageName, false);
+        for (String item : list) {
+            Class cls = Class.forName(item);
+            AutoPropertiesClass autoPropertiesClass = (AutoPropertiesClass) cls.getAnnotation(AutoPropertiesClass.class);
+            if (autoPropertiesClass != null) {
+                Method[] methods = cls.getDeclaredMethods();
+                if (methods != null) {
+                    for (Method method : methods) {
+                        AutoPropertiesMethod autoPropertiesMethod = method.getAnnotation(AutoPropertiesMethod.class);
+                        if (autoPropertiesMethod == null)
+                            continue;
+                        method.setAccessible(true);
+                        ParameterizedType parameterizedType = (ParameterizedType) method.getGenericReturnType();
+                        Type type = parameterizedType.getRawType();
+                        Class retCls = (Class) type;
+                        int modifiers = method.getModifiers();
+                        Type[] parameters = method.getParameterTypes();
+                        if ((parameters == null || parameters.length <= 0) && (Map.class == retCls) && Modifier.isStatic(modifiers) && Modifier.isPrivate(modifiers)) {
+                            Map<String, Object> map = (Map<String, Object>) method.invoke(null);
+                            if (map != null)
+                                properties(map);
+                        } else
+                            throw new IllegalArgumentException(cls + "  " + method + "  " + PreLoadMethod.class + " must use empty parameters static Map private");
+                    }
+                }
+            }
+        }
     }
 }

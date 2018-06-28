@@ -11,6 +11,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -162,5 +164,11 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
      */
     @InterceptorPattens
     static class DefaultInterceptor extends BaseInterceptor {
+        @Override
+        public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+            super.preHandle(request, response, handler);
+            reload();
+            return true;
+        }
     }
 }

@@ -4,6 +4,7 @@ import cn.jiangzeyin.StringUtil;
 import cn.jiangzeyin.SystemClock;
 import cn.jiangzeyin.common.request.ParameterXssWrapper;
 import cn.jiangzeyin.controller.multipart.MultipartFileConfig;
+import cn.jiangzeyin.util.FileUtil;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -99,8 +100,12 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
             if (fileName == null || fileName.length() <= 0)
                 continue;
             String filePath = StringUtil.clearPath(String.format("%s/%s_%s", localPath, SystemClock.now(), fileName));
-            multiFile.transferTo(new File(filePath));
-            //FileUtil.writeInputStream(multiFile.getInputStream(), new File(filePath));
+            File file = new File(filePath);
+            //File parent = file.getParentFile();
+            //if (!parent.exists() && !parent.mkdirs())
+            //    throw new IOException("create " + parent.getPath());
+            //multiFile.transferTo(file);
+            FileUtil.writeInputStream(multiFile.getInputStream(), file);
             path[i] = filePath;
         }
         return path;
