@@ -3,25 +3,18 @@ package cn.jiangzeyin.controller.base;
 import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.StringUtil;
 import cn.jiangzeyin.common.DefaultSystemLog;
-import cn.jiangzeyin.common.interceptor.BaseInterceptor;
 import cn.jiangzeyin.common.interceptor.CallbackController;
 import cn.jiangzeyin.common.spring.SpringUtil;
 import org.springframework.http.HttpHeaders;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * base
@@ -65,95 +58,10 @@ public abstract class AbstractBaseControl extends CallbackController {
         return this.ip;
     }
 
-    protected HttpServletResponse getResponse() {
-        HttpServletResponse response = getRequestAttributes().getResponse();
-        Objects.requireNonNull(response, "response null");
-        return response;
-    }
-
-    private static ServletRequestAttributes getRequestAttributes() {
-        RequestAttributes attributes = null;
-        try {
-            attributes = RequestContextHolder.currentRequestAttributes();
-        } catch (IllegalStateException e) {
-            // TODO: handle exception
-            DefaultSystemLog.ERROR().error("获取req失败", e);
-        }
-        Objects.requireNonNull(attributes);
-        if (attributes instanceof ServletRequestAttributes)
-            return (ServletRequestAttributes) attributes;
-        throw new IllegalArgumentException("error");
-    }
-
-    protected HttpSession getSession() {
-        HttpSession session = getRequestAttributes().getRequest().getSession();
-        if (session == null) {
-            session = BaseInterceptor.getSession();
-        }
-        Objects.requireNonNull(session, "session null");
-        return session;
-    }
-
-    protected HttpServletRequest getRequest() {
-        HttpServletRequest request = getRequestAttributes().getRequest();
-        Objects.requireNonNull(request, "request null");
-        return request;
-    }
-
-    protected Object getAttribute(String name) {
-        return getRequestAttributes().getAttribute(name, RequestAttributes.SCOPE_REQUEST);
-    }
-
-    protected void setAttribute(String name, Object object) {
-        getRequestAttributes().setAttribute(name, object, RequestAttributes.SCOPE_REQUEST);
-    }
-
-
     protected String getHeader(String name) {
         return getRequest().getHeader(name);
     }
 
-
-    /**
-     * 获取session 字符串
-     *
-     * @param name name
-     * @return str
-     * @author jiangzeyin
-     */
-    protected String getSessionAttribute(String name) {
-        return StringUtil.convertNULL(getSessionAttributeObj(name));
-    }
-
-    /**
-     * 获取session 中对象
-     *
-     * @param name name
-     * @return obj
-     */
-    protected Object getSessionAttributeObj(String name) {
-        return getRequestAttributes().getAttribute(name, RequestAttributes.SCOPE_SESSION);
-    }
-
-    /**
-     * 移除session 值
-     *
-     * @param name name
-     * @author jiangzeyin
-     */
-    protected void removeSessionAttribute(String name) {
-        getRequestAttributes().removeAttribute(name, RequestAttributes.SCOPE_SESSION);
-    }
-
-    /**
-     * 设置session 字符串
-     *
-     * @param name   name
-     * @param object 值
-     */
-    protected void setSessionAttribute(String name, Object object) {
-        getRequestAttributes().setAttribute(name, object, RequestAttributes.SCOPE_SESSION);
-    }
 
     protected String getCookieValue(String name) {
         Cookie cookie = RequestUtil.getCookieByName(getRequest(), name);

@@ -45,7 +45,7 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
     }
 
     @Override
-    protected HttpServletRequest getRequest() {
+    public HttpServletRequest getRequest() {
         HttpServletRequest request = super.getRequest();
         if (ServletFileUpload.isMultipartContent(request)) {
             MultipartHttpServletRequest multipartHttpServletRequest = THREAD_LOCAL_MULTIPART_HTTP_SERVLET_REQUEST.get();
