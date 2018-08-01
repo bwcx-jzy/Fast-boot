@@ -16,40 +16,55 @@ import redis.clients.jedis.JedisPoolConfig;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * 管理工厂
  * Created by jiangzeyin on 2017/12/12.
  *
  * @since 1.0.0
  */
-public class RedisCacheManagerFactory {
+public final class RedisCacheManagerFactory {
     private static final ConcurrentHashMap<String, RedisCacheManager> REDIS_CACHE_MANAGER_CONCURRENT_HASH_MAP = new ConcurrentHashMap<>();
-    private static final ConcurrentHashMap<String, RedisTemplate> REDIS_TEMPLATE_CONCURRENT_HASH_MAP = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, RedisTemplate<String, Object>> REDIS_TEMPLATE_CONCURRENT_HASH_MAP = new ConcurrentHashMap<>();
 
+    /**
+     * 获取缓存管理对象
+     *
+     * @param database 数据编号
+     * @return manage
+     */
     public static RedisCacheManager getRedisCacheManager(int database) {
         String key = "key_value_" + database;
-        RedisCacheManager redisCacheManager = REDIS_CACHE_MANAGER_CONCURRENT_HASH_MAP.get(key);
-        if (redisCacheManager != null)
-            return redisCacheManager;
-        RedisTemplate template = new RedisTemplate<>();
-        RedisConnectionFactory connectionFactory = RedisConnectionFactoryPool.getRedisConnectionFactory(database);
-        template.setConnectionFactory(connectionFactory);
-        template.afterPropertiesSet();
-        REDIS_TEMPLATE_CONCURRENT_HASH_MAP.put(key, template);
-        redisCacheManager = new CustomizedRedisCacheManager(database, template);
-        // 指定缓存时间
-        redisCacheManager.setExpires(RedisCacheConfig.getExpires(database));
-        // 默认时间
-        redisCacheManager.setDefaultExpiration(RedisCacheConfig.getDefaultExpireTime(database));
-        redisCacheManager.afterPropertiesSet();
-        REDIS_CACHE_MANAGER_CONCURRENT_HASH_MAP.put(key, redisCacheManager);
+        RedisCacheManager redisCacheManager = REDIS_CACHE_MANAGER_CONCURRENT_HASH_MAP.computeIfAbsent(key, s -> {
+            RedisTemplate<String, Object> template = new RedisTemplate<>();
+            RedisConnectionFactory connectionFactory = RedisConnectionFactoryPool.getRedisConnectionFactory(database);
+            template.setConnectionFactory(connectionFactory);
+            template.afterPropertiesSet();
+            REDIS_TEMPLATE_CONCURRENT_HASH_MAP.put(key, template);
+            RedisCacheManager redisCacheManager1 = new CustomizedRedisCacheManager(database, template);
+            // 指定缓存时间
+            redisCacheManager1.setExpires(RedisCacheConfig.getExpires(database));
+            // 默认时间
+            redisCacheManager1.setDefaultExpiration(RedisCacheConfig.getDefaultExpireTime(database));
+            redisCacheManager1.afterPropertiesSet();
+//                REDIS_CACHE_MANAGER_CONCURRENT_HASH_MAP.put(key, redisCacheManager);
+            return redisCacheManager1;
+        });
+        Objects.requireNonNull(redisCacheManager, "init error");
         return redisCacheManager;
     }
 
-    public static RedisTemplate getRedisTemplate(int database) {
+    /**
+     * 获取缓存操作模板
+     *
+     * @param database 数据编号
+     * @return 操作模板
+     */
+    public static RedisTemplate<String, Object> getRedisTemplate(int database) {
         String key = "key_value_" + database;
-        RedisTemplate template = REDIS_TEMPLATE_CONCURRENT_HASH_MAP.get(key);
+        RedisTemplate<String, Object> template = REDIS_TEMPLATE_CONCURRENT_HASH_MAP.get(key);
         if (template == null) {
             getRedisCacheManager(database);
             template = REDIS_TEMPLATE_CONCURRENT_HASH_MAP.get(key);
@@ -65,6 +80,12 @@ public class RedisCacheManagerFactory {
             this.database = database;
         }
 
+        /**
+         * 计算到期时间
+         *
+         * @param name 组名
+         * @return long
+         */
         @Override
         protected long computeExpiration(String name) {
             Long time = RedisCacheConfig.getGroupExpires(database, name);
@@ -90,17 +111,17 @@ public class RedisCacheManagerFactory {
             return redisConnectionFactory;
         }
 
-        static RedisConnectionFactory getRedisConnectionFactory() {
-            if (redisProperties == null)
-                redisProperties = SpringUtil.getBean(RedisProperties.class);
-            return getRedisConnectionFactory(redisProperties.getDatabase());
-        }
-
-        static int getDefaultDatabase() {
-            if (redisProperties == null)
-                redisProperties = SpringUtil.getBean(RedisProperties.class);
-            return redisProperties.getDatabase();
-        }
+//        static RedisConnectionFactory getRedisConnectionFactory() {
+//            if (redisProperties == null)
+//                redisProperties = SpringUtil.getBean(RedisProperties.class);
+//            return getRedisConnectionFactory(redisProperties.getDatabase());
+//        }
+//
+//        static int getDefaultDatabase() {
+//            if (redisProperties == null)
+//                redisProperties = SpringUtil.getBean(RedisProperties.class);
+//            return redisProperties.getDatabase();
+//        }
 
         /**
          * Redis connection configuration.
@@ -200,8 +221,6 @@ public class RedisCacheManagerFactory {
                 config.setMaxWaitMillis(props.getMaxWait());
                 return config;
             }
-
         }
     }
-
 }

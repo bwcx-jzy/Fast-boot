@@ -88,7 +88,14 @@ public class RedisCacheConfig {
         return dataSource;
     }
 
+    /**
+     * 获取默认使用的库编号
+     *
+     * @return int
+     */
     public static int getDefaultDatabase() {
+        if (defaultDatabase < 0)
+            throw new RuntimeException("please config");
         return defaultDatabase;
     }
 
@@ -98,6 +105,7 @@ public class RedisCacheConfig {
      * @param cls class
      * @throws IllegalAccessException e
      */
+    @SuppressWarnings("unchecked")
     private static void loadClass(Class cls) throws IllegalAccessException {
         Field[] fields = cls.getFields();
         for (Field field : fields) {
