@@ -177,6 +177,7 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
      * @throws NoSuchFieldException   e
      * @throws IllegalAccessException e
      */
+    @SuppressWarnings("unchecked")
     public SpringApplicationBuilder addLoadPage(String packageName) throws NoSuchFieldException, IllegalAccessException {
         if (StringUtils.isEmpty(packageName))
             throw new IllegalArgumentException("packageName");
@@ -209,6 +210,7 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
      *
      * @throws Exception e
      */
+    @SuppressWarnings("unchecked")
     public void loadProperties(String packageName) throws Exception {
         List<String> list = PackageUtil.getClassName(packageName, false);
         for (String item : list) {
@@ -227,7 +229,7 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
                         Class retCls = (Class) type;
                         int modifiers = method.getModifiers();
                         Type[] parameters = method.getParameterTypes();
-                        if ((parameters == null || parameters.length <= 0) && (Map.class == retCls) && Modifier.isStatic(modifiers) && Modifier.isPrivate(modifiers)) {
+                        if (parameters.length <= 0 && Map.class == retCls && Modifier.isStatic(modifiers) && Modifier.isPrivate(modifiers)) {
                             Map<String, Object> map = (Map<String, Object>) method.invoke(null);
                             if (map != null)
                                 properties(map);

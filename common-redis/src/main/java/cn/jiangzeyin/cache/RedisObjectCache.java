@@ -96,7 +96,7 @@ public class RedisObjectCache {
         Objects.requireNonNull(key);
         if (database < 0)
             throw new RuntimeException("database error");
-        RedisTemplate redisTemplate = RedisCacheManagerFactory.getRedisTemplate(database);
+        RedisTemplate<String, Object> redisTemplate = RedisCacheManagerFactory.getRedisTemplate(database);
         redisTemplate.delete(key);
     }
 
@@ -144,7 +144,7 @@ public class RedisObjectCache {
         Objects.requireNonNull(key);
         if (database < 0)
             throw new RuntimeException("database error");
-        RedisTemplate redisTemplate = RedisCacheManagerFactory.getRedisTemplate(database);
+        RedisTemplate<String, Object> redisTemplate = RedisCacheManagerFactory.getRedisTemplate(database);
         return redisTemplate.getExpire(key);
     }
 
@@ -170,7 +170,7 @@ public class RedisObjectCache {
         Objects.requireNonNull(key);
         if (database < 0)
             throw new RuntimeException("database error");
-        RedisTemplate redisTemplate = RedisCacheManagerFactory.getRedisTemplate(database);
+        RedisTemplate<String, Object> redisTemplate = RedisCacheManagerFactory.getRedisTemplate(database);
         return redisTemplate.hasKey(key);
     }
 }

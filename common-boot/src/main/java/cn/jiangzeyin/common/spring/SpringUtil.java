@@ -1,6 +1,7 @@
 package cn.jiangzeyin.common.spring;
 
 import cn.jiangzeyin.CommonPropertiesFinal;
+import cn.jiangzeyin.StringUtil;
 import cn.jiangzeyin.common.CommonInitPackage;
 import cn.jiangzeyin.common.DefaultSystemLog;
 import cn.jiangzeyin.common.SpringApplicationBuilder;
@@ -8,12 +9,14 @@ import cn.jiangzeyin.common.spring.event.ApplicationEventClient;
 import cn.jiangzeyin.common.spring.event.ApplicationEventLoad;
 import cn.jiangzeyin.pool.ThreadPoolService;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.core.env.Environment;
@@ -21,6 +24,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.context.support.ServletRequestHandledEvent;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 通用的Spring Context util
@@ -106,7 +110,6 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
      */
     public static Object getBean(String name) {
         return getApplicationContext().getBean(name);
-
     }
 
     /**
@@ -148,6 +151,24 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
      */
     public static String getApplicationId() {
         return getEnvironment().getProperty(CommonPropertiesFinal.APPLICATION_ID);
+    }
+
+    /**
+     * 动态注入class
+     *
+     * @param tClass class
+     * @param <T>    t
+     * @return obj
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T registerSingleton(Class<T> tClass) {
+        Objects.requireNonNull(tClass);
+        AutowireCapableBeanFactory autowireCapableBeanFactory = getApplicationContext().getAutowireCapableBeanFactory();
+        T obj = autowireCapableBeanFactory.createBean(tClass);
+        String beanName = StringUtil.captureName(tClass.getSimpleName());
+        AnnotationConfigApplicationContext applicationContext = (AnnotationConfigApplicationContext) getApplicationContext().getParentBeanFactory();
+        applicationContext.getBeanFactory().registerSingleton(beanName, obj);
+        return obj;
     }
 }
 

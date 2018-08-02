@@ -88,8 +88,16 @@ public class CommonInitPackage {
         return newList;
     }
 
-    // 排序class 中方法
+    /**
+     * 排序class 中方法
+     *
+     * @param classT class
+     */
+    @SuppressWarnings("unchecked")
     private static void loadClass(Class classT) {
+        // 注入到Spring 容器中
+        SpringUtil.registerSingleton(classT);
+        // 调用方法
         Method[] methods = classT.getDeclaredMethods();
         HashMap<Method, Integer> sortMap = new HashMap<>();
         for (Method method : methods) {
@@ -99,7 +107,7 @@ public class CommonInitPackage {
             Type type = method.getGenericReturnType();
             int modifiers = method.getModifiers();
             Type[] parameters = method.getParameterTypes();
-            if ((parameters == null || parameters.length <= 0) && Void.TYPE.equals(type) && Modifier.isStatic(modifiers) && Modifier.isPrivate(modifiers)) {
+            if (parameters.length <= 0 && Void.TYPE.equals(type) && Modifier.isStatic(modifiers) && Modifier.isPrivate(modifiers)) {
                 sortMap.put(method, preLoadMethod.value());
             } else
                 throw new IllegalArgumentException(classT + "  " + method + "  " + PreLoadMethod.class + " must use empty parameters static void private");
