@@ -10,13 +10,10 @@ import cn.jiangzeyin.common.spring.event.ApplicationEventLoad;
 import cn.jiangzeyin.pool.ThreadPoolService;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.*;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.core.env.Environment;
@@ -163,11 +160,14 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
     @SuppressWarnings("unchecked")
     public static <T> T registerSingleton(Class<T> tClass) {
         Objects.requireNonNull(tClass);
+        // 创建bean
         AutowireCapableBeanFactory autowireCapableBeanFactory = getApplicationContext().getAutowireCapableBeanFactory();
         T obj = autowireCapableBeanFactory.createBean(tClass);
         String beanName = StringUtil.captureName(tClass.getSimpleName());
-        AnnotationConfigApplicationContext applicationContext = (AnnotationConfigApplicationContext) getApplicationContext().getParentBeanFactory();
-        applicationContext.getBeanFactory().registerSingleton(beanName, obj);
+        // 注册
+        ConfigurableApplicationContext configurableApplicationContext = (ConfigurableApplicationContext) getApplicationContext();
+        ConfigurableListableBeanFactory configurableListableBeanFactory = configurableApplicationContext.getBeanFactory();
+        configurableListableBeanFactory.registerSingleton(beanName, obj);
         return obj;
     }
 }
