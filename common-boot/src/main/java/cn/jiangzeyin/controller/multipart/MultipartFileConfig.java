@@ -4,7 +4,9 @@ import cn.jiangzeyin.StringUtil;
 
 /**
  * 上传文件保存路径
- * Created by jiangzeyin on 2017/10/25.
+ *
+ * @author jiangzeyin
+ * @date 2017/10/25
  */
 public class MultipartFileConfig {
     private static String fileTempPath;
@@ -14,8 +16,9 @@ public class MultipartFileConfig {
     }
 
     public static String getFileTempPath() {
-        if (StringUtil.isEmpty(fileTempPath))
+        if (StringUtil.isEmpty(fileTempPath)) {
             throw new IllegalArgumentException("please set  fileTempPath");
+        }
         return fileTempPath;
     }
 }

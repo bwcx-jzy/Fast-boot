@@ -7,7 +7,9 @@ import org.springframework.context.annotation.PropertySource;
 import java.util.List;
 
 /**
- * Created by jiangzeyin on 2017/12/12.
+ *
+ * @author jiangzeyin
+ * @date 2017/12/12
  */
 @Configuration
 @PropertySource("classpath:redis.properties")

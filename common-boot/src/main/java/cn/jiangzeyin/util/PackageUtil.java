@@ -49,12 +49,13 @@ public final class PackageUtil {
         Enumeration<URL> urls = loader.getResources(packagePath);
         while (urls.hasMoreElements()) {
             URL url = urls.nextElement();
-            if (url == null)
+            if (url == null) {
                 continue;
+            }
             String type = url.getProtocol();
-            if (type.equals("file")) {
+            if ("file".equals(type)) {
                 fileNames.addAll(getClassNameByFile(url.getPath(), childPackage));
-            } else if (type.equals("jar")) {
+            } else if ("jar".equals(type)) {
                 fileNames.addAll(getClassNameByJar(url.getPath(), childPackage));
             }
         }
@@ -76,8 +77,9 @@ public final class PackageUtil {
         filePath = URLDecoder.decode(filePath, "UTF-8");
         File file = new File(filePath);
         File[] childFiles = file.listFiles();
-        if (childFiles == null)
+        if (childFiles == null) {
             return myClassName;
+        }
         for (File childFile : childFiles) {
             if (childFile.isDirectory()) {
                 if (childPackage) {
@@ -108,11 +110,13 @@ public final class PackageUtil {
         List<String> myClassName = new ArrayList<>();
         String[] jarInfo = jarPath.split("!");
         String jarFilePath = jarInfo[0].substring(jarInfo[0].indexOf("/"));
-        jarFilePath = URLDecoder.decode(jarFilePath, "UTF-8");//UrlDecode.getURLDecode(jarFilePath);
+        //UrlDecode.getURLDecode(jarFilePath);
+        jarFilePath = URLDecoder.decode(jarFilePath, "UTF-8");
         // 判断是否为文件，
         File jarFileInfo = new File(jarFilePath);
-        if (!jarFileInfo.isFile())
+        if (!jarFileInfo.isFile()) {
             return myClassName;
+        }
         String packagePath = jarInfo[1].substring(1);
         try {
             JarFile jarFile = new JarFile(jarFileInfo);

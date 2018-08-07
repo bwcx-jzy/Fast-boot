@@ -74,9 +74,11 @@ public final class FileUtil {
         Objects.requireNonNull(inputStream, "inputStream is null");
         Objects.requireNonNull(file, "file is null");
         File parent = file.getParentFile();
-        if (!parent.exists())
-            if (!parent.mkdirs())
+        if (!parent.exists()) {
+            if (!parent.mkdirs()) {
                 throw new IllegalArgumentException(file.getPath() + " create fail");
+            }
+        }
         DataOutputStream outputStream = null;
         FileOutputStream fileOutputStream = null;
         try {
@@ -92,10 +94,12 @@ public final class FileUtil {
             }
         } finally {
             inputStream.close();
-            if (outputStream != null)
+            if (outputStream != null) {
                 outputStream.close();
-            if (fileOutputStream != null)
+            }
+            if (fileOutputStream != null) {
                 fileOutputStream.close();
+            }
         }
     }
 

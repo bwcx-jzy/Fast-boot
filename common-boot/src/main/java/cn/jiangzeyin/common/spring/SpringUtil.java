@@ -46,8 +46,9 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
         DefaultSystemLog.init();
         List<ApplicationEventLoad> applicationEventLoads = SpringApplicationBuilder.getInstance().getApplicationEventLoads();
         if (applicationEventLoads != null) {
-            for (ApplicationEventLoad applicationEventLoad : applicationEventLoads)
+            for (ApplicationEventLoad applicationEventLoad : applicationEventLoads) {
                 applicationEventLoad.applicationLoad();
+            }
         }
     }
 
@@ -66,15 +67,18 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
         }
         List<ApplicationEventClient> applicationEventClients = SpringApplicationBuilder.getInstance().getApplicationEventClients();
         if (applicationEventClients != null) {
-            for (ApplicationEventClient applicationEventClient : applicationEventClients)
+            for (ApplicationEventClient applicationEventClient : applicationEventClients) {
                 applicationEventClient.onApplicationEvent(event);
+            }
         }
-        if (event instanceof ApplicationReadyEvent) {// 启动最后的预加载
+        // 启动最后的预加载
+        if (event instanceof ApplicationReadyEvent) {
             CommonInitPackage.init();
             DefaultSystemLog.LOG().info("common-boot 启动完成");
             return;
         }
-        if (event instanceof ContextClosedEvent) { // 应用关闭
+        // 应用关闭
+        if (event instanceof ContextClosedEvent) {
             DefaultSystemLog.LOG().info("common-boot 关闭程序");
             ThreadPoolService.shutdown();
             return;

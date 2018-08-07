@@ -35,6 +35,11 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
         throw new IllegalArgumentException("not MultipartHttpServletRequest");
     }
 
+
+    public static void remove() {
+        THREAD_LOCAL_MULTIPART_HTTP_SERVLET_REQUEST.remove();
+    }
+
     /**
      * 处理上传文件 对象
      */
@@ -49,8 +54,9 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
         HttpServletRequest request = super.getRequest();
         if (ServletFileUpload.isMultipartContent(request)) {
             MultipartHttpServletRequest multipartHttpServletRequest = THREAD_LOCAL_MULTIPART_HTTP_SERVLET_REQUEST.get();
-            if (multipartHttpServletRequest != null)
+            if (multipartHttpServletRequest != null) {
                 return multipartHttpServletRequest;
+            }
             multipartHttpServletRequest = new StandardMultipartHttpServletRequest(request);
             THREAD_LOCAL_MULTIPART_HTTP_SERVLET_REQUEST.set(multipartHttpServletRequest);
             request = multipartHttpServletRequest;
@@ -69,8 +75,9 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
     @Override
     protected <T> T getObject(Class<T> tClass) throws IllegalAccessException, InstantiationException {
         Map<String, String[]> parameter = getParameter();
-        if (parameter == null)
+        if (parameter == null) {
             return super.getObject(tClass);
+        }
         Object object = tClass.newInstance();
         doParameterMap(parameter, object);
         return (T) object;
@@ -94,11 +101,13 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
         for (int i = 0, len = path.length; i < len; i++) {
             String item = name[i];
             MultipartFile multiFile = getFile(item);
-            if (multiFile == null)
+            if (multiFile == null) {
                 continue;
+            }
             String fileName = multiFile.getOriginalFilename();
-            if (fileName == null || fileName.length() <= 0)
+            if (fileName == null || fileName.length() <= 0) {
                 continue;
+            }
             String filePath = StringUtil.clearPath(String.format("%s/%s_%s", localPath, SystemClock.now(), fileName));
             File file = new File(filePath);
             //File parent = file.getParentFile();
@@ -124,8 +133,9 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
     @Override
     protected String[] getParameters(String name) {
         Map<String, String[]> parameter = getParameter();
-        if (parameter == null)
+        if (parameter == null) {
             return super.getParameters(name);
+        }
         return parameter.get(name);
     }
 
@@ -160,8 +170,9 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
     @Override
     protected long getParameterLong(String name, long def) {
         String value = getParameter(name);
-        if (value == null)
+        if (value == null) {
             return def;
+        }
         try {
             return Long.parseLong(value);
         } catch (NumberFormatException ignored) {

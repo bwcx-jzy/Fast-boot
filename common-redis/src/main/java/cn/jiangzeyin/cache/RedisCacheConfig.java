@@ -7,12 +7,14 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Created by jiangzeyin on 2017/12/20.
- *
+ * @author jiangzeyin
+ * @date 2017/12/20
  * @since 1.0.1
  */
 public class RedisCacheConfig {
-    // 普通缓存key
+    /**
+     * 普通缓存key
+     */
     private static final ConcurrentHashMap<Integer, Map<String, Long>> CACHE_INFO_CONCURRENT_HASH_MAP = new ConcurrentHashMap<>();
     private static Map<Integer, Long> defaultExpireTime;
     private static int defaultDatabase = -1;
@@ -28,8 +30,9 @@ public class RedisCacheConfig {
      * @throws IllegalAccessException e
      */
     public static void config(Class cls, int database, ConvertKey convertKey, DataSource source) throws IllegalAccessException {
-        if (database < 0)
+        if (database < 0) {
             throw new IllegalArgumentException("database error");
+        }
         defaultDatabase = database;
         config(cls, convertKey, source);
     }
@@ -64,8 +67,9 @@ public class RedisCacheConfig {
      */
     public static Long getGroupExpires(int database, String group) {
         Map<String, Long> map = CACHE_INFO_CONCURRENT_HASH_MAP.get(database);
-        if (map == null)
+        if (map == null) {
             return null;
+        }
         return map.get(group);
     }
 
@@ -76,11 +80,13 @@ public class RedisCacheConfig {
      * @return 缓存时间
      */
     public static Long getDefaultExpireTime(int database) {
-        if (defaultExpireTime == null)
+        if (defaultExpireTime == null) {
             return (long) ObjectCache.DEFAULT_CACHE_TIME;
+        }
         Long time = defaultExpireTime.get(database);
-        if (time == null)
+        if (time == null) {
             return (long) ObjectCache.DEFAULT_CACHE_TIME;
+        }
         return time;
     }
 
@@ -94,8 +100,9 @@ public class RedisCacheConfig {
      * @return int
      */
     public static int getDefaultDatabase() {
-        if (defaultDatabase < 0)
+        if (defaultDatabase < 0) {
             throw new RuntimeException("please config");
+        }
         return defaultDatabase;
     }
 
@@ -111,13 +118,16 @@ public class RedisCacheConfig {
         for (Field field : fields) {
             Class type = field.getType();
             if (type == String.class) {
-                if (!Modifier.isStatic(field.getModifiers()))
+                if (!Modifier.isStatic(field.getModifiers())) {
                     continue;
-                if (!Modifier.isFinal(field.getModifiers()))
+                }
+                if (!Modifier.isFinal(field.getModifiers())) {
                     continue;
+                }
                 CacheConfigWildcardField wildcardField = field.getAnnotation(CacheConfigWildcardField.class);
-                if (wildcardField == null)
+                if (wildcardField == null) {
                     continue;
+                }
                 String key = (String) field.get(null);
                 Map<String, Long> map = CACHE_INFO_CONCURRENT_HASH_MAP.computeIfAbsent(wildcardField.value(), k -> new HashMap<>());
                 // 秒
@@ -125,10 +135,11 @@ public class RedisCacheConfig {
                 map.put(key, cacheTime);
             } else if (type == Map.class) {
                 Map map = (Map) field.get(null);
-                if (defaultExpireTime == null)
+                if (defaultExpireTime == null) {
                     defaultExpireTime = map;
-                else
+                } else {
                     defaultExpireTime.putAll(map);
+                }
             }
         }
     }
@@ -140,12 +151,20 @@ public class RedisCacheConfig {
      * @return group
      */
     public static String getKeyGroup(String key, int database) {
-        if (convertKey == null)
+        if (convertKey == null) {
             return "default";
+        }
         return convertKey.getGroup(key, database);
     }
 
     public interface ConvertKey {
+        /**
+         * 更加key 和 索引得到 组
+         *
+         * @param key      key
+         * @param database 索引
+         * @return 组名
+         */
         String getGroup(String key, int database);
     }
 

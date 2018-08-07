@@ -27,8 +27,8 @@ public final class ZipFileUtil {
                 if (zipEntry.isDirectory()) {
                     continue;
                 }
-                String name_ = zipEntry.getName();
-                if (name_.equals(name)) {
+                String entityName = zipEntry.getName();
+                if (entityName.equals(name)) {
                     return FileUtil.copyInputStream(zipFile.getInputStream(zipEntry));
                 }
             }

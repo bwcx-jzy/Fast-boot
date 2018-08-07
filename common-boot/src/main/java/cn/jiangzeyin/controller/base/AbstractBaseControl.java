@@ -158,8 +158,9 @@ public abstract class AbstractBaseControl extends CallbackController {
             String[] temp = (String[]) value;
             StringBuilder stringBuffer = new StringBuilder();
             for (int i = 0; i < temp.length; i++) {
-                if (i != 0)
+                if (i != 0) {
                     stringBuffer.append(",");
+                }
                 stringBuffer.append(temp[i]);
             }
             setValue(tClass, obj, key, stringBuffer.toString());
@@ -198,7 +199,8 @@ public abstract class AbstractBaseControl extends CallbackController {
                 method.invoke(obj, Float.valueOf(value));
             } else if (AbstractBaseControl.class.isAssignableFrom(type)) {
                 Object type_obj = type.newInstance();
-                Method setIdMethod = getMethod(type_obj.getClass(), "Id", Integer.class);//type.getDeclaredMethod();
+                //type.getDeclaredMethod();
+                Method setIdMethod = getMethod(type_obj.getClass(), "Id", Integer.class);
                 try {
                     setIdMethod.invoke(type_obj, Integer.valueOf(value));
                     method.invoke(obj, type_obj);
@@ -220,10 +222,11 @@ public abstract class AbstractBaseControl extends CallbackController {
             return tClass.getDeclaredMethod(parSetName(name), type);
         } catch (NoSuchMethodException e) {
             Class superClass = tClass.getSuperclass();
-            if (superClass != Object.class)
+            if (superClass != Object.class) {
                 return getMethod(superClass, name, type);
-            else
+            } else {
                 throw e;
+            }
         }
     }
 
@@ -232,14 +235,22 @@ public abstract class AbstractBaseControl extends CallbackController {
             return null;
         }
         int startIndex = 0;
-        if (fieldName.charAt(0) == '_')
+        if (fieldName.charAt(0) == '_') {
             startIndex = 1;
+        }
         return "set"
                 + fieldName.substring(startIndex, startIndex + 1).toUpperCase()
                 + fieldName.substring(startIndex + 1);
     }
 
+    /**
+     *
+     */
     private static String default_headerName;
+    /**
+     *
+     */
+    private static final String UNKNOWN = "unknown";
 
     /**
      * 获取ip 地址
@@ -248,28 +259,31 @@ public abstract class AbstractBaseControl extends CallbackController {
      * @return ip 信息
      */
     public static String getIpAddress(HttpServletRequest request) {
-        if (default_headerName == null)
+        if (default_headerName == null) {
             default_headerName = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.IP_DEFAULT_HEADER_NAME);
+        }
         String ipFromNginx = null;
         if (!StringUtil.isEmpty(default_headerName)) {
             ipFromNginx = request.getHeader(default_headerName);
         }
-        if (ipFromNginx != null && ipFromNginx.length() > 0)
+        if (ipFromNginx != null && ipFromNginx.length() > 0) {
             return ipFromNginx;
+        }
+
         String ip = request.getHeader("x-forwarded-for");
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
             ip = request.getHeader("Proxy-Client-IP");
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
             ip = request.getHeader("WL-Proxy-Client-IP");
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
             ip = request.getHeader("HTTP_CLIENT_IP");
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
             ip = request.getHeader("HTTP_X_FORWARDED_FOR");
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
         }
         ip = StringUtil.convertNULL(ip);

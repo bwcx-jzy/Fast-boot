@@ -18,7 +18,9 @@ import java.util.Objects;
 
 /**
  * Boot 启动控制
- * Created by jiangzeyin on 2018/4/13.
+ *
+ * @author jiangzeyin
+ * @date 2018/4/13
  */
 public class SpringApplicationBuilder extends org.springframework.boot.builder.SpringApplicationBuilder {
     /**
@@ -66,11 +68,13 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
     protected SpringApplicationBuilder(Object... sources) throws Exception {
         super(sources);
         if (applicationBuilder != null) {
-            if (!isRestart())
+            if (!isRestart()) {
                 throw new IllegalArgumentException("duplicate create");
+            }
         }
-        if (sources == null || sources.length <= 0)
+        if (sources == null || sources.length <= 0) {
             throw new IllegalArgumentException("please set sources");
+        }
         Object object = sources[0];
         if (!(object instanceof Class)) {
             throw new IllegalArgumentException("sources index 0  must with class");
@@ -87,14 +91,16 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
     }
 
     public static SpringApplicationBuilder getInstance() {
-        if (applicationBuilder == null)
+        if (applicationBuilder == null) {
             throw new RuntimeException("Application not start");
+        }
         return applicationBuilder;
     }
 
     public Environment getEnvironment() {
-        if (environment == null)
+        if (environment == null) {
             throw new RuntimeException("Application not start");
+        }
         return environment;
     }
 
@@ -122,8 +128,9 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
      */
     public SpringApplicationBuilder addHttpMessageConverter(HttpMessageConverter<?> httpMessageConverter) {
         Objects.requireNonNull(httpMessageConverter);
-        if (httpMessageConverters == null)
+        if (httpMessageConverters == null) {
             this.httpMessageConverters = new ArrayList<>();
+        }
         this.httpMessageConverters.add(httpMessageConverter);
         return this;
     }
@@ -136,8 +143,9 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
      */
     public SpringApplicationBuilder addInterceptor(Class<? extends BaseInterceptor> cls) {
         Objects.requireNonNull(cls);
-        if (interceptorClass == null)
+        if (interceptorClass == null) {
             this.interceptorClass = new ArrayList<>();
+        }
         this.interceptorClass.add(cls);
         return this;
     }
@@ -150,8 +158,9 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
      */
     public SpringApplicationBuilder addApplicationEventLoad(ApplicationEventLoad applicationEventLoad) {
         Objects.requireNonNull(applicationEventLoad);
-        if (applicationEventLoads == null)
+        if (applicationEventLoads == null) {
             this.applicationEventLoads = new ArrayList<>();
+        }
         this.applicationEventLoads.add(applicationEventLoad);
         return this;
     }
@@ -164,8 +173,9 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
      */
     public SpringApplicationBuilder addApplicationEventClient(ApplicationEventClient applicationEventClient) {
         Objects.requireNonNull(applicationEventClient);
-        if (applicationEventClients == null)
+        if (applicationEventClients == null) {
             applicationEventClients = new ArrayList<>();
+        }
         applicationEventClients.add(applicationEventClient);
         return this;
     }
@@ -179,11 +189,13 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
      */
     @SuppressWarnings("unchecked")
     public SpringApplicationBuilder addLoadPage(String packageName) throws NoSuchFieldException, IllegalAccessException {
-        if (StringUtils.isEmpty(packageName))
+        if (StringUtils.isEmpty(packageName)) {
             throw new IllegalArgumentException("packageName");
+        }
         ComponentScan componentScan = (ComponentScan) applicationClass.getAnnotation(ComponentScan.class);
-        if (componentScan == null)
+        if (componentScan == null) {
             throw new RuntimeException("please add ComponentScan");
+        }
         InvocationHandler invocationHandler = Proxy.getInvocationHandler(componentScan);
         Field value = invocationHandler.getClass().getDeclaredField("memberValues");
         value.setAccessible(true);
@@ -221,8 +233,9 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
                 if (methods != null) {
                     for (Method method : methods) {
                         AutoPropertiesMethod autoPropertiesMethod = method.getAnnotation(AutoPropertiesMethod.class);
-                        if (autoPropertiesMethod == null)
+                        if (autoPropertiesMethod == null) {
                             continue;
+                        }
                         method.setAccessible(true);
                         ParameterizedType parameterizedType = (ParameterizedType) method.getGenericReturnType();
                         Type type = parameterizedType.getRawType();
@@ -231,10 +244,12 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
                         Type[] parameters = method.getParameterTypes();
                         if (parameters.length <= 0 && Map.class == retCls && Modifier.isStatic(modifiers) && Modifier.isPrivate(modifiers)) {
                             Map<String, Object> map = (Map<String, Object>) method.invoke(null);
-                            if (map != null)
+                            if (map != null) {
                                 properties(map);
-                        } else
+                            }
+                        } else {
                             throw new IllegalArgumentException(cls + "  " + method + "  " + PreLoadMethod.class + " must use empty parameters static Map private");
+                        }
                     }
                 }
             }

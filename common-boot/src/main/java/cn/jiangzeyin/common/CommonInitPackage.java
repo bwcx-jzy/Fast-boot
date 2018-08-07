@@ -14,7 +14,9 @@ import java.util.*;
 
 /**
  * 控制初始化
- * Created by jiangzeyin on 2017/10/24.
+ *
+ * @author jiangzeyin
+ * @date 2017/10/24
  */
 public class CommonInitPackage {
     private volatile static boolean init = false;
@@ -48,8 +50,9 @@ public class CommonInitPackage {
         }
         try {
             List<String> list = PackageUtil.getClassName(packageName);
-            if (list == null || list.size() <= 0)
+            if (list == null || list.size() <= 0) {
                 return;
+            }
             List<Class<?>> classList = new ArrayList<>();
             for (String name : list) {
                 try {
@@ -59,25 +62,34 @@ public class CommonInitPackage {
                     DefaultSystemLog.ERROR().error("预加载包错误:" + name, e);
                 }
             }
-            if (classList.size() <= 0)
+            if (classList.size() <= 0) {
                 return;
+            }
             List<Map.Entry<Class, Integer>> newList = splitClass(classList);
-            if (newList != null)
-                for (Map.Entry<Class, Integer> item : newList)
+            if (newList != null) {
+                for (Map.Entry<Class, Integer> item : newList) {
                     loadClass(item.getKey());
+                }
+            }
             PACKAGE_NAME_LIST.add(packageName);
         } catch (IOException e) {
             DefaultSystemLog.ERROR().error("预加载包错误", e);
         }
     }
 
-    // 排序class
+    /**
+     * // 排序class
+     *
+     * @param list list
+     * @return 排序后的
+     */
     private static List<Map.Entry<Class, Integer>> splitClass(List<Class<?>> list) {
         HashMap<Class, Integer> sortMap = new HashMap<>();
         for (Class item : list) {
             PreLoadClass preLoadClass = (PreLoadClass) item.getAnnotation(PreLoadClass.class);
-            if (preLoadClass == null)
+            if (preLoadClass == null) {
                 continue;
+            }
             sortMap.put(item, preLoadClass.value());
         }
         List<Map.Entry<Class, Integer>> newList = null;
@@ -102,15 +114,17 @@ public class CommonInitPackage {
         HashMap<Method, Integer> sortMap = new HashMap<>();
         for (Method method : methods) {
             PreLoadMethod preLoadMethod = method.getAnnotation(PreLoadMethod.class);
-            if (preLoadMethod == null)
+            if (preLoadMethod == null) {
                 continue;
+            }
             Type type = method.getGenericReturnType();
             int modifiers = method.getModifiers();
             Type[] parameters = method.getParameterTypes();
             if (parameters.length <= 0 && Void.TYPE.equals(type) && Modifier.isStatic(modifiers) && Modifier.isPrivate(modifiers)) {
                 sortMap.put(method, preLoadMethod.value());
-            } else
+            } else {
                 throw new IllegalArgumentException(classT + "  " + method + "  " + PreLoadMethod.class + " must use empty parameters static void private");
+            }
         }
         if (sortMap.size() > 0) {
             List<Map.Entry<Method, Integer>> newList = new ArrayList<>(sortMap.entrySet());

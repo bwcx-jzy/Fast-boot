@@ -13,7 +13,9 @@ import java.util.Objects;
 
 /**
  * 每次进入controller 回调
- * Created by jiangzeyin on 2018/6/26.
+ *
+ * @author jiangzeyin
+ * @date 2018/6/26
  */
 public abstract class CallbackController {
     /**
@@ -36,8 +38,9 @@ public abstract class CallbackController {
             DefaultSystemLog.ERROR().error("获取req失败", e);
         }
         Objects.requireNonNull(attributes);
-        if (attributes instanceof ServletRequestAttributes)
+        if (attributes instanceof ServletRequestAttributes) {
             return (ServletRequestAttributes) attributes;
+        }
         throw new IllegalArgumentException("error");
     }
 

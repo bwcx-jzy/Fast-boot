@@ -39,6 +39,13 @@ public class XssFilter extends CharacterEncodingFilter {
         return REQUEST_PARAMETERS_MAP.get();
     }
 
+    private static void cleanThreadLocal() {
+        REQUEST_HEADER_MAP.remove();
+        REQUEST_INFO.remove();
+        REQUEST_TIME.remove();
+        REQUEST_PARAMETERS_MAP.remove();
+    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         REQUEST_TIME.set(System.currentTimeMillis());
@@ -49,6 +56,7 @@ public class XssFilter extends CharacterEncodingFilter {
         requestLog(request, isFile);
         super.doFilterInternal(request, response, filterChain);
         responseLog(response);
+        cleanThreadLocal();
     }
 
     /**
@@ -75,8 +83,9 @@ public class XssFilter extends CharacterEncodingFilter {
                 String[] value = entry.getValue();
                 if (value != null) {
                     for (int i = 0; i < value.length; i++) {
-                        if (i != 0)
+                        if (i != 0) {
                             stringBuffer.append(",");
+                        }
                         stringBuffer.append(isFile ? ParameterXssWrapper.getUTF8(value[i]) : value[i]);
                     }
                 }
@@ -108,11 +117,12 @@ public class XssFilter extends CharacterEncodingFilter {
             return;
         }
         // 记录请求超时
-        Long time = System.currentTimeMillis() - REQUEST_TIME.get();
+        long time = System.currentTimeMillis() - REQUEST_TIME.get();
         if (request_timeout_log == -1) {
             request_timeout_log = StringUtil.parseLong(SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.REQUEST_TIME_OUT, "3000"));
-            if (request_timeout_log <= 0)
+            if (request_timeout_log <= 0) {
                 request_timeout_log = 0;
+            }
         }
         if (request_timeout_log > 0 && time > request_timeout_log) {
             String stringBuffer = "time:" +

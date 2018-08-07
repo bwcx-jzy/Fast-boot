@@ -21,8 +21,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 管理工厂
- * Created by jiangzeyin on 2017/12/12.
  *
+ * @author jiangzeyin
+ * @date 2017/12/12
  * @since 1.0.0
  */
 public final class RedisCacheManagerFactory {
@@ -89,8 +90,9 @@ public final class RedisCacheManagerFactory {
         @Override
         protected long computeExpiration(String name) {
             Long time = RedisCacheConfig.getGroupExpires(database, name);
-            if (time == null)
+            if (time == null) {
                 time = super.computeExpiration(name);
+            }
             return time;
         }
     }
@@ -102,10 +104,12 @@ public final class RedisCacheManagerFactory {
 
         static RedisConnectionFactory getRedisConnectionFactory(int database) {
             RedisConnectionFactory redisConnectionFactory = REDIS_CONNECTION_FACTORY_CONCURRENT_HASH_MAP.get(database);
-            if (redisConnectionFactory != null)
+            if (redisConnectionFactory != null) {
                 return redisConnectionFactory;
-            if (redisProperties == null)
+            }
+            if (redisProperties == null) {
                 redisProperties = SpringUtil.getBean(RedisProperties.class);
+            }
             redisConnectionFactory = new RedisConnectionConfiguration(redisProperties, database).redisConnectionFactory();
             REDIS_CONNECTION_FACTORY_CONCURRENT_HASH_MAP.put(database, redisConnectionFactory);
             return redisConnectionFactory;

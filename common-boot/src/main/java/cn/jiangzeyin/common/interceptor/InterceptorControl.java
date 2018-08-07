@@ -67,15 +67,19 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
                 DefaultSystemLog.ERROR().error("加载拦截器错误", e);
                 continue;
             }
-            if (classItem == null)
+            if (classItem == null) {
                 continue;
-            if (classItem == DefaultInterceptor.class)
+            }
+            if (classItem == DefaultInterceptor.class) {
                 continue;
+            }
             boolean isAbstract = Modifier.isAbstract(classItem.getModifiers());
-            if (isAbstract)
+            if (isAbstract) {
                 continue;
-            if (!BaseInterceptor.class.isAssignableFrom(classItem))
+            }
+            if (!BaseInterceptor.class.isAssignableFrom(classItem)) {
                 continue;
+            }
             loadInterceptor(classItem, registry);
         }
         loadDefault(registry);
@@ -106,8 +110,9 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
             return;
         }
         InterceptorPattens interceptorPattens = (InterceptorPattens) itemCls.getAnnotation(InterceptorPattens.class);
-        if (interceptorPattens == null)
+        if (interceptorPattens == null) {
             return;
+        }
         BaseInterceptor handlerInterceptor;
         try {
             handlerInterceptor = (BaseInterceptor) itemCls.newInstance();
@@ -121,8 +126,9 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
         registration.addPathPatterns(patterns);
         // 排除
         String[] exclude = interceptorPattens.exclude();
-        if (exclude.length > 0)
+        if (exclude.length > 0) {
             registration.excludePathPatterns(exclude);
+        }
         LOAD_OK.add(itemCls);
         DefaultSystemLog.LOG().info("加载拦截器：" + itemCls + "  " + Arrays.toString(patterns) + "  " + Arrays.toString(exclude));
         isHash = true;

@@ -1,11 +1,10 @@
 package cn.jiangzeyin.common.request;
 
 import cn.jiangzeyin.StringUtil;
-import cn.jiangzeyin.common.DefaultSystemLog;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -74,24 +73,22 @@ public class ParameterXssWrapper extends HttpServletRequestWrapper {
     }
 
     private static String[] doXss(String[] values, boolean convertUtf8) {
-        if (values == null)
+        if (values == null) {
             return null;
+        }
         for (int i = 0; i < values.length; i++) {
-            if (!convertUtf8)
+            if (!convertUtf8) {
                 values[i] = getUTF8(values[i]);
+            }
             values[i] = StringUtil.filterHTML(values[i]);
         }
         return values;
     }
 
     static String getUTF8(String str) {
-        if (StringUtil.isEmpty(str))
-            return "";
-        try {
-            return new String(str.getBytes("ISO-8859-1"), "utf-8");
-        } catch (UnsupportedEncodingException e) {
-            DefaultSystemLog.ERROR().error("iso-8859-1 to utf-8 失败", e);
+        if (StringUtil.isEmpty(str)) {
             return "";
         }
+        return new String(str.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
     }
 }

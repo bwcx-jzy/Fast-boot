@@ -1,6 +1,7 @@
 package cn.jiangzeyin.common.interceptor;
 
 import cn.jiangzeyin.common.DefaultSystemLog;
+import cn.jiangzeyin.controller.base.AbstractMultipartFileBaseControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -73,7 +74,10 @@ public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        if (ex != null)
+        if (ex != null) {
             DefaultSystemLog.ERROR().error("controller 异常:" + request.getRequestURL(), ex);
+        }
+        // 释放资源
+        AbstractMultipartFileBaseControl.remove();
     }
 }

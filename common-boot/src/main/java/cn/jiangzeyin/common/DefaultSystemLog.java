@@ -20,14 +20,27 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by jiangzeyin on 2017/2/3.
  */
 public class DefaultSystemLog {
-    private static final LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+    private static final LoggerContext LOGGER_CONTEXT = (LoggerContext) LoggerFactory.getILoggerFactory();
     private static final Map<LogType, Logger> LOG_TYPE_LOGGER_MAP = new ConcurrentHashMap<>();
     private static final String TYPE_ERROR_TAG = "ERROR";
     private static ConsoleAppender<ILoggingEvent> consoleAppender;
 
+    /**
+     * 日志类型
+     */
     public enum LogType {
+        /**
+         * 请求
+         */
         REQUEST, REQUEST_ERROR,
-        DEFAULT, ERROR
+        /**
+         * 默认
+         */
+        DEFAULT,
+        /**
+         * 异常
+         */
+        ERROR
     }
 
 
@@ -59,11 +72,11 @@ public class DefaultSystemLog {
     private static ConsoleAppender<ILoggingEvent> initConsole() {
         ConsoleAppender<ILoggingEvent> appender = new ConsoleAppender<>();
         PatternLayout patternLayout = new PatternLayout();
-        patternLayout.setContext(loggerContext);
+        patternLayout.setContext(LOGGER_CONTEXT);
         patternLayout.setPattern("%date %level [%thread] %logger{10} [%file:%line]- x:\\(%X\\) %msg%n");
         patternLayout.start();
         appender.setLayout(patternLayout);
-        appender.setContext(loggerContext);
+        appender.setContext(LOGGER_CONTEXT);
         appender.start();
         return appender;
     }
@@ -87,7 +100,7 @@ public class DefaultSystemLog {
         RollingFileAppender appender = new RollingFileAppender<>();
         //policy
         SizeAndTimeBasedRollingPolicy<Object> policy = new SizeAndTimeBasedRollingPolicy<>();
-        policy.setContext(loggerContext);
+        policy.setContext(LOGGER_CONTEXT);
         String logPath = "/log/cn.jiangzeyin";
         String filePath = String.format("%s/%s/%s/%s", logPath, SpringUtil.getApplicationId(), path, tag).toLowerCase();
         policy.setFileNamePattern(String.format("%s-%%d{yyyy-MM-dd}.%%event.log", filePath));
@@ -98,13 +111,13 @@ public class DefaultSystemLog {
         policy.start();
         //encoder
         PatternLayoutEncoder encoder = new PatternLayoutEncoder();
-        encoder.setContext(loggerContext);
+        encoder.setContext(LOGGER_CONTEXT);
         encoder.setPattern("%d{HH:mm:ss.SSS} %-5level [%thread %file:%line] %logger - %msg%n");
         encoder.start();
         appender.setFile(String.format("%s.log", filePath));
         appender.setName("appender" + tag);
         appender.setRollingPolicy(policy);
-        appender.setContext(loggerContext);
+        appender.setContext(LOGGER_CONTEXT);
         appender.setEncoder(encoder);
         //support that multiple JVMs can safely write to the same file.
         appender.setPrudent(true);
@@ -130,10 +143,12 @@ public class DefaultSystemLog {
      */
     public static Logger LOG(LogType type) {
         Logger logger = LOG_TYPE_LOGGER_MAP.get(type);
-        if (logger == null && LogType.DEFAULT != type)
+        if (logger == null && LogType.DEFAULT != type) {
             logger = LOG(LogType.DEFAULT);
-        if (logger == null)
+        }
+        if (logger == null) {
             throw new IllegalArgumentException("not find");
+        }
         return logger;
     }
 

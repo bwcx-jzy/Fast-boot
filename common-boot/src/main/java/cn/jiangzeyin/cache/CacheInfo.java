@@ -35,17 +35,22 @@ class CacheInfo {
 
 
     static Map<String, CacheInfo> loadClass(Class cls) throws IllegalAccessException {
-        if (cls == null) throw new NullPointerException();
+        if (cls == null) {
+            throw new NullPointerException();
+        }
         Map<String, CacheInfo> map = new HashMap<>();
         CacheConfig cacheConfig = (CacheConfig) cls.getAnnotation(CacheConfig.class);
         Field[] fields = cls.getFields();
         for (Field field : fields) {
-            if (field.getType() != String.class)
+            if (field.getType() != String.class) {
                 continue;
-            if (!Modifier.isStatic(field.getModifiers()))
+            }
+            if (!Modifier.isStatic(field.getModifiers())) {
                 continue;
-            if (!Modifier.isFinal(field.getModifiers()))
+            }
+            if (!Modifier.isFinal(field.getModifiers())) {
                 continue;
+            }
             CacheConfigField cacheConfigField = field.getAnnotation(CacheConfigField.class);
             String key = (String) field.get(null);
             if (cacheConfigField == null) {
