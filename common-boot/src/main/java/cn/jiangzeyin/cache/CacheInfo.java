@@ -13,7 +13,9 @@ import static cn.jiangzeyin.cache.ObjectCache.DEFAULT_CACHE_TIME;
  */
 class CacheInfo {
     private final String key;
-    // 秒
+    /**
+     * 缓存时间 单位秒
+     */
     private long cacheTime;
 
     CacheInfo(String key, long cacheTime) {

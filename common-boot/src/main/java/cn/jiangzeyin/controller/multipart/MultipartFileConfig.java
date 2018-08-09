@@ -6,7 +6,7 @@ import cn.jiangzeyin.StringUtil;
  * 上传文件保存路径
  *
  * @author jiangzeyin
- * @date 2017/10/25
+ * data 2017/10/25
  */
 public class MultipartFileConfig {
     private static String fileTempPath;

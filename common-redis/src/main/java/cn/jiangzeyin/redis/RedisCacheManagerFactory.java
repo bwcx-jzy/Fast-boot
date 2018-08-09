@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 管理工厂
  *
  * @author jiangzeyin
- * @date 2017/12/12
+ * data 2017/12/12
  * @since 1.0.0
  */
 public final class RedisCacheManagerFactory {
@@ -90,16 +90,16 @@ public final class RedisCacheManagerFactory {
         @Override
         protected long computeExpiration(String name) {
             Long time = RedisCacheConfig.getGroupExpires(database, name);
-            if (time == null) {
-                time = super.computeExpiration(name);
-            }
-            return time;
+            //            if (time == null) {
+            //                time = super.computeExpiration(name);
+            //            }
+            return time == null ? super.computeExpiration(name) : time;
         }
     }
 
 
     private static class RedisConnectionFactoryPool {
-        private static RedisProperties redisProperties;
+        private static volatile RedisProperties redisProperties;
         private static final ConcurrentHashMap<Integer, RedisConnectionFactory> REDIS_CONNECTION_FACTORY_CONCURRENT_HASH_MAP = new ConcurrentHashMap<>();
 
         static RedisConnectionFactory getRedisConnectionFactory(int database) {
@@ -194,7 +194,7 @@ public final class RedisCacheManagerFactory {
                     try {
                         String[] parts = StringUtils.split(node, ":");
                         Assert.state(parts.length == 2, "Must be defined as 'host:port'");
-                        nodes.add(new RedisNode(parts[0], Integer.valueOf(parts[1])));
+                        nodes.add(new RedisNode(parts[0], Integer.parseInt(parts[1])));
                     } catch (RuntimeException ex) {
                         throw new IllegalStateException(
                                 "Invalid redis sentinel " + "property '" + node + "'", ex);

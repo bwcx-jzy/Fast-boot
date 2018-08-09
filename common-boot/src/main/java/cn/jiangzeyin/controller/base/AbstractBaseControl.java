@@ -3,7 +3,7 @@ package cn.jiangzeyin.controller.base;
 import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.StringUtil;
 import cn.jiangzeyin.common.DefaultSystemLog;
-import cn.jiangzeyin.common.interceptor.CallbackController;
+import cn.jiangzeyin.common.interceptor.BaseCallbackController;
 import cn.jiangzeyin.common.spring.SpringUtil;
 import org.springframework.http.HttpHeaders;
 
@@ -11,6 +11,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.Iterator;
@@ -23,7 +24,7 @@ import java.util.Map;
  * @author jiangzeyin
  * Created by jiangzeyin on 2017/1/12.
  */
-public abstract class AbstractBaseControl extends CallbackController {
+public abstract class AbstractBaseControl extends BaseCallbackController {
     //private static final ThreadLocal<HttpServletRequest> HTTP_SERVLET_REQUEST_THREAD_LOCAL = new ThreadLocal<>();
     //private static final ThreadLocal<HttpSession> HTTP_SESSION_THREAD_LOCAL = new ThreadLocal<>();
     //private static final ThreadLocal<HttpServletResponse> HTTP_SERVLET_RESPONSE_THREAD_LOCAL = new ThreadLocal<>();
@@ -185,8 +186,9 @@ public abstract class AbstractBaseControl extends CallbackController {
             }
             return;
         }
+        Method method;
         try {
-            Method method = getMethod(tClass, name, type);
+            method = getMethod(tClass, name, type);
             if (type == int.class || type == Integer.class) {
                 method.invoke(obj, Integer.valueOf(value));
             } else if (type == long.class || type == Long.class) {
@@ -198,12 +200,12 @@ public abstract class AbstractBaseControl extends CallbackController {
             } else if (type == float.class || type == Float.class) {
                 method.invoke(obj, Float.valueOf(value));
             } else if (AbstractBaseControl.class.isAssignableFrom(type)) {
-                Object type_obj = type.newInstance();
+                Object typeObj = type.newInstance();
                 //type.getDeclaredMethod();
-                Method setIdMethod = getMethod(type_obj.getClass(), "Id", Integer.class);
+                Method setIdMethod = getMethod(typeObj.getClass(), "Id", Integer.class);
                 try {
-                    setIdMethod.invoke(type_obj, Integer.valueOf(value));
-                    method.invoke(obj, type_obj);
+                    setIdMethod.invoke(typeObj, Integer.valueOf(value));
+                    method.invoke(obj, typeObj);
                 } catch (NumberFormatException ignored) {
                 }
             } else if (type == Double.class || type == double.class) {
@@ -211,8 +213,7 @@ public abstract class AbstractBaseControl extends CallbackController {
             } else {
                 DefaultSystemLog.ERROR().error("未设置对应数据类型:" + type, new RuntimeException());
             }
-            //System.out.println(type + "  " + name + "  " + value);
-        } catch (Exception e) {
+        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             DefaultSystemLog.ERROR().error("创建对象错误", e);
         }
     }

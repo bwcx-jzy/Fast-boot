@@ -9,7 +9,7 @@ import java.util.List;
 /**
  *
  * @author jiangzeyin
- * @date 2017/12/12
+ * data 2017/12/12
  */
 @Configuration
 @PropertySource("classpath:redis.properties")

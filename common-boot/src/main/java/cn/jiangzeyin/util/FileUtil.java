@@ -10,7 +10,7 @@ import java.util.Objects;
  */
 public final class FileUtil {
 
-    public static int EACH_LEN = 1024 * 1024;
+    private static final int EACH_LEN = 1024 * 1024;
 
     /**
      * 复制流
@@ -54,10 +54,12 @@ public final class FileUtil {
                 sb.append(line);
             }
         } finally {
-            if (br != null)
+            if (br != null) {
                 br.close();
-            if (inputStreamReader != null)
+            }
+            if (inputStreamReader != null) {
                 inputStreamReader.close();
+            }
             inputStream.close();
         }
         return sb.toString();

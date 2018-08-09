@@ -5,6 +5,7 @@ import cn.jiangzeyin.common.interceptor.BaseInterceptor;
 import cn.jiangzeyin.common.spring.event.ApplicationEventClient;
 import cn.jiangzeyin.common.spring.event.ApplicationEventLoad;
 import cn.jiangzeyin.util.PackageUtil;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -20,13 +21,13 @@ import java.util.Objects;
  * Boot 启动控制
  *
  * @author jiangzeyin
- * @date 2018/4/13
+ * data 2018/4/13
  */
-public class SpringApplicationBuilder extends org.springframework.boot.builder.SpringApplicationBuilder {
+public class ApplicationBuilder extends SpringApplicationBuilder {
     /**
      * 程序全局控制对象
      */
-    private volatile static SpringApplicationBuilder applicationBuilder;
+    private volatile static ApplicationBuilder applicationBuilder;
     /**
      * 程序主类
      */
@@ -61,11 +62,11 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
      * @throws NoSuchFieldException   e
      * @throws IllegalAccessException e
      */
-    public static SpringApplicationBuilder createBuilder(Object... sources) throws Exception {
-        return new SpringApplicationBuilder(sources);
+    public static ApplicationBuilder createBuilder(Object... sources) throws Exception {
+        return new ApplicationBuilder(sources);
     }
 
-    protected SpringApplicationBuilder(Object... sources) throws Exception {
+    protected ApplicationBuilder(Object... sources) throws Exception {
         super(sources);
         if (applicationBuilder != null) {
             if (!isRestart()) {
@@ -81,16 +82,16 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
         }
         this.applicationClass = (Class) object;
         banner((environment, sourceClass, out) -> {
-            SpringApplicationBuilder.this.environment = environment;
+            ApplicationBuilder.this.environment = environment;
             String msg = environment.getProperty(CommonPropertiesFinal.BANNER_MSG, "boot Application starting");
             out.println(msg);
         });
         addLoadPage("cn.jiangzeyin");
         //loadProperties();
-        SpringApplicationBuilder.applicationBuilder = this;
+        ApplicationBuilder.applicationBuilder = this;
     }
 
-    public static SpringApplicationBuilder getInstance() {
+    public static ApplicationBuilder getInstance() {
         if (applicationBuilder == null) {
             throw new RuntimeException("Application not start");
         }
@@ -126,7 +127,7 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
      * @param httpMessageConverter converter
      * @return this
      */
-    public SpringApplicationBuilder addHttpMessageConverter(HttpMessageConverter<?> httpMessageConverter) {
+    public ApplicationBuilder addHttpMessageConverter(HttpMessageConverter<?> httpMessageConverter) {
         Objects.requireNonNull(httpMessageConverter);
         if (httpMessageConverters == null) {
             this.httpMessageConverters = new ArrayList<>();
@@ -141,7 +142,7 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
      * @param cls cls
      * @return this
      */
-    public SpringApplicationBuilder addInterceptor(Class<? extends BaseInterceptor> cls) {
+    public ApplicationBuilder addInterceptor(Class<? extends BaseInterceptor> cls) {
         Objects.requireNonNull(cls);
         if (interceptorClass == null) {
             this.interceptorClass = new ArrayList<>();
@@ -156,7 +157,7 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
      * @param applicationEventLoad 监听接口
      * @return this
      */
-    public SpringApplicationBuilder addApplicationEventLoad(ApplicationEventLoad applicationEventLoad) {
+    public ApplicationBuilder addApplicationEventLoad(ApplicationEventLoad applicationEventLoad) {
         Objects.requireNonNull(applicationEventLoad);
         if (applicationEventLoads == null) {
             this.applicationEventLoads = new ArrayList<>();
@@ -171,7 +172,7 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
      * @param applicationEventClient 监听接口回调
      * @return this
      */
-    public SpringApplicationBuilder addApplicationEventClient(ApplicationEventClient applicationEventClient) {
+    public ApplicationBuilder addApplicationEventClient(ApplicationEventClient applicationEventClient) {
         Objects.requireNonNull(applicationEventClient);
         if (applicationEventClients == null) {
             applicationEventClients = new ArrayList<>();
@@ -188,7 +189,7 @@ public class SpringApplicationBuilder extends org.springframework.boot.builder.S
      * @throws IllegalAccessException e
      */
     @SuppressWarnings("unchecked")
-    public SpringApplicationBuilder addLoadPage(String packageName) throws NoSuchFieldException, IllegalAccessException {
+    public ApplicationBuilder addLoadPage(String packageName) throws NoSuchFieldException, IllegalAccessException {
         if (StringUtils.isEmpty(packageName)) {
             throw new IllegalArgumentException("packageName");
         }

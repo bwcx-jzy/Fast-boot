@@ -15,9 +15,9 @@ import java.util.Objects;
  * 每次进入controller 回调
  *
  * @author jiangzeyin
- * @date 2018/6/26
+ * data 2018/6/26
  */
-public abstract class CallbackController {
+public abstract class BaseCallbackController {
     /**
      * 重置信息
      */
@@ -50,7 +50,11 @@ public abstract class CallbackController {
         return response;
     }
 
-
+    /**
+     * 获取session
+     *
+     * @return session
+     */
     public HttpSession getSession() {
         HttpSession session = getRequestAttributes().getRequest().getSession();
         if (session == null) {

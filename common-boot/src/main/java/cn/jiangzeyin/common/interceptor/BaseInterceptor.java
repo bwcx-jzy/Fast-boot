@@ -25,12 +25,23 @@ public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
     protected HttpSession session;
     protected ServletContext application;
     protected String url;
-    private CallbackController callbackController;
+    private BaseCallbackController baseCallbackController;
 
 
     private static final ThreadLocal<HttpSession> HTTP_SESSION_THREAD_LOCAL = new ThreadLocal<>();
 
+    /**
+     * 释放资源
+     */
+    protected void clearResources() {
+        HTTP_SESSION_THREAD_LOCAL.remove();
+    }
 
+    /**
+     * 获取session
+     *
+     * @return session
+     */
     public static HttpSession getSession() {
         return HTTP_SESSION_THREAD_LOCAL.get();
     }
@@ -48,9 +59,9 @@ public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
             Object object = handlerMethod.getBean();
             Class controlClass = object.getClass();
             //  controller
-            if (CallbackController.class.isAssignableFrom(controlClass)) {
-                // callbackController.resetInfo(this.request, this.session, this.response);
-                this.callbackController = (CallbackController) object;
+            if (BaseCallbackController.class.isAssignableFrom(controlClass)) {
+                // baseCallbackController.resetInfo(this.request, this.session, this.response);
+                this.baseCallbackController = (BaseCallbackController) object;
             }
         }
         return true;
@@ -60,8 +71,9 @@ public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
      * 第二次回调
      */
     protected void reload() {
-        if (callbackController != null)
-            callbackController.resetInfo();
+        if (baseCallbackController != null) {
+            baseCallbackController.resetInfo();
+        }
     }
 
     @Override
@@ -79,5 +91,6 @@ public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
         }
         // 释放资源
         AbstractMultipartFileBaseControl.remove();
+        clearResources();
     }
 }

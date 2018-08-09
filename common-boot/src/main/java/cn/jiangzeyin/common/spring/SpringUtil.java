@@ -2,9 +2,9 @@ package cn.jiangzeyin.common.spring;
 
 import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.StringUtil;
+import cn.jiangzeyin.common.ApplicationBuilder;
 import cn.jiangzeyin.common.CommonInitPackage;
 import cn.jiangzeyin.common.DefaultSystemLog;
-import cn.jiangzeyin.common.SpringApplicationBuilder;
 import cn.jiangzeyin.common.spring.event.ApplicationEventClient;
 import cn.jiangzeyin.common.spring.event.ApplicationEventLoad;
 import cn.jiangzeyin.pool.ThreadPoolService;
@@ -32,7 +32,11 @@ import java.util.Objects;
 @Configuration
 public class SpringUtil implements ApplicationListener, ApplicationContextAware {
 
-    private static ApplicationContext applicationContext;
+    private volatile static ApplicationContext applicationContext;
+
+    private synchronized static void setApplicationContexts(ApplicationContext applicationContext) {
+        SpringUtil.applicationContext = applicationContext;
+    }
 
     /**
      * 容器加载完成
@@ -42,9 +46,10 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
      */
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        SpringUtil.applicationContext = applicationContext;
+//        SpringUtil.applicationContext = applicationContext;
+        setApplicationContexts(applicationContext);
         DefaultSystemLog.init();
-        List<ApplicationEventLoad> applicationEventLoads = SpringApplicationBuilder.getInstance().getApplicationEventLoads();
+        List<ApplicationEventLoad> applicationEventLoads = ApplicationBuilder.getInstance().getApplicationEventLoads();
         if (applicationEventLoads != null) {
             for (ApplicationEventLoad applicationEventLoad : applicationEventLoads) {
                 applicationEventLoad.applicationLoad();
@@ -65,7 +70,7 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
             applicationFailedEvent.getException().printStackTrace();
             return;
         }
-        List<ApplicationEventClient> applicationEventClients = SpringApplicationBuilder.getInstance().getApplicationEventClients();
+        List<ApplicationEventClient> applicationEventClients = ApplicationBuilder.getInstance().getApplicationEventClients();
         if (applicationEventClients != null) {
             for (ApplicationEventClient applicationEventClient : applicationEventClients) {
                 applicationEventClient.onApplicationEvent(event);
@@ -142,7 +147,7 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
      * @return environment
      */
     public static Environment getEnvironment() {
-        return SpringApplicationBuilder.getInstance().getEnvironment();
+        return ApplicationBuilder.getInstance().getEnvironment();
     }
 
     /**

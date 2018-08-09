@@ -118,8 +118,7 @@ public final class PackageUtil {
             return myClassName;
         }
         String packagePath = jarInfo[1].substring(1);
-        try {
-            JarFile jarFile = new JarFile(jarFileInfo);
+        try (JarFile jarFile = new JarFile(jarFileInfo)) {
             Enumeration<JarEntry> entrys = jarFile.entries();
             while (entrys.hasMoreElements()) {
                 JarEntry jarEntry = entrys.nextElement();

@@ -2,12 +2,13 @@ package cn.jiangzeyin.cache;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 内存缓存
  *
  * @author jiangzeyin
- * @date 2017/12/1
+ * data 2017/12/1
  */
 public final class ObjectCache {
     private static final ConcurrentHashMap<String, CacheEntity<String, Object>> CONCURRENT_HASH_MAP = new ConcurrentHashMap<>();
@@ -15,7 +16,7 @@ public final class ObjectCache {
     /**
      * 默认10分钟  秒单位
      */
-    public static final int DEFAULT_CACHE_TIME = 60 * 10;
+    static final int DEFAULT_CACHE_TIME = 60 * 10;
 
     private ObjectCache() {
 
@@ -29,6 +30,14 @@ public final class ObjectCache {
         return put(key, value, -1);
     }
 
+    /**
+     * 添加缓存信息
+     *
+     * @param key       键
+     * @param value     值
+     * @param cacheTime 缓存时间
+     * @return 上传缓存对象
+     */
     public static Object put(String key, Object value, long cacheTime) {
         if (key == null) {
             throw new NullPointerException();
@@ -39,20 +48,18 @@ public final class ObjectCache {
         if (cacheTime < -1) {
             throw new IllegalArgumentException("cacheTime must >=0");
         }
-        CacheEntity<String, Object> cacheEntity = CONCURRENT_HASH_MAP.get(key);
-        if (cacheEntity == null) {
-            CacheInfo cacheInfo = CACHE_INFO_CONCURRENT_HASH_MAP.get(key);
-            if (cacheInfo == null) {
-                cacheInfo = new CacheInfo(key, cacheTime == -1 ? DEFAULT_CACHE_TIME : cacheTime);
-                CACHE_INFO_CONCURRENT_HASH_MAP.put(cacheInfo.getKey(), cacheInfo);
-            } else if (cacheTime != -1) {
+        AtomicBoolean containsKey = new AtomicBoolean(true);
+        CacheEntity<String, Object> cacheEntity = CONCURRENT_HASH_MAP.computeIfAbsent(key, entityKey -> {
+            // 缓存信息
+            CacheInfo cacheInfo = CACHE_INFO_CONCURRENT_HASH_MAP.computeIfAbsent(key, s -> new CacheInfo(key, cacheTime == -1 ? DEFAULT_CACHE_TIME : cacheTime));
+            if (cacheTime != cacheInfo.getCacheTime()) {
                 cacheInfo.setCacheTime(cacheTime);
             }
-            cacheEntity = new CacheEntity<>(key, value, cacheInfo);
-            CONCURRENT_HASH_MAP.put(cacheEntity.getKey(), cacheEntity);
-            return null;
-        }
-        return cacheEntity.setValue(value, cacheTime);
+            containsKey.set(false);
+            // 缓存对象
+            return new CacheEntity<>(key, value, cacheInfo);
+        });
+        return containsKey.get() ? cacheEntity.setValue(value, cacheTime) : null;
     }
 
     public static Object get(String key) {

@@ -2,9 +2,11 @@ package cn.jiangzeyin;
 
 /**
  * 配置属性字段
- * Created by jiangzeyin on 2017/8/25.
+ *
+ * @author jiangzeyin
+ * data 2017/8/25
  */
-public abstract class CommonPropertiesFinal {
+public final class CommonPropertiesFinal {
     /**
      * 程序启动banner 文字信息
      */

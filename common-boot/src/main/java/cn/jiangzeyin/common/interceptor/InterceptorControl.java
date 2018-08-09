@@ -3,7 +3,7 @@ package cn.jiangzeyin.common.interceptor;
 import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.StringUtil;
 import cn.jiangzeyin.common.DefaultSystemLog;
-import cn.jiangzeyin.common.SpringApplicationBuilder;
+import cn.jiangzeyin.common.ApplicationBuilder;
 import cn.jiangzeyin.common.spring.SpringUtil;
 import cn.jiangzeyin.util.PackageUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -86,7 +86,7 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
     }
 
     private void loadApplicationInterceptor(InterceptorRegistry registry) {
-        List<Class<? extends BaseInterceptor>> interceptorClass = SpringApplicationBuilder.getInstance().getInterceptorClass();
+        List<Class<? extends BaseInterceptor>> interceptorClass = ApplicationBuilder.getInstance().getInterceptorClass();
         if (interceptorClass != null) {
             for (Class<? extends BaseInterceptor> item : interceptorClass) {
                 loadInterceptor(item, registry);
@@ -105,7 +105,7 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
     }
 
     private void loadInterceptor(Class itemCls, InterceptorRegistry registry) {
-        if (LOAD_OK.contains(itemCls) && !SpringApplicationBuilder.isRestart()) {
+        if (LOAD_OK.contains(itemCls) && !ApplicationBuilder.isRestart()) {
             DefaultSystemLog.LOG().info("重复注入拦截器" + itemCls);
             return;
         }
@@ -158,7 +158,7 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         super.configureMessageConverters(converters);
-        List<HttpMessageConverter<?>> httpMessageConverters = SpringApplicationBuilder.getInstance().getHttpMessageConverters();
+        List<HttpMessageConverter<?>> httpMessageConverters = ApplicationBuilder.getInstance().getHttpMessageConverters();
         if (httpMessageConverters != null) {
             converters.addAll(httpMessageConverters);
         }

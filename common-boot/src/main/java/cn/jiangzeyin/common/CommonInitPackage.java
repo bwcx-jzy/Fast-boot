@@ -16,7 +16,7 @@ import java.util.*;
  * 控制初始化
  *
  * @author jiangzeyin
- * @date 2017/10/24
+ * data 2017/10/24
  */
 public class CommonInitPackage {
     private volatile static boolean init = false;
@@ -27,7 +27,7 @@ public class CommonInitPackage {
      * 系统预加载包名
      */
     public static void init() {
-        if (init && !SpringApplicationBuilder.isRestart()) {
+        if (init && !ApplicationBuilder.isRestart()) {
             DefaultSystemLog.LOG().info("系统init 包已经被初始化过啦！");
             return;
         }
@@ -44,7 +44,7 @@ public class CommonInitPackage {
      * @param packageName packageName
      */
     public static void load(String packageName) {
-        if (PACKAGE_NAME_LIST.contains(packageName) && !SpringApplicationBuilder.isRestart()) {
+        if (PACKAGE_NAME_LIST.contains(packageName) && !ApplicationBuilder.isRestart()) {
             DefaultSystemLog.LOG().info(packageName + " 包已经被初始化过啦！");
             return;
         }
@@ -131,7 +131,7 @@ public class CommonInitPackage {
             newList.sort(Comparator.comparing(Map.Entry::getValue));
             for (Map.Entry<Method, Integer> item : newList) {
                 Method method = item.getKey();
-                if (METHOD_LIST.contains(method) && !SpringApplicationBuilder.isRestart()) {
+                if (METHOD_LIST.contains(method) && !ApplicationBuilder.isRestart()) {
                     DefaultSystemLog.LOG().info(classT + "  " + method.getName() + "已经调用过啦");
                     continue;
                 }

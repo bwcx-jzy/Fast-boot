@@ -34,13 +34,13 @@ public final class ThreadPoolService {
         if (class1 == null) {
             throw new NullPointerException();
         }
-        PoolCacheInfo poolCacheInfo = POOL_CACHE_INFO_CONCURRENT_HASH_MAP.get(class1);
-        if (poolCacheInfo == null) {
+        PoolCacheInfo poolCacheInfo = POOL_CACHE_INFO_CONCURRENT_HASH_MAP.computeIfAbsent(class1, aClass -> {
             // 创建线程方法
-            poolCacheInfo = createPool(class1);
-            POOL_CACHE_INFO_CONCURRENT_HASH_MAP.put(class1, poolCacheInfo);
-            DefaultSystemLog.LOG().info(class1 + "线程池申请成功:" + poolCacheInfo);
-        }
+            PoolCacheInfo poolCacheInfo1 = createPool(class1);
+            POOL_CACHE_INFO_CONCURRENT_HASH_MAP.put(class1, poolCacheInfo1);
+            DefaultSystemLog.LOG().info(class1 + "线程池申请成功:" + poolCacheInfo1);
+            return poolCacheInfo1;
+        });
         return poolCacheInfo.poolExecutor;
     }
 
@@ -54,12 +54,12 @@ public final class ThreadPoolService {
         PoolConfig poolConfig = (PoolConfig) tClass.getAnnotation(PoolConfig.class);
         BlockingQueue<Runnable> blockingQueue;
         SystemThreadFactory systemThreadFactory = new SystemThreadFactory(tClass.getName());
-        ThreadPoolExecutor_Pool threadPoolExecutor;
+        ThreadPoolExecutorPool threadPoolExecutor;
         ProxyHandler proxyHandler;
         if (poolConfig == null) {
             proxyHandler = new ProxyHandler(PolicyHandler.Caller);
             blockingQueue = new SynchronousQueue<>();
-            threadPoolExecutor = new ThreadPoolExecutor_Pool(0,
+            threadPoolExecutor = new ThreadPoolExecutorPool(0,
                     Integer.MAX_VALUE,
                     60L,
                     TimeUnit.SECONDS,
@@ -75,7 +75,7 @@ public final class ThreadPoolService {
                 blockingQueue = new LinkedBlockingQueue<>();
             }
             // 构建对象
-            threadPoolExecutor = new ThreadPoolExecutor_Pool(corePoolSize,
+            threadPoolExecutor = new ThreadPoolExecutorPool(corePoolSize,
                     poolConfig.maximumPoolSize(),
                     poolConfig.keepAliveTime(),
                     poolConfig.UNIT(),
@@ -178,12 +178,12 @@ public final class ThreadPoolService {
     }
 
     private static class PoolCacheInfo {
-        private final ThreadPoolExecutor_Pool poolExecutor;
+        private final ThreadPoolExecutorPool poolExecutor;
         private final BlockingQueue<Runnable> blockingQueue;
         private final ProxyHandler handler;
         private final SystemThreadFactory systemThreadFactory;
 
-        PoolCacheInfo(ThreadPoolExecutor_Pool poolExecutor, BlockingQueue<Runnable> blockingQueue, ProxyHandler handler, SystemThreadFactory systemThreadFactory) {
+        PoolCacheInfo(ThreadPoolExecutorPool poolExecutor, BlockingQueue<Runnable> blockingQueue, ProxyHandler handler, SystemThreadFactory systemThreadFactory) {
             this.poolExecutor = poolExecutor;
             this.blockingQueue = blockingQueue;
             this.handler = handler;
@@ -220,6 +220,8 @@ public final class ThreadPoolService {
                 case DiscardOldest:
                     rejectedExecutionHandler1 = new ThreadPoolExecutor.DiscardOldestPolicy();
                     break;
+                default:
+                    throw new IllegalArgumentException("暂时不支持");
             }
             rejectedExecutionHandler = rejectedExecutionHandler1;
         }
@@ -242,34 +244,37 @@ public final class ThreadPoolService {
      * create 2016-11-21
      */
     static class SystemThreadFactory implements ThreadFactory {
-        private static final AtomicInteger poolNumber = new AtomicInteger(1);
+        private static final AtomicInteger POOL_NUMBER = new AtomicInteger(1);
         private final ThreadGroup group;
         private final AtomicInteger threadNumber = new AtomicInteger(1);
         private final String namePrefix;
 
         SystemThreadFactory(String poolName) {
-            if (StringUtil.isEmpty(poolName))
+            if (StringUtil.isEmpty(poolName)) {
                 poolName = "pool";
+            }
             SecurityManager s = System.getSecurityManager();
             group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
-            namePrefix = poolName + "-" + poolNumber.getAndIncrement() + "-thread-";
+            namePrefix = poolName + "-" + POOL_NUMBER.getAndIncrement() + "-thread-";
         }
 
         @Override
         public Thread newThread(Runnable r) {
             Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
-            if (t.isDaemon())
+            if (t.isDaemon()) {
                 t.setDaemon(false);
-            if (t.getPriority() != Thread.NORM_PRIORITY)
+            }
+            if (t.getPriority() != Thread.NORM_PRIORITY) {
                 t.setPriority(Thread.NORM_PRIORITY);
+            }
             return t;
         }
     }
 
-    private static class ThreadPoolExecutor_Pool extends ThreadPoolExecutor {
+    private static class ThreadPoolExecutorPool extends ThreadPoolExecutor {
         private int queueMaxSize = 0;
 
-        ThreadPoolExecutor_Pool(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue, ThreadFactory threadFactory, RejectedExecutionHandler handler) {
+        ThreadPoolExecutorPool(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue, ThreadFactory threadFactory, RejectedExecutionHandler handler) {
             super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, handler);
         }
 
@@ -307,8 +312,9 @@ public final class ThreadPoolService {
         private void checkQueueSize() {
             if (queueMaxSize > 0) {
                 int queueSize = getQueue().size();
-                if (queueSize > queueMaxSize)
+                if (queueSize > queueMaxSize) {
                     throw new RuntimeException("queue size :" + queueSize + "  >" + queueMaxSize);
+                }
             }
         }
     }

@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author jiangzeyin
- * @date 2017/12/20
+ * data 2017/12/20
  * @since 1.0.1
  */
 public class RedisCacheConfig {
