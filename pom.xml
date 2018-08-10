@@ -126,13 +126,18 @@
         </plugins>
     </build>
     <distributionManagement>
-        <snapshotRepository>
-            <id>maven-repo</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-        </snapshotRepository>
+        <!--<snapshotRepository>-->
+            <!--<id>maven-repo</id>-->
+            <!--<url>https://oss.sonatype.org/content/repositories/snapshots/</url>-->
+        <!--</snapshotRepository>-->
+        <!--<repository>-->
+            <!--<id>maven-repo</id>-->
+            <!--<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
+        <!--</repository>-->
         <repository>
-            <id>maven-repo</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>yokead-loc-repo</id>
+            <name>yokead Repository</name>
+            <url>http://bwcx:4040/repository/yokead/</url>
         </repository>
     </distributionManagement>
     <licenses>

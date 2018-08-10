@@ -1,7 +1,6 @@
 package cn.jiangzeyin.common.interceptor;
 
 import cn.jiangzeyin.StringUtil;
-import cn.jiangzeyin.common.DefaultSystemLog;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -30,18 +29,30 @@ public abstract class BaseCallbackController {
      * @return req
      */
     public static ServletRequestAttributes getRequestAttributes() {
+        ServletRequestAttributes servletRequestAttributes = tryGetRequestAttributes();
+        Objects.requireNonNull(servletRequestAttributes);
+        return servletRequestAttributes;
+    }
+
+    /**
+     * 尝试获取
+     *
+     * @return ServletRequestAttributes
+     */
+    public static ServletRequestAttributes tryGetRequestAttributes() {
         RequestAttributes attributes = null;
         try {
             attributes = RequestContextHolder.currentRequestAttributes();
         } catch (IllegalStateException e) {
             // TODO: handle exception
-            DefaultSystemLog.ERROR().error("获取req失败", e);
         }
-        Objects.requireNonNull(attributes);
+        if (attributes == null) {
+            return null;
+        }
         if (attributes instanceof ServletRequestAttributes) {
             return (ServletRequestAttributes) attributes;
         }
-        throw new IllegalArgumentException("error");
+        return null;
     }
 
     public HttpServletResponse getResponse() {

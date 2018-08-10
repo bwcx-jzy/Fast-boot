@@ -37,7 +37,6 @@ public final class ThreadPoolService {
         PoolCacheInfo poolCacheInfo = POOL_CACHE_INFO_CONCURRENT_HASH_MAP.computeIfAbsent(class1, aClass -> {
             // 创建线程方法
             PoolCacheInfo poolCacheInfo1 = createPool(class1);
-            POOL_CACHE_INFO_CONCURRENT_HASH_MAP.put(class1, poolCacheInfo1);
             DefaultSystemLog.LOG().info(class1 + "线程池申请成功:" + poolCacheInfo1);
             return poolCacheInfo1;
         });
