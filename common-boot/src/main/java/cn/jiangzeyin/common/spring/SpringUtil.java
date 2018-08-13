@@ -65,11 +65,12 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
         if (event instanceof ApplicationFailedEvent) {
-            System.err.println("启动失败");
+            System.err.println("Common-Boot 启动失败");
             ApplicationFailedEvent applicationFailedEvent = (ApplicationFailedEvent) event;
             applicationFailedEvent.getException().printStackTrace();
             return;
         }
+        //  通知子级
         List<ApplicationEventClient> applicationEventClients = ApplicationBuilder.getInstance().getApplicationEventClients();
         if (applicationEventClients != null) {
             for (ApplicationEventClient applicationEventClient : applicationEventClients) {
@@ -88,6 +89,7 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
             ThreadPoolService.shutdown();
             return;
         }
+        // 请求异常记录
         if (event instanceof ServletRequestHandledEvent) {
             ServletRequestHandledEvent servletRequestHandledEvent = (ServletRequestHandledEvent) event;
             if (!servletRequestHandledEvent.wasFailure()) {

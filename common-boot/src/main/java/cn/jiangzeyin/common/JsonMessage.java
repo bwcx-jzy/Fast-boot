@@ -20,6 +20,7 @@ public class JsonMessage implements Serializable {
     public static final String DATA = "data";
 
     static {
+        // long 类型自动转String
         SerializeConfig serializeConfig = SerializeConfig.globalInstance;
         serializeConfig.put(Long.class, ToStringSerializer.instance);
         serializeConfig.put(long.class, ToStringSerializer.instance);

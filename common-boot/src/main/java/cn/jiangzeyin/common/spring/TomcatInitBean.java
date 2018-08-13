@@ -12,6 +12,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * tomcat
  * Created by jiangzeyin on 2017/3/31.
+ *
+ * @author jiangzeyin
  */
 @Configuration
 public class TomcatInitBean {
@@ -26,7 +28,8 @@ public class TomcatInitBean {
         return container -> {
             Integer timOut = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.TOMCAT_SESSION_TIME_OUT, Integer.class);
             if (timOut != null) {
-                container.setSessionTimeout(timOut, TimeUnit.MINUTES);//单位为分钟
+                //单位为分钟
+                container.setSessionTimeout(timOut, TimeUnit.MINUTES);
             }
         };
     }
@@ -40,8 +43,9 @@ public class TomcatInitBean {
     public ServletContextInitializer servletContextInitializer() {
         return servletContext -> {
             String name = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.TOMCAT_SESSION_COOKIE_NAME);
-            if (name != null && name.length() > 0)
+            if (name != null && name.length() > 0) {
                 servletContext.getSessionCookieConfig().setName(name);
+            }
         };
     }
 

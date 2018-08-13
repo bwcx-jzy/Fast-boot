@@ -9,6 +9,7 @@ import java.lang.annotation.*;
  * Created by jiangzeyin on 2018/8/13.
  *
  * @author jiangzeyin
+ * @since 1.1.22
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)

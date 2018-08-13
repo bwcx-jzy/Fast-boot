@@ -39,6 +39,9 @@ public class XssFilter extends CharacterEncodingFilter {
         return REQUEST_PARAMETERS_MAP.get();
     }
 
+    /**
+     * 释放资源
+     */
     private static void cleanThreadLocal() {
         REQUEST_HEADER_MAP.remove();
         REQUEST_INFO.remove();

@@ -2,19 +2,30 @@
 
 > 针对SpringBoot封装的一个 common boot
 
-如果需要common-boot 程序生效 需要使用cn.jiangzeyin.common.SpringApplicationBuilder.createBuilder() 来创建Application 参数一般传入程序主类，程序主类需要添加扫描包的注解 ComponentScan
+如果需要common-boot 程序生效 
 
- 然后调用run方法 传入main 方法中的字符串数据 来启动程序
+方式一：
+    
+    直接在Application 中添加 cn.jiangzeyin.common.EnableCommonBoot  注解
+
+
+方式二：
+    
+    需要使用cn.jiangzeyin.common.ApplicationBuilder.createBuilder() 来创建Application 参数一般传入程序主类，程序主类需要添加扫描包的注解 ComponentScan
+
+    然后调用run方法 传入main 方法中的字符串数据 来启动程序
  
- addHttpMessageConverter();
+    addHttpMessageConverter();
  
- addInterceptor();
+    addInterceptor();
  
- addApplicationEventLoad();
+    addApplicationEventLoad();
  
- addApplicationEventClient();
+    addApplicationEventClient();
  
- addLoadPage();
+    addLoadPage();
+    
+    也可以自动定义一个class来继承  cn.jiangzeyin.common.ApplicationBuilder 根据需求来实现
  
  请根据实际使用情况来调用
 

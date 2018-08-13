@@ -11,6 +11,7 @@
 
 注：VERSION 请更换为公共maven库最新的版本号
 
+ https://mvnrepository.com/artifact/cn.jiangzeyin.fast-boot/common-parent
 
 博客地址：http://blog.csdn.net/jiangzeyin_/article/details/78709043
 
@@ -46,6 +47,6 @@ javadoc：https://apidoc.gitee.com/jiangzeyin/common-parent/
         <artifactId>common-redis</artifactId>
     </dependency>
 
-
+特点：支持动态指定Redis 索引库编号
 
 地址：https://gitee.com/jiangzeyin/common-parent/tree/master/common-redis

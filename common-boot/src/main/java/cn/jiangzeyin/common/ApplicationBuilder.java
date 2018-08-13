@@ -5,6 +5,7 @@ import cn.jiangzeyin.common.interceptor.BaseInterceptor;
 import cn.jiangzeyin.common.spring.event.ApplicationEventClient;
 import cn.jiangzeyin.common.spring.event.ApplicationEventLoad;
 import cn.jiangzeyin.util.PackageUtil;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
@@ -32,6 +33,8 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
      * 程序主类
      */
     private Class applicationClass;
+
+    private SpringApplication application;
     /**
      * 程序配置变量
      */
@@ -68,25 +71,22 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
 
     protected ApplicationBuilder(Object... sources) throws Exception {
         super(sources);
+        this.application = application();
         if (applicationBuilder != null) {
             if (!isRestart()) {
                 throw new IllegalArgumentException("duplicate create");
             }
         }
-        if (sources == null || sources.length <= 0) {
-            throw new IllegalArgumentException("please set sources");
-        }
-        Object object = sources[0];
-        if (!(object instanceof Class)) {
-            throw new IllegalArgumentException("sources index 0  must with class");
-        }
-        this.applicationClass = (Class) object;
+        this.applicationClass = this.application.getMainApplicationClass();
         banner((environment, sourceClass, out) -> {
             ApplicationBuilder.this.environment = environment;
             String msg = environment.getProperty(CommonPropertiesFinal.BANNER_MSG, "boot Application starting");
             out.println(msg);
         });
-        addLoadPage("cn.jiangzeyin");
+        EnableCommonBoot enableCommonBoot = (EnableCommonBoot) this.applicationClass.getAnnotation(EnableCommonBoot.class);
+        if (enableCommonBoot == null) {
+            addLoadPage("cn.jiangzeyin");
+        }
         //loadProperties();
         ApplicationBuilder.applicationBuilder = this;
     }
@@ -195,7 +195,7 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
         }
         ComponentScan componentScan = (ComponentScan) applicationClass.getAnnotation(ComponentScan.class);
         if (componentScan == null) {
-            System.err.println("please add ComponentScan");
+            new IllegalArgumentException("please add ComponentScan").printStackTrace();
             return this;
         }
         InvocationHandler invocationHandler = Proxy.getInvocationHandler(componentScan);
@@ -222,6 +222,7 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
     /**
      * 加载配置
      *
+     * @param packageName 指定包名
      * @throws Exception e
      */
     @SuppressWarnings("unchecked")
