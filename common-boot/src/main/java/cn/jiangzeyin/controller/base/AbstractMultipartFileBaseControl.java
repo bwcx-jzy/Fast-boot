@@ -46,7 +46,7 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
     @Override
     public void resetInfo() {
         super.resetInfo();
-        THREAD_LOCAL_MULTIPART_HTTP_SERVLET_REQUEST.set(null);
+//        THREAD_LOCAL_MULTIPART_HTTP_SERVLET_REQUEST.set(null);
     }
 
     @Override

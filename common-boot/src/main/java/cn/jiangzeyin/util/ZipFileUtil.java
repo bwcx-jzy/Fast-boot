@@ -9,6 +9,8 @@ import java.util.zip.ZipFile;
 /**
  * 压缩文件信息
  * Created by jiangzeyin on 2018/6/2.
+ *
+ * @author jiangzeyin
  */
 public final class ZipFileUtil {
     /**

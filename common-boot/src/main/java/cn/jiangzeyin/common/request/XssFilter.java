@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * xss 拦截器
+ * xss 过滤器
  *
  * @author jiangzeyin
  * Created by jiangzeyin on 2017/1/5.
