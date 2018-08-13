@@ -1,5 +1,7 @@
 package cn.jiangzeyin.cache;
 
+import cn.jiangzeyin.DateUtil;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -11,8 +13,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * data 2017/12/1
  */
 public final class ObjectCache {
-    private static final ConcurrentHashMap<String, CacheEntity<String, Object>> CONCURRENT_HASH_MAP = new ConcurrentHashMap<>();
-    private static final ConcurrentHashMap<String, CacheInfo> CACHE_INFO_CONCURRENT_HASH_MAP = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, CacheEntity<String, Object>> CONCURRENT_HASH_MAP = new ConcurrentHashMap<>(100);
+    private static final ConcurrentHashMap<String, CacheInfo> CACHE_INFO_CONCURRENT_HASH_MAP = new ConcurrentHashMap<>(100);
     /**
      * 默认10分钟  秒单位
      */
@@ -27,7 +29,7 @@ public final class ObjectCache {
     }
 
     public static Object put(String key, Object value) {
-        return put(key, value, -1);
+        return put(key, value, DEFAULT_CACHE_TIME);
     }
 
     /**
@@ -45,13 +47,13 @@ public final class ObjectCache {
         if (value == null) {
             throw new NullPointerException();
         }
-        if (cacheTime < -1) {
-            throw new IllegalArgumentException("cacheTime must >=0");
+        if (cacheTime <= 0) {
+            throw new IllegalArgumentException("cacheTime must >0");
         }
         AtomicBoolean containsKey = new AtomicBoolean(true);
         CacheEntity<String, Object> cacheEntity = CONCURRENT_HASH_MAP.computeIfAbsent(key, entityKey -> {
             // 缓存信息
-            CacheInfo cacheInfo = CACHE_INFO_CONCURRENT_HASH_MAP.computeIfAbsent(key, s -> new CacheInfo(key, cacheTime == -1 ? DEFAULT_CACHE_TIME : cacheTime));
+            CacheInfo cacheInfo = CACHE_INFO_CONCURRENT_HASH_MAP.computeIfAbsent(key, s -> new CacheInfo(key, cacheTime));
             if (cacheTime != cacheInfo.getCacheTime()) {
                 cacheInfo.setCacheTime(cacheTime);
             }
@@ -70,6 +72,12 @@ public final class ObjectCache {
         return cacheEntity == null ? null : cacheEntity.getValue();
     }
 
+    /**
+     * 缓存信息
+     *
+     * @param <K>
+     * @param <V>
+     */
     private static class CacheEntity<K, V> implements Map.Entry<K, V> {
         final K key;
         final CacheInfo cacheInfo;
@@ -91,6 +99,7 @@ public final class ObjectCache {
         @Override
         public V getValue() {
             long existTime = getCurrentTime() - intoTime;
+            // 判断缓存时间
             if (existTime > cacheInfo.getCacheTime()) {
                 return null;
             }
@@ -108,6 +117,13 @@ public final class ObjectCache {
             return val;
         }
 
+        /**
+         * 添加缓存的值 并且修改缓存时间
+         *
+         * @param value     object
+         * @param cacheTime 缓存时间 单位秒
+         * @return 修改之前的值
+         */
         V setValue(V value, long cacheTime) {
             if (cacheTime != -1) {
                 this.cacheInfo.setCacheTime(cacheTime);
@@ -116,7 +132,12 @@ public final class ObjectCache {
         }
     }
 
+    /**
+     * 获取当前时间，秒
+     *
+     * @return 秒
+     */
     private static long getCurrentTime() {
-        return System.currentTimeMillis() / 1000L;
+        return DateUtil.getCurrentShortTimeMillis();
     }
 }

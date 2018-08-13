@@ -4,6 +4,8 @@ import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.StringUtil;
 import cn.jiangzeyin.common.spring.SpringUtil;
 import cn.jiangzeyin.util.PackageUtil;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -18,6 +20,8 @@ import java.util.*;
  * @author jiangzeyin
  * data 2017/10/24
  */
+@Configuration
+@ComponentScan(value = "cn.jiangzeyin")
 public class CommonInitPackage {
     private volatile static boolean init = false;
     private static final List<Method> METHOD_LIST = new ArrayList<>();
@@ -32,8 +36,9 @@ public class CommonInitPackage {
             return;
         }
         String pageName = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.PRELOAD_PACKAGE_NAME);
-        if (StringUtil.isEmpty(pageName))
+        if (StringUtil.isEmpty(pageName)) {
             return;
+        }
         load(pageName);
         init = true;
     }

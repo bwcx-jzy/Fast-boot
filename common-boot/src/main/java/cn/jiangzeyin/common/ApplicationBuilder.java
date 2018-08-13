@@ -195,7 +195,8 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
         }
         ComponentScan componentScan = (ComponentScan) applicationClass.getAnnotation(ComponentScan.class);
         if (componentScan == null) {
-            throw new RuntimeException("please add ComponentScan");
+            System.err.println("please add ComponentScan");
+            return this;
         }
         InvocationHandler invocationHandler = Proxy.getInvocationHandler(componentScan);
         Field value = invocationHandler.getClass().getDeclaredField("memberValues");

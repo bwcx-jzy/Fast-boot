@@ -22,8 +22,8 @@
         <fastjson.version>1.2.47</fastjson.version>
         <simple-util.version>1.0.12</simple-util.version>
 
-        <common-boot.version>1.1.21</common-boot.version>
-        <common-redis.version>1.1.21</common-redis.version>
+        <common-boot.version>1.1.22</common-boot.version>
+        <common-redis.version>1.1.22</common-redis.version>
     </properties>
     <modules>
         <module>common-boot</module>
@@ -130,9 +130,13 @@
             <id>maven-repo</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </snapshotRepository>
+        <!--<repository>-->
+        <!--<id>maven-repo</id>-->
+        <!--<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
+        <!--</repository>-->
         <repository>
-            <id>maven-repo</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>yokead-loc-repo</id>
+            <url>http://bwcx:4040/repository/yokead/</url>
         </repository>
     </distributionManagement>
     <licenses>

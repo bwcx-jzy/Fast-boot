@@ -170,7 +170,6 @@ public abstract class AbstractBaseControl extends BaseCallbackController {
 
 
     private void setValue(Class tClass, Object obj, String name, String value) {
-        //Class tClass = obj.getClass();
         Field[] fields = tClass.getDeclaredFields();
         Class type = null;
         for (Field field : fields) {
@@ -190,15 +189,15 @@ public abstract class AbstractBaseControl extends BaseCallbackController {
         try {
             method = getMethod(tClass, name, type);
             if (type == int.class || type == Integer.class) {
-                method.invoke(obj, Integer.valueOf(value));
+                method.invoke(obj, StringUtil.parseInt(value));
             } else if (type == long.class || type == Long.class) {
-                method.invoke(obj, Long.valueOf(value));
+                method.invoke(obj, StringUtil.parseLong(value));
             } else if (type == String.class) {
                 method.invoke(obj, value);
             } else if (type == BigDecimal.class) {
-                method.invoke(obj, BigDecimal.valueOf(Long.parseLong(value)));
+                method.invoke(obj, BigDecimal.valueOf(StringUtil.parseLong(value)));
             } else if (type == float.class || type == Float.class) {
-                method.invoke(obj, Float.valueOf(value));
+                method.invoke(obj, StringUtil.parseFloat(value));
             } else if (AbstractBaseControl.class.isAssignableFrom(type)) {
                 Object typeObj = type.newInstance();
                 //type.getDeclaredMethod();
@@ -209,7 +208,7 @@ public abstract class AbstractBaseControl extends BaseCallbackController {
                 } catch (NumberFormatException ignored) {
                 }
             } else if (type == Double.class || type == double.class) {
-                method.invoke(obj, Double.valueOf(value));
+                method.invoke(obj, StringUtil.parseDouble(value));
             } else {
                 DefaultSystemLog.ERROR().error("未设置对应数据类型:" + type, new RuntimeException());
             }
