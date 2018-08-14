@@ -1,5 +1,4 @@
-.idea/workspace.xml
-.idea/libraries/
+.idea/
 target/
 common-boot/target/
 common-redis/target/
