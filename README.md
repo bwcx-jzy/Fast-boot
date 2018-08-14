@@ -56,3 +56,9 @@ javadoc：https://apidoc.gitee.com/jiangzeyin/common-parent/
 特点：支持动态指定Redis 索引库编号
 
 地址：https://gitee.com/jiangzeyin/common-parent/tree/master/common-redis
+
+
+### 提供bug反馈或建议
+
+- [码云](https://gitee.com/jiangzeyin/common-parent)
+- [Gtihub](https://github.com/jiangzeyin/Fast-boot/issues)
