@@ -1,7 +1,14 @@
 # common-parent 
 > 针对SpringBoot 封装的一系列的快捷包
 
-**maven 坐标**
+[![Maven metadata URI](https://img.shields.io/maven-metadata/v/http/central.maven.org/maven2/cn/jiangzeyin/fast-boot/common-parent/maven-metadata.xml.svg)](https://mvnrepository.com/artifact/cn.jiangzeyin.fast-boot/common-parent)
+![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)
+![jdk](https://img.shields.io/badge/JDK-1.8+-green.svg)
+
+## 安装
+
+### Maven
+在项目的pom.xml 添加如下pom
 
     <parent>
         <groupId>cn.jiangzeyin.fast-boot</groupId>
@@ -9,15 +16,12 @@
         <version>VERSION</version>
     </parent>
 
-[![Maven metadata URI](https://img.shields.io/maven-metadata/v/http/central.maven.org/maven2/cn/jiangzeyin/fast-boot/common-parent/maven-metadata.xml.svg)](https://mvnrepository.com/artifact/cn.jiangzeyin.fast-boot/common-parent)
-![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)
-![jdk](https://img.shields.io/badge/JDK-1.8+-green.svg)
-
 
 注：VERSION 请更换为公共maven库最新的版本号
 
+## 版本变更
 
- https://mvnrepository.com/artifact/cn.jiangzeyin.fast-boot/common-parent
+- [Release版本变更说明](https://gitee.com/jiangzeyin/common-parent/v4-master/CHANGELOG.md)
 
 博客地址：http://blog.csdn.net/jiangzeyin_/article/details/78709043
 
