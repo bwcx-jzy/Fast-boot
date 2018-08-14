@@ -16,7 +16,6 @@
         <version>VERSION</version>
     </parent>
 
-
 注：VERSION 请更换为公共maven库最新的版本号
 
 ## 版本变更
