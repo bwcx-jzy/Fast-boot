@@ -10,6 +10,7 @@
     </parent>
 
 [![Maven metadata URI](https://img.shields.io/maven-metadata/v/http/central.maven.org/maven2/cn/jiangzeyin/fast-boot/common-parent/maven-metadata.xml.svg)](https://mvnrepository.com/artifact/cn.jiangzeyin.fast-boot/common-parent)
+![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)
 ![jdk](https://img.shields.io/badge/JDK-1.8+-green.svg)
 
 
