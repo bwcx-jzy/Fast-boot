@@ -10,6 +10,7 @@
     </parent>
 
 [![Maven metadata URI](https://img.shields.io/maven-metadata/v/http/central.maven.org/maven2/cn/jiangzeyin/fast-boot/common-parent/maven-metadata.xml.svg)](https://mvnrepository.com/artifact/cn.jiangzeyin.fast-boot/common-parent)
+![jdk](https://img.shields.io/badge/JDK-1.8+-green.svg)
 
 
 注：VERSION 请更换为公共maven库最新的版本号
