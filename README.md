@@ -8,7 +8,7 @@
 ## 安装
 
 ### Maven
-在项目的pom.xml 添加如下pom
+在项目的pom.xml 添加如下代码
 
     <parent>
         <groupId>cn.jiangzeyin.fast-boot</groupId>
@@ -21,13 +21,15 @@
 
 ## 版本变更
 
-- [Release版本变更说明](https://gitee.com/jiangzeyin/common-parent/v4-master/CHANGELOG.md)
+- [Release版本变更说明](https://gitee.com/jiangzeyin/common-parent/blob/master/CHANGELOG.md)
 
-博客地址：http://blog.csdn.net/jiangzeyin_/article/details/78709043
+## 文档
 
-javadoc：https://apidoc.gitee.com/jiangzeyin/common-parent/
+[博客地址](http://blog.csdn.net/jiangzeyin_/article/details/78709043)
 
-子项目：
+[参考API](https://apidoc.gitee.com/jiangzeyin/common-parent/)
+
+## 子项目：
 
 # 1.common-boot
 
