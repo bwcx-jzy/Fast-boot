@@ -1,4 +1,5 @@
 # Fast-Boot
+![Fast-Boot](https://images.gitee.com/uploads/images/2018/0814/182554_be855ac3_804942.png "1_Primary_logo_on_transparent_272x67_看图王.png")
 > 针对SpringBoot 封装的一系列的快捷包 提供公共的Controller、自动化拦截器、启动加载资源接口、线程池管理
 
 [![Maven metadata URI](https://img.shields.io/maven-metadata/v/http/central.maven.org/maven2/cn/jiangzeyin/fast-boot/common-parent/maven-metadata.xml.svg)](https://mvnrepository.com/artifact/cn.jiangzeyin.fast-boot/common-parent)
