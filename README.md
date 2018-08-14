@@ -60,5 +60,5 @@ javadoc：https://apidoc.gitee.com/jiangzeyin/common-parent/
 
 ### 提供bug反馈或建议
 
-- [码云](https://gitee.com/jiangzeyin/common-parent)
+- [码云](https://gitee.com/jiangzeyin/common-parent/issues)
 - [Gtihub](https://github.com/jiangzeyin/Fast-boot/issues)
