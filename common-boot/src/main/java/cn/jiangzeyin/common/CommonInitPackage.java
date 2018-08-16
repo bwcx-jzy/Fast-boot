@@ -1,13 +1,12 @@
 package cn.jiangzeyin.common;
 
+import cn.hutool.core.util.ClassUtil;
 import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.StringUtil;
 import cn.jiangzeyin.common.spring.SpringUtil;
-import cn.jiangzeyin.util.PackageUtil;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -53,33 +52,19 @@ public class CommonInitPackage {
             DefaultSystemLog.LOG().info(packageName + " 包已经被初始化过啦！");
             return;
         }
-        try {
-            List<String> list = PackageUtil.getClassName(packageName);
-            if (list == null || list.size() <= 0) {
-                return;
-            }
-            List<Class<?>> classList = new ArrayList<>();
-            for (String name : list) {
-                try {
-                    Class<?> cls = Class.forName(name);
-                    classList.add(cls);
-                } catch (ClassNotFoundException e) {
-                    DefaultSystemLog.ERROR().error("预加载包错误:" + name, e);
-                }
-            }
-            if (classList.size() <= 0) {
-                return;
-            }
-            List<Map.Entry<Class, Integer>> newList = splitClass(classList);
-            if (newList != null) {
-                for (Map.Entry<Class, Integer> item : newList) {
-                    loadClass(item.getKey());
-                }
-            }
-            PACKAGE_NAME_LIST.add(packageName);
-        } catch (IOException e) {
-            DefaultSystemLog.ERROR().error("预加载包错误", e);
+        //扫描
+        Set<Class<?>> set = ClassUtil.scanPackageByAnnotation(packageName, PreLoadClass.class);
+        if (set == null || set.size() <= 0) {
+            return;
         }
+        // 排序调用
+        List<Map.Entry<Class, Integer>> newList = splitClass(set);
+        if (newList != null) {
+            for (Map.Entry<Class, Integer> item : newList) {
+                loadClass(item.getKey());
+            }
+        }
+        PACKAGE_NAME_LIST.add(packageName);
     }
 
     /**
@@ -88,13 +73,10 @@ public class CommonInitPackage {
      * @param list list
      * @return 排序后的
      */
-    private static List<Map.Entry<Class, Integer>> splitClass(List<Class<?>> list) {
+    private static List<Map.Entry<Class, Integer>> splitClass(Set<Class<?>> list) {
         HashMap<Class, Integer> sortMap = new HashMap<>();
         for (Class item : list) {
             PreLoadClass preLoadClass = (PreLoadClass) item.getAnnotation(PreLoadClass.class);
-            if (preLoadClass == null) {
-                continue;
-            }
             sortMap.put(item, preLoadClass.value());
         }
         List<Map.Entry<Class, Integer>> newList = null;

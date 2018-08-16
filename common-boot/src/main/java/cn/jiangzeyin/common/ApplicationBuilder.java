@@ -1,10 +1,10 @@
 package cn.jiangzeyin.common;
 
+import cn.hutool.core.util.ClassUtil;
 import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.common.interceptor.BaseInterceptor;
 import cn.jiangzeyin.common.spring.event.ApplicationEventClient;
 import cn.jiangzeyin.common.spring.event.ApplicationEventLoad;
-import cn.jiangzeyin.util.PackageUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.ComponentScan;
@@ -13,10 +13,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Boot 启动控制
@@ -227,32 +224,28 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
      */
     @SuppressWarnings("unchecked")
     public void loadProperties(String packageName) throws Exception {
-        List<String> list = PackageUtil.getClassName(packageName, false);
-        for (String item : list) {
-            Class cls = Class.forName(item);
-            AutoPropertiesClass autoPropertiesClass = (AutoPropertiesClass) cls.getAnnotation(AutoPropertiesClass.class);
-            if (autoPropertiesClass != null) {
-                Method[] methods = cls.getDeclaredMethods();
-                if (methods != null) {
-                    for (Method method : methods) {
-                        AutoPropertiesMethod autoPropertiesMethod = method.getAnnotation(AutoPropertiesMethod.class);
-                        if (autoPropertiesMethod == null) {
-                            continue;
+        Set<Class<?>> list = ClassUtil.scanPackageByAnnotation(packageName, AutoPropertiesClass.class);
+        for (Class cls : list) {
+            Method[] methods = cls.getDeclaredMethods();
+            if (methods != null) {
+                for (Method method : methods) {
+                    AutoPropertiesMethod autoPropertiesMethod = method.getAnnotation(AutoPropertiesMethod.class);
+                    if (autoPropertiesMethod == null) {
+                        continue;
+                    }
+                    method.setAccessible(true);
+                    ParameterizedType parameterizedType = (ParameterizedType) method.getGenericReturnType();
+                    Type type = parameterizedType.getRawType();
+                    Class retCls = (Class) type;
+                    int modifiers = method.getModifiers();
+                    Type[] parameters = method.getParameterTypes();
+                    if (parameters.length <= 0 && Map.class == retCls && Modifier.isStatic(modifiers) && Modifier.isPrivate(modifiers)) {
+                        Map<String, Object> map = (Map<String, Object>) method.invoke(null);
+                        if (map != null) {
+                            properties(map);
                         }
-                        method.setAccessible(true);
-                        ParameterizedType parameterizedType = (ParameterizedType) method.getGenericReturnType();
-                        Type type = parameterizedType.getRawType();
-                        Class retCls = (Class) type;
-                        int modifiers = method.getModifiers();
-                        Type[] parameters = method.getParameterTypes();
-                        if (parameters.length <= 0 && Map.class == retCls && Modifier.isStatic(modifiers) && Modifier.isPrivate(modifiers)) {
-                            Map<String, Object> map = (Map<String, Object>) method.invoke(null);
-                            if (map != null) {
-                                properties(map);
-                            }
-                        } else {
-                            throw new IllegalArgumentException(cls + "  " + method + "  " + PreLoadMethod.class + " must use empty parameters static Map private");
-                        }
+                    } else {
+                        throw new IllegalArgumentException(cls + "  " + method + "  " + PreLoadMethod.class + " must use empty parameters static Map private");
                     }
                 }
             }

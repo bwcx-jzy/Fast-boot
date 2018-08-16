@@ -1,11 +1,11 @@
 package cn.jiangzeyin.common.interceptor;
 
+import cn.hutool.core.util.ClassUtil;
 import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.StringUtil;
-import cn.jiangzeyin.common.DefaultSystemLog;
 import cn.jiangzeyin.common.ApplicationBuilder;
+import cn.jiangzeyin.common.DefaultSystemLog;
 import cn.jiangzeyin.common.spring.SpringUtil;
-import cn.jiangzeyin.util.PackageUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -13,11 +13,11 @@ import org.springframework.web.servlet.config.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 拦截器控制器
@@ -47,40 +47,22 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
             loadDefault(registry);
             return;
         }
-        List<String> list;
-        try {
-            list = PackageUtil.getClassName(loadPath);
-        } catch (IOException e) {
-            DefaultSystemLog.ERROR().error("加载拦截器异常", e);
-            loadDefault(registry);
-            return;
-        }
-        if (list.size() <= 0) {
-            loadDefault(registry);
-            return;
-        }
-        for (String item : list) {
-            Class classItem;
-            try {
-                classItem = Class.forName(item);
-            } catch (ClassNotFoundException e) {
-                DefaultSystemLog.ERROR().error("加载拦截器错误", e);
-                continue;
+        Set<Class<?>> classSet = ClassUtil.scanPackageByAnnotation(loadPath, InterceptorPattens.class);
+        if (classSet != null) {
+            for (Class classItem : classSet) {
+                if (classItem == DefaultInterceptor.class) {
+                    continue;
+                }
+                boolean isAbstract = Modifier.isAbstract(classItem.getModifiers());
+                if (isAbstract) {
+                    continue;
+                }
+                if (!BaseInterceptor.class.isAssignableFrom(classItem)) {
+                    DefaultSystemLog.LOG().info("加载拦截器异常: {} 没有继承 {}", classItem, BaseInterceptor.class);
+                    continue;
+                }
+                loadInterceptor(classItem, registry);
             }
-            if (classItem == null) {
-                continue;
-            }
-            if (classItem == DefaultInterceptor.class) {
-                continue;
-            }
-            boolean isAbstract = Modifier.isAbstract(classItem.getModifiers());
-            if (isAbstract) {
-                continue;
-            }
-            if (!BaseInterceptor.class.isAssignableFrom(classItem)) {
-                continue;
-            }
-            loadInterceptor(classItem, registry);
         }
         loadDefault(registry);
     }
@@ -95,13 +77,12 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
     }
 
     private void loadDefault(InterceptorRegistry registry) {
-        if (isHash) {
-            loadApplicationInterceptor(registry);
-            return;
-        }
+        //
         loadApplicationInterceptor(registry);
-        DefaultSystemLog.LOG().info("加载默认拦截器");
-        loadInterceptor(DefaultInterceptor.class, registry);
+        if (!isHash) {
+            DefaultSystemLog.LOG().info("加载默认拦截器");
+            loadInterceptor(DefaultInterceptor.class, registry);
+        }
     }
 
     private void loadInterceptor(Class itemCls, InterceptorRegistry registry) {
@@ -110,9 +91,6 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
             return;
         }
         InterceptorPattens interceptorPattens = (InterceptorPattens) itemCls.getAnnotation(InterceptorPattens.class);
-        if (interceptorPattens == null) {
-            return;
-        }
         BaseInterceptor handlerInterceptor;
         try {
             handlerInterceptor = (BaseInterceptor) itemCls.newInstance();

@@ -1,17 +1,16 @@
 package cn.jiangzeyin.controller.base;
 
+import cn.hutool.core.io.FileUtil;
 import cn.jiangzeyin.StringUtil;
 import cn.jiangzeyin.SystemClock;
 import cn.jiangzeyin.common.request.ParameterXssWrapper;
 import cn.jiangzeyin.controller.multipart.MultipartFileConfig;
-import cn.jiangzeyin.util.FileUtil;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -109,12 +108,7 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
                 continue;
             }
             String filePath = StringUtil.clearPath(String.format("%s/%s_%s", localPath, SystemClock.now(), fileName));
-            File file = new File(filePath);
-            //File parent = file.getParentFile();
-            //if (!parent.exists() && !parent.mkdirs())
-            //    throw new IOException("create " + parent.getPath());
-            //multiFile.transferTo(file);
-            FileUtil.writeInputStream(multiFile.getInputStream(), file);
+            FileUtil.writeFromStream(multiFile.getInputStream(), filePath);
             path[i] = filePath;
         }
         return path;

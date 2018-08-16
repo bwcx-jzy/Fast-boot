@@ -1,5 +1,9 @@
 package cn.jiangzeyin.util;
 
+import cn.hutool.core.io.IoUtil;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
@@ -31,10 +35,38 @@ public final class ZipFileUtil {
                 }
                 String entityName = zipEntry.getName();
                 if (entityName.equals(name)) {
-                    return FileUtil.copyInputStream(zipFile.getInputStream(zipEntry));
+                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                    IoUtil.copy(zipFile.getInputStream(zipEntry), byteArrayOutputStream);
+                    InputStream inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+                    try {
+                        byteArrayOutputStream.close();
+                    } catch (IOException ignored) {
+                    }
+                    return inputStream;
                 }
             }
         }
         return null;
     }
+
+//    /**
+//     * 复制流
+//     *
+//     * @param input input
+//     * @return 新流
+//     * @throws IOException io
+//     */
+//    public static InputStream copyInputStream(InputStream input) throws IOException {
+//        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//        int len = input.available();
+//        //判断长度是否大于1M  如果大于1M逐个读取
+//        int byteLen = len > EACH_LEN ? EACH_LEN : len;
+//        byte[] bytes = new byte[byteLen];
+//        //  byte[] buffer = new byte[1024];
+//        while ((len = input.read(bytes)) > -1) {
+//            byteArrayOutputStream.write(bytes, 0, len);
+//        }
+//        byteArrayOutputStream.flush();
+//        return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+//    }
 }
