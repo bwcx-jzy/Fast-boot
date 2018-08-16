@@ -4,11 +4,6 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.4.7.RELEASE</version>
-    </parent>
     <groupId>cn.jiangzeyin.fast-boot</groupId>
     <artifactId>common-parent</artifactId>
     <version>1.1.23</version>
@@ -24,6 +19,8 @@
 
         <common-boot.version>1.1.23</common-boot.version>
         <common-redis.version>1.1.23</common-redis.version>
+
+        <spring-boot.version>1.4.7.RELEASE</spring-boot.version>
     </properties>
     <modules>
         <module>common-boot</module>
