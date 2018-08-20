@@ -1,9 +1,9 @@
 package cn.jiangzeyin.common.interceptor;
 
+import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ClassUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jiangzeyin.CommonPropertiesFinal;
-import cn.jiangzeyin.StringUtil;
 import cn.jiangzeyin.common.ApplicationBuilder;
 import cn.jiangzeyin.common.DefaultSystemLog;
 import cn.jiangzeyin.common.spring.SpringUtil;
@@ -133,13 +133,13 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         String resourceHandler = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.INTERCEPTOR_RESOURCE_HANDLER);
         ResourceHandlerRegistration resourceHandlerRegistration;
-        if (!StringUtil.isEmpty(resourceHandler)) {
-            String[] handler = StringUtil.stringToArray(resourceHandler, ",");
+        if (StrUtil.isNotBlank(resourceHandler)) {
+            String[] handler = ArrayUtil.toArray(StrUtil.splitTrim(resourceHandler, ","), String.class);
             resourceHandlerRegistration = registry.addResourceHandler(handler);
             // 资源文件路径
             String resourceLocation = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.INTERCEPTOR_RESOURCE_LOCATION);
-            if (resourceHandlerRegistration != null && !StringUtil.isEmpty(resourceLocation)) {
-                String[] location = StringUtil.stringToArray(resourceLocation, ",");
+            if (resourceHandlerRegistration != null && StrUtil.isNotBlank(resourceLocation)) {
+                String[] location = ArrayUtil.toArray(StrUtil.splitTrim(resourceLocation, ","), String.class);
                 resourceHandlerRegistration.addResourceLocations(location);
             }
         }

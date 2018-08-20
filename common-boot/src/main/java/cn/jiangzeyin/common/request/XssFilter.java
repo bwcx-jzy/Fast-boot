@@ -1,7 +1,7 @@
 package cn.jiangzeyin.common.request;
 
+import cn.hutool.core.convert.Convert;
 import cn.jiangzeyin.CommonPropertiesFinal;
-import cn.jiangzeyin.StringUtil;
 import cn.jiangzeyin.common.DefaultSystemLog;
 import cn.jiangzeyin.common.spring.SpringUtil;
 import cn.jiangzeyin.controller.base.RequestUtil;
@@ -122,7 +122,8 @@ public class XssFilter extends CharacterEncodingFilter {
         // 记录请求超时
         long time = System.currentTimeMillis() - REQUEST_TIME.get();
         if (request_timeout_log == -1) {
-            request_timeout_log = StringUtil.parseLong(SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.REQUEST_TIME_OUT, "3000"));
+            Long timeOut = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.REQUEST_TIME_OUT, Long.class, 3000L);
+            request_timeout_log = Convert.toLong(timeOut, 3000L);
             if (request_timeout_log <= 0) {
                 request_timeout_log = 0;
             }

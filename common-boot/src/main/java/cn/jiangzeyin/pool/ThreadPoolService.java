@@ -1,7 +1,8 @@
 package cn.jiangzeyin.pool;
 
-import cn.jiangzeyin.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jiangzeyin.common.DefaultSystemLog;
+import cn.jiangzeyin.util.StringUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
@@ -249,7 +250,7 @@ public final class ThreadPoolService {
         private final String namePrefix;
 
         SystemThreadFactory(String poolName) {
-            if (StringUtil.isEmpty(poolName)) {
+            if (StrUtil.isEmpty(poolName)) {
                 poolName = "pool";
             }
             SecurityManager s = System.getSecurityManager();

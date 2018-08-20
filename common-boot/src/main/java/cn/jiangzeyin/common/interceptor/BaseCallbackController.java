@@ -1,6 +1,5 @@
 package cn.jiangzeyin.common.interceptor;
 
-import cn.jiangzeyin.StringUtil;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -97,7 +96,7 @@ public abstract class BaseCallbackController {
      * @author jiangzeyin
      */
     public String getSessionAttribute(String name) {
-        return StringUtil.convertNULL(getSessionAttributeObj(name));
+        return Objects.toString(getSessionAttributeObj(name), "");
     }
 
     /**

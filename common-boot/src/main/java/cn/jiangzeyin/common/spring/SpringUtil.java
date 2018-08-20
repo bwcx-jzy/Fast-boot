@@ -1,7 +1,7 @@
 package cn.jiangzeyin.common.spring;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jiangzeyin.CommonPropertiesFinal;
-import cn.jiangzeyin.StringUtil;
 import cn.jiangzeyin.common.ApplicationBuilder;
 import cn.jiangzeyin.common.CommonInitPackage;
 import cn.jiangzeyin.common.DefaultSystemLog;
@@ -174,7 +174,7 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
         // 创建bean
         AutowireCapableBeanFactory autowireCapableBeanFactory = getApplicationContext().getAutowireCapableBeanFactory();
         T obj = autowireCapableBeanFactory.createBean(tClass);
-        String beanName = StringUtil.captureName(tClass.getSimpleName());
+        String beanName = StrUtil.upperFirst(tClass.getSimpleName());
         // 注册
         ConfigurableApplicationContext configurableApplicationContext = (ConfigurableApplicationContext) getApplicationContext();
         ConfigurableListableBeanFactory configurableListableBeanFactory = configurableApplicationContext.getBeanFactory();

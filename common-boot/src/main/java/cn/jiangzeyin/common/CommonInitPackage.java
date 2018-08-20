@@ -1,8 +1,8 @@
 package cn.jiangzeyin.common;
 
 import cn.hutool.core.util.ClassUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jiangzeyin.CommonPropertiesFinal;
-import cn.jiangzeyin.StringUtil;
 import cn.jiangzeyin.common.spring.SpringUtil;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -35,7 +35,7 @@ public class CommonInitPackage {
             return;
         }
         String pageName = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.PRELOAD_PACKAGE_NAME);
-        if (StringUtil.isEmpty(pageName)) {
+        if (StrUtil.isBlank(pageName)) {
             return;
         }
         load(pageName);

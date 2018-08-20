@@ -1,7 +1,7 @@
 package cn.jiangzeyin.common.request;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HtmlUtil;
-import cn.jiangzeyin.StringUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -86,7 +86,7 @@ public class ParameterXssWrapper extends HttpServletRequestWrapper {
     }
 
     static String getUTF8(String str) {
-        if (StringUtil.isEmpty(str)) {
+        if (StrUtil.isEmpty(str)) {
             return "";
         }
         return new String(str.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);

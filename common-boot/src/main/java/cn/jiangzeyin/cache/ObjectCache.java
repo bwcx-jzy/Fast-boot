@@ -1,6 +1,6 @@
 package cn.jiangzeyin.cache;
 
-import cn.jiangzeyin.DateUtil;
+import cn.hutool.core.date.DateUtil;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -138,6 +138,6 @@ public final class ObjectCache {
      * @return 秒
      */
     private static long getCurrentTime() {
-        return DateUtil.getCurrentShortTimeMillis();
+        return DateUtil.currentSeconds();
     }
 }

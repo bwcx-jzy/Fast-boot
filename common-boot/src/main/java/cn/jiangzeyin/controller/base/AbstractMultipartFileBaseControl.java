@@ -1,8 +1,8 @@
 package cn.jiangzeyin.controller.base;
 
+import cn.hutool.core.convert.Convert;
+import cn.hutool.core.date.SystemClock;
 import cn.hutool.core.io.FileUtil;
-import cn.jiangzeyin.StringUtil;
-import cn.jiangzeyin.SystemClock;
 import cn.jiangzeyin.common.request.ParameterXssWrapper;
 import cn.jiangzeyin.controller.multipart.MultipartFileConfig;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
@@ -95,7 +95,7 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
             if (fileName == null || fileName.length() <= 0) {
                 continue;
             }
-            String filePath = StringUtil.clearPath(String.format("%s/%s_%s", localPath, SystemClock.now(), fileName));
+            String filePath = FileUtil.normalize(String.format("%s/%s_%s", localPath, SystemClock.now(), fileName));
             FileUtil.writeFromStream(multiFile.getInputStream(), filePath);
             path[i] = filePath;
         }
@@ -141,7 +141,7 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
     @Override
     protected int getParameterInt(String name, int def) {
         String value = getParameter(name);
-        return StringUtil.parseInt(value, def);
+        return Convert.toInt(value, def);
     }
 
     @Override

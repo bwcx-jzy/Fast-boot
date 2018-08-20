@@ -1,7 +1,7 @@
 package cn.jiangzeyin.controller.base;
 
+import cn.hutool.core.convert.Convert;
 import cn.hutool.extra.servlet.ServletUtil;
-import cn.jiangzeyin.StringUtil;
 import cn.jiangzeyin.common.interceptor.BaseCallbackController;
 import org.springframework.http.HttpHeaders;
 
@@ -70,7 +70,7 @@ public abstract class AbstractBaseControl extends BaseCallbackController {
     }
 
     protected int getParameterInt(String name, int def) {
-        return StringUtil.parseInt(getParameter(name), def);
+        return Convert.toInt(getParameter(name), def);
     }
 
     protected int getParameterInt(String name) {

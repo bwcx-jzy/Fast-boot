@@ -2,18 +2,15 @@ package cn.jiangzeyin.redis;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 
 import java.util.List;
 
 /**
- *
  * @author jiangzeyin
  * data 2017/12/12
  */
 @Configuration
-@PropertySource("classpath:redis.properties")
-@ConfigurationProperties(prefix = "spring.redis")
+@ConfigurationProperties(prefix = "fast-bot.spring.redis")
 public class RedisProperties {
     /**
      * Database index used by the connection factory.

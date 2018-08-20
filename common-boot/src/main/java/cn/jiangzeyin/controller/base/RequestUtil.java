@@ -1,6 +1,6 @@
 package cn.jiangzeyin.controller.base;
 
-import cn.jiangzeyin.StringUtil;
+import cn.hutool.core.util.StrUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
@@ -23,7 +23,7 @@ public final class RequestUtil {
      * @throws UnsupportedEncodingException 编码异常
      */
     public static Map<String, String> convertUrlMap(String url) throws UnsupportedEncodingException {
-        if (StringUtil.isEmpty(url)) {
+        if (StrUtil.isEmpty(url)) {
             return null;
         }
         Map<String, String> mapRequest = new HashMap<>();
@@ -33,7 +33,7 @@ public final class RequestUtil {
             return mapRequest;
         }
         String allParam = arrSplit[1];
-        if (StringUtil.isEmpty(allParam)) {
+        if (StrUtil.isBlank(allParam)) {
             return mapRequest;
         }
         arrSplit = allParam.split("[&]");

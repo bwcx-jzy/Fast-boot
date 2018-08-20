@@ -4,6 +4,8 @@
 
 > 针对SpringBoot 封装的一系列的快捷包 提供公共的Controller、自动化拦截器、启动加载资源接口、线程池管理
 
+> 此项目依赖HuTool 工具集  Hutool项目地址：https://gitee.com/loolly/hutool/  文档地址：http://hutool.mydoc.io/
+
 [![Maven metadata URI](https://img.shields.io/maven-metadata/v/http/central.maven.org/maven2/cn/jiangzeyin/fast-boot/common-parent/maven-metadata.xml.svg)](https://mvnrepository.com/artifact/cn.jiangzeyin.fast-boot/common-parent)
 ![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)
 ![jdk](https://img.shields.io/badge/JDK-1.8+-green.svg)
