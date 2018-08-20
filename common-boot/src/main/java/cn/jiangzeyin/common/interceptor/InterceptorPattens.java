@@ -23,4 +23,11 @@ public @interface InterceptorPattens {
      * @return 数组
      */
     String[] exclude() default {};
+
+    /**
+     * 拦截器排序
+     *
+     * @return 值越小 先执行
+     */
+    int sort() default 0;
 }

@@ -1,6 +1,7 @@
 package cn.jiangzeyin.common.interceptor;
 
 import cn.hutool.core.util.ClassUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.StringUtil;
 import cn.jiangzeyin.common.ApplicationBuilder;
@@ -11,13 +12,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 拦截器控制器
@@ -30,60 +26,77 @@ import java.util.Set;
 public class InterceptorControl extends WebMvcConfigurerAdapter {
     @Value("${" + CommonPropertiesFinal.INTERCEPTOR_INIT_PACKAGE_NAME + ":}")
     private String loadPath;
-    private boolean isHash = false;
-
+    /**
+     * 加载成功
+     */
     private static final List<Class> LOAD_OK = new ArrayList<>();
+    private InterceptorRegistry registry;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        init(registry);
+        this.registry = registry;
+        init();
     }
 
     /**
-     * @param registry 注册
+     * 预加载包中
      */
-    private void init(InterceptorRegistry registry) {
-        if (loadPath == null || loadPath.length() <= 0) {
-            loadDefault(registry);
+    private void init() {
+        if (StrUtil.isNotEmpty(loadPath)) {
+            Set<Class<?>> classSet = ClassUtil.scanPackageByAnnotation(loadPath, InterceptorPattens.class);
+            loadClass(classSet);
+        }
+        //  加载application 注入
+        loadApplicationInterceptor();
+    }
+
+    private void loadApplicationInterceptor() {
+        Set<Class<? extends BaseInterceptor>> interceptorClass = ApplicationBuilder.getInstance().getInterceptorClass();
+        Class<?>[] cls = interceptorClass.toArray(new Class[0]);
+        Set<Class<?>> newSet = new HashSet<>(Arrays.asList(cls));
+        loadClass(newSet);
+    }
+
+    private void loadClass(Set<Class<?>> set) {
+        if (null == set) {
             return;
         }
-        Set<Class<?>> classSet = ClassUtil.scanPackageByAnnotation(loadPath, InterceptorPattens.class);
-        if (classSet != null) {
-            for (Class classItem : classSet) {
-                if (classItem == DefaultInterceptor.class) {
-                    continue;
-                }
-                boolean isAbstract = Modifier.isAbstract(classItem.getModifiers());
-                if (isAbstract) {
-                    continue;
-                }
-                if (!BaseInterceptor.class.isAssignableFrom(classItem)) {
-                    DefaultSystemLog.LOG().info("加载拦截器异常: {} 没有继承 {}", classItem, BaseInterceptor.class);
-                    continue;
-                }
-                loadInterceptor(classItem, registry);
-            }
-        }
-        loadDefault(registry);
-    }
-
-    private void loadApplicationInterceptor(InterceptorRegistry registry) {
-        List<Class<? extends BaseInterceptor>> interceptorClass = ApplicationBuilder.getInstance().getInterceptorClass();
-        if (interceptorClass != null) {
-            for (Class<? extends BaseInterceptor> item : interceptorClass) {
-                loadInterceptor(item, registry);
+        List<Map.Entry<Class, Integer>> newList = splitClass(set);
+        if (newList != null) {
+            for (Map.Entry<Class, Integer> entry : newList) {
+                loadInterceptor(entry.getKey(), registry);
             }
         }
     }
 
-    private void loadDefault(InterceptorRegistry registry) {
-        //
-        loadApplicationInterceptor(registry);
-        if (!isHash) {
-            DefaultSystemLog.LOG().info("加载默认拦截器");
-            loadInterceptor(DefaultInterceptor.class, registry);
+    /**
+     * 排序class
+     *
+     * @param list list
+     * @return 排序后的
+     */
+    private static List<Map.Entry<Class, Integer>> splitClass(Set<Class<?>> list) {
+        HashMap<Class, Integer> sortMap = new HashMap<>(10);
+        for (Class item : list) {
+            boolean isAbstract = Modifier.isAbstract(item.getModifiers());
+            if (isAbstract) {
+                continue;
+            }
+            if (!BaseInterceptor.class.isAssignableFrom(item)) {
+                DefaultSystemLog.LOG().info("加载拦截器异常: {} 没有继承 {}", item, BaseInterceptor.class);
+                continue;
+            }
+            InterceptorPattens interceptorPattens = (InterceptorPattens) item.getAnnotation(InterceptorPattens.class);
+            sortMap.put(item, interceptorPattens.sort());
         }
+        List<Map.Entry<Class, Integer>> newList = null;
+        if (sortMap.size() > 0) {
+            newList = new ArrayList<>(sortMap.entrySet());
+            newList.sort(Comparator.comparing(Map.Entry::getValue));
+        }
+        return newList;
     }
+
 
     private void loadInterceptor(Class itemCls, InterceptorRegistry registry) {
         if (LOAD_OK.contains(itemCls) && !ApplicationBuilder.isRestart()) {
@@ -108,8 +121,7 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
             registration.excludePathPatterns(exclude);
         }
         LOAD_OK.add(itemCls);
-        DefaultSystemLog.LOG().info("加载拦截器：" + itemCls + "  " + Arrays.toString(patterns) + "  " + Arrays.toString(exclude));
-        isHash = true;
+        DefaultSystemLog.LOG().info("加载拦截器：{} {} {} {}", itemCls, Arrays.toString(patterns), Arrays.toString(exclude), interceptorPattens.sort());
     }
 
     /**
@@ -136,23 +148,9 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         super.configureMessageConverters(converters);
-        List<HttpMessageConverter<?>> httpMessageConverters = ApplicationBuilder.getInstance().getHttpMessageConverters();
+        Set<HttpMessageConverter<?>> httpMessageConverters = ApplicationBuilder.getInstance().getHttpMessageConverters();
         if (httpMessageConverters != null) {
             converters.addAll(httpMessageConverters);
-        }
-    }
-
-    /**
-     * 默认的拦截器
-     * Created by jiangzeyin on 2017/11/3.
-     */
-    @InterceptorPattens
-    static class DefaultInterceptor extends BaseInterceptor {
-        @Override
-        public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-            super.preHandle(request, response, handler);
-            reload();
-            return true;
         }
     }
 }

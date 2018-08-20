@@ -74,7 +74,7 @@ public class CommonInitPackage {
      * @return 排序后的
      */
     private static List<Map.Entry<Class, Integer>> splitClass(Set<Class<?>> list) {
-        HashMap<Class, Integer> sortMap = new HashMap<>();
+        HashMap<Class, Integer> sortMap = new HashMap<>(10);
         for (Class item : list) {
             PreLoadClass preLoadClass = (PreLoadClass) item.getAnnotation(PreLoadClass.class);
             sortMap.put(item, preLoadClass.value());

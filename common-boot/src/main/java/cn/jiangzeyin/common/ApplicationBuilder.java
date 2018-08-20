@@ -6,6 +6,7 @@ import cn.jiangzeyin.common.interceptor.BaseInterceptor;
 import cn.jiangzeyin.common.spring.event.ApplicationEventClient;
 import cn.jiangzeyin.common.spring.event.ApplicationEventLoad;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
@@ -13,7 +14,10 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.*;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Boot 启动控制
@@ -39,20 +43,20 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
     /**
      * 程序监听事件
      */
-    private List<ApplicationEventClient> applicationEventClients;
+    private Set<ApplicationEventClient> applicationEventClients;
 
     /**
      * 程序加载完成
      */
-    private List<ApplicationEventLoad> applicationEventLoads;
+    private Set<ApplicationEventLoad> applicationEventLoads;
     /**
      *
      */
-    private List<Class<? extends BaseInterceptor>> interceptorClass;
+    private Set<Class<? extends BaseInterceptor>> interceptorClass;
     /**
      *
      */
-    private List<HttpMessageConverter<?>> httpMessageConverters;
+    private Set<HttpMessageConverter<?>> httpMessageConverters;
 
     /**
      * 创建启动对象
@@ -102,19 +106,19 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
         return environment;
     }
 
-    public List<ApplicationEventClient> getApplicationEventClients() {
+    public Set<ApplicationEventClient> getApplicationEventClients() {
         return applicationEventClients;
     }
 
-    public List<ApplicationEventLoad> getApplicationEventLoads() {
+    public Set<ApplicationEventLoad> getApplicationEventLoads() {
         return applicationEventLoads;
     }
 
-    public List<Class<? extends BaseInterceptor>> getInterceptorClass() {
+    public Set<Class<? extends BaseInterceptor>> getInterceptorClass() {
         return interceptorClass;
     }
 
-    public List<HttpMessageConverter<?>> getHttpMessageConverters() {
+    public Set<HttpMessageConverter<?>> getHttpMessageConverters() {
         return httpMessageConverters;
     }
 
@@ -127,7 +131,7 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
     public ApplicationBuilder addHttpMessageConverter(HttpMessageConverter<?> httpMessageConverter) {
         Objects.requireNonNull(httpMessageConverter);
         if (httpMessageConverters == null) {
-            this.httpMessageConverters = new ArrayList<>();
+            this.httpMessageConverters = new HashSet<>();
         }
         this.httpMessageConverters.add(httpMessageConverter);
         return this;
@@ -142,7 +146,7 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
     public ApplicationBuilder addInterceptor(Class<? extends BaseInterceptor> cls) {
         Objects.requireNonNull(cls);
         if (interceptorClass == null) {
-            this.interceptorClass = new ArrayList<>();
+            this.interceptorClass = new HashSet<>();
         }
         this.interceptorClass.add(cls);
         return this;
@@ -157,7 +161,7 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
     public ApplicationBuilder addApplicationEventLoad(ApplicationEventLoad applicationEventLoad) {
         Objects.requireNonNull(applicationEventLoad);
         if (applicationEventLoads == null) {
-            this.applicationEventLoads = new ArrayList<>();
+            this.applicationEventLoads = new HashSet<>();
         }
         this.applicationEventLoads.add(applicationEventLoad);
         return this;
@@ -172,7 +176,7 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
     public ApplicationBuilder addApplicationEventClient(ApplicationEventClient applicationEventClient) {
         Objects.requireNonNull(applicationEventClient);
         if (applicationEventClients == null) {
-            applicationEventClients = new ArrayList<>();
+            applicationEventClients = new HashSet<>();
         }
         applicationEventClients.add(applicationEventClient);
         return this;
@@ -190,19 +194,29 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
         if (StringUtils.isEmpty(packageName)) {
             throw new IllegalArgumentException("packageName");
         }
+        Object proxy;
+        String fliedName;
         ComponentScan componentScan = (ComponentScan) applicationClass.getAnnotation(ComponentScan.class);
         if (componentScan == null) {
-            new IllegalArgumentException("please add ComponentScan").printStackTrace();
-            return this;
+            SpringBootApplication springBootApplication = (SpringBootApplication) applicationClass.getAnnotation(SpringBootApplication.class);
+            if (springBootApplication == null) {
+                throw new IllegalArgumentException("please add " + SpringBootApplication.class);
+            } else {
+                proxy = springBootApplication;
+                fliedName = "scanBasePackages";
+            }
+        } else {
+            proxy = componentScan;
+            fliedName = "value";
         }
-        InvocationHandler invocationHandler = Proxy.getInvocationHandler(componentScan);
+        InvocationHandler invocationHandler = Proxy.getInvocationHandler(proxy);
         Field value = invocationHandler.getClass().getDeclaredField("memberValues");
         value.setAccessible(true);
         Map<String, Object> memberValues = (Map<String, Object>) value.get(invocationHandler);
-        String[] values = (String[]) memberValues.get("value");
+        String[] values = (String[]) memberValues.get(fliedName);
         String[] newValues = new String[]{packageName};
         newValues = StringUtils.mergeStringArrays(values, newValues);
-        memberValues.put("value", newValues);
+        memberValues.put(fliedName, newValues);
         return this;
     }
 

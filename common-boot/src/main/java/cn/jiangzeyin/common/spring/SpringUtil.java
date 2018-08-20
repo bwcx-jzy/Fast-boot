@@ -20,8 +20,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.util.Assert;
 import org.springframework.web.context.support.ServletRequestHandledEvent;
 
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * 通用的Spring Context util
@@ -49,7 +49,7 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
 //        SpringUtil.applicationContext = applicationContext;
         setApplicationContexts(applicationContext);
         DefaultSystemLog.init();
-        List<ApplicationEventLoad> applicationEventLoads = ApplicationBuilder.getInstance().getApplicationEventLoads();
+        Set<ApplicationEventLoad> applicationEventLoads = ApplicationBuilder.getInstance().getApplicationEventLoads();
         if (applicationEventLoads != null) {
             for (ApplicationEventLoad applicationEventLoad : applicationEventLoads) {
                 applicationEventLoad.applicationLoad();
@@ -71,7 +71,7 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
             return;
         }
         //  通知子级
-        List<ApplicationEventClient> applicationEventClients = ApplicationBuilder.getInstance().getApplicationEventClients();
+        Set<ApplicationEventClient> applicationEventClients = ApplicationBuilder.getInstance().getApplicationEventClients();
         if (applicationEventClients != null) {
             for (ApplicationEventClient applicationEventClient : applicationEventClients) {
                 applicationEventClient.onApplicationEvent(event);
