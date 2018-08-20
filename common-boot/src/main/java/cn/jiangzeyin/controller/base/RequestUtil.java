@@ -2,7 +2,6 @@ package cn.jiangzeyin.controller.base;
 
 import cn.jiangzeyin.StringUtil;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -56,34 +55,7 @@ public final class RequestUtil {
 
 
     /**
-     * @param request req
-     * @param name    name
-     * @return cookie
-     * @author jiangzeyin
-     */
-    public static Cookie getCookieByName(HttpServletRequest request, String name) {
-        Map<String, Cookie> cookieMap = readCookieMap(request);
-        return cookieMap.getOrDefault(name, null);
-    }
-
-    /**
-     * @param request req
-     * @return map
-     * @author jiangzeyin
-     */
-    private static Map<String, Cookie> readCookieMap(HttpServletRequest request) {
-        Map<String, Cookie> cookieMap = new HashMap<>();
-        Cookie[] cookies = request.getCookies();
-        if (null != cookies) {
-            for (Cookie cookie : cookies) {
-                cookieMap.put(cookie.getName(), cookie);
-            }
-        }
-        return cookieMap;
-    }
-
-    /**
-     * 获取headr
+     * 获取header
      *
      * @param request req
      * @return map
@@ -91,7 +63,7 @@ public final class RequestUtil {
      */
     public static Map<String, String> getHeaderMapValues(HttpServletRequest request) {
         Enumeration<String> enumeration = request.getHeaderNames();
-        Map<String, String> headerMapValues = new HashMap<>();
+        Map<String, String> headerMapValues = new HashMap<>(20);
         if (enumeration != null) {
             for (; enumeration.hasMoreElements(); ) {
                 String name = enumeration.nextElement();

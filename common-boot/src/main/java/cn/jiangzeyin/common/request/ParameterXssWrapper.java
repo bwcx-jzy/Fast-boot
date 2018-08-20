@@ -1,5 +1,6 @@
 package cn.jiangzeyin.common.request;
 
+import cn.hutool.http.HtmlUtil;
 import cn.jiangzeyin.StringUtil;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +25,6 @@ public class ParameterXssWrapper extends HttpServletRequestWrapper {
      */
     ParameterXssWrapper(HttpServletRequest request) {
         super(request);
-        //request = this;
         this.request = request;
         this.parameters = doXss(request.getParameterMap(), true);
     }
@@ -59,7 +59,7 @@ public class ParameterXssWrapper extends HttpServletRequestWrapper {
     public static Map<String, String[]> doXss(Map<String, String[]> map, boolean convertUtf8) {
         Objects.requireNonNull(map);
         Iterator<Map.Entry<String, String[]>> iterator = map.entrySet().iterator();
-        Map<String, String[]> valuesMap = new HashMap<>();
+        Map<String, String[]> valuesMap = new HashMap<>(20);
         while (iterator.hasNext()) {
             Map.Entry<String, String[]> entry = iterator.next();
             String key = entry.getKey();
@@ -76,11 +76,11 @@ public class ParameterXssWrapper extends HttpServletRequestWrapper {
         if (values == null) {
             return null;
         }
-        for (int i = 0; i < values.length; i++) {
+        for (int i = 0, len = values.length; i < len; i++) {
             if (!convertUtf8) {
                 values[i] = getUTF8(values[i]);
             }
-            values[i] = StringUtil.filterHTML(values[i]);
+            values[i] = HtmlUtil.escape(values[i]);
         }
         return values;
     }

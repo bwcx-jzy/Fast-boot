@@ -34,7 +34,6 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
         throw new IllegalArgumentException("not MultipartHttpServletRequest");
     }
 
-
     public static void remove() {
         THREAD_LOCAL_MULTIPART_HTTP_SERVLET_REQUEST.remove();
     }
@@ -45,7 +44,6 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
     @Override
     public void resetInfo() {
         super.resetInfo();
-//        THREAD_LOCAL_MULTIPART_HTTP_SERVLET_REQUEST.set(null);
     }
 
     @Override
@@ -71,16 +69,6 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
         return getMultiRequest().getFiles(name);
     }
 
-    @Override
-    protected <T> T getObject(Class<T> tClass) throws IllegalAccessException, InstantiationException {
-        Map<String, String[]> parameter = getParameter();
-        if (parameter == null) {
-            return super.getObject(tClass);
-        }
-        Object object = tClass.newInstance();
-        doParameterMap(parameter, object);
-        return (T) object;
-    }
 
     /**
      * 接收文件
