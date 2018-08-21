@@ -31,7 +31,7 @@
 
 [参考API](https://apidoc.gitee.com/jiangzeyin/common-parent/)
 
-##依赖
+## 依赖
 [SpringBoot starter-web](https://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#spring-boot-starter-web)
 
 [HuTool](https://gitee.com/loolly/hutool/)
