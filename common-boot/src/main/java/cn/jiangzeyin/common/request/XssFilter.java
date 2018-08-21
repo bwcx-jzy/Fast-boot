@@ -5,6 +5,7 @@ import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.common.DefaultSystemLog;
 import cn.jiangzeyin.common.spring.SpringUtil;
 import cn.jiangzeyin.controller.base.RequestUtil;
+import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
@@ -51,9 +52,15 @@ public class XssFilter extends CharacterEncodingFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         REQUEST_TIME.set(System.currentTimeMillis());
-        ParameterXssWrapper xssWrapper = new ParameterXssWrapper(request);
-        requestLog(xssWrapper);
-        super.doFilterInternal(xssWrapper, response, filterChain);
+        boolean isFile = ServletFileUpload.isMultipartContent(request);
+        HttpServletRequest newRequest;
+        if (isFile) {
+            newRequest = new MultipartParameterXssWrapper(request);
+        } else {
+            newRequest = new ParameterXssWrapper(request);
+        }
+        requestLog(newRequest);
+        super.doFilterInternal(newRequest, response, filterChain);
         responseLog(response);
         cleanThreadLocal();
     }

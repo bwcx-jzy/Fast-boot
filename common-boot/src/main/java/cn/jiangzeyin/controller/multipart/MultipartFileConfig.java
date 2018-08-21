@@ -1,6 +1,7 @@
 package cn.jiangzeyin.controller.multipart;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.system.UserInfo;
 
 /**
  * 上传文件保存路径
@@ -10,6 +11,7 @@ import cn.hutool.core.util.StrUtil;
  */
 public class MultipartFileConfig {
     private static String fileTempPath;
+    private static final UserInfo USER_INFO = new UserInfo();
 
     public static void setFileTempPath(String fileTempPath) {
         MultipartFileConfig.fileTempPath = fileTempPath;
@@ -17,7 +19,7 @@ public class MultipartFileConfig {
 
     public static String getFileTempPath() {
         if (StrUtil.isBlank(fileTempPath)) {
-            throw new IllegalArgumentException("please set  fileTempPath");
+            fileTempPath = USER_INFO.getTempDir();
         }
         return fileTempPath;
     }
