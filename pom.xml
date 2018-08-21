@@ -123,14 +123,14 @@
             <id>maven-repo</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </snapshotRepository>
-        <!--<repository>-->
-        <!--<id>maven-repo</id>-->
-        <!--<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
-        <!--</repository>-->
         <repository>
-            <id>yokead-loc-repo</id>
-            <url>http://bwcx:4040/repository/yokead/</url>
+            <id>maven-repo</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
+        <!--<repository>-->
+        <!--<id>yokead-loc-repo</id>-->
+        <!--<url>http://bwcx:4040/repository/yokead/</url>-->
+        <!--</repository>-->
     </distributionManagement>
     <licenses>
         <license>
