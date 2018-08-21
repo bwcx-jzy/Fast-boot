@@ -13,11 +13,11 @@
 ### Maven
 在项目的pom.xml 添加如下代码
 
-    <parent>
+    <dependencies>
         <groupId>cn.jiangzeyin.fast-boot</groupId>
         <artifactId>common-parent</artifactId>
         <version>VERSION</version>
-    </parent>
+    </dependencies>
 
 注：VERSION 请更换为公共maven库最新的版本号
 
