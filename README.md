@@ -11,7 +11,7 @@
 ## 安装
 
 ### Maven
-在项目的pom.xml 添加如下代码
+在SpringBoot项目的pom.xml 添加如下代码
 
     <dependencies>
         <groupId>cn.jiangzeyin.fast-boot</groupId>
