@@ -6,6 +6,8 @@
 *  【common-boot】 拦截注解添加排序属性  排序值越小越先加载
 *  【common-redis】 去掉读取配置文件，采用动态读取属性 
 *  【common-boot】 删除simple-util 依赖
+*  【common-boot】 xss自动支持文件表单
+*  【去除】AbstractMultipartFileBaseControl 类 合并到 AbstractBaseControl
 
 ---------------------------------------------------------------------
 

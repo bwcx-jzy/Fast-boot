@@ -42,12 +42,13 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
      * 预加载包中
      */
     private void init() {
+        //  加载application 注入
+        loadApplicationInterceptor();
+        // 用户添加的级别最低
         if (StrUtil.isNotEmpty(loadPath)) {
             Set<Class<?>> classSet = ClassUtil.scanPackageByAnnotation(loadPath, InterceptorPattens.class);
             loadClass(classSet);
         }
-        //  加载application 注入
-        loadApplicationInterceptor();
     }
 
     private void loadApplicationInterceptor() {

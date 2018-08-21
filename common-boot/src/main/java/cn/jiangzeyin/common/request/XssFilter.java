@@ -1,6 +1,7 @@
 package cn.jiangzeyin.common.request;
 
 import cn.hutool.core.convert.Convert;
+import cn.hutool.extra.servlet.ServletUtil;
 import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.common.DefaultSystemLog;
 import cn.jiangzeyin.common.spring.SpringUtil;
@@ -77,9 +78,9 @@ public class XssFilter extends CharacterEncodingFilter {
         Map<String, String[]> parameters = request.getParameterMap();
         REQUEST_PARAMETERS_MAP.set(parameters);
         StringBuffer stringBuffer = new StringBuffer();
-        stringBuffer.append(request.getRequestURI());
-        //.append(",ip:").append(RequestUtil.getIpAddress(request))
-        stringBuffer.append(" parameters:");
+        stringBuffer.append(request.getRequestURI())
+                .append(",ip:").append(ServletUtil.getClientIP(request))
+                .append(" parameters:");
         if (parameters != null) {
             Set<Map.Entry<String, String[]>> entries = parameters.entrySet();
             stringBuffer.append("{");
