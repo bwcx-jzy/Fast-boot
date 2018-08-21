@@ -52,6 +52,9 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
 
     private void loadApplicationInterceptor() {
         Set<Class<? extends BaseInterceptor>> interceptorClass = ApplicationBuilder.getInstance().getInterceptorClass();
+        if (interceptorClass == null) {
+            return;
+        }
         Class<?>[] cls = interceptorClass.toArray(new Class[0]);
         Set<Class<?>> newSet = new HashSet<>(Arrays.asList(cls));
         loadClass(newSet);

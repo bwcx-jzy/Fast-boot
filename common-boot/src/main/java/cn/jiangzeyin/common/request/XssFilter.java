@@ -5,7 +5,6 @@ import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.common.DefaultSystemLog;
 import cn.jiangzeyin.common.spring.SpringUtil;
 import cn.jiangzeyin.controller.base.RequestUtil;
-import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
@@ -52,12 +51,9 @@ public class XssFilter extends CharacterEncodingFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         REQUEST_TIME.set(System.currentTimeMillis());
-        boolean isFile = ServletFileUpload.isMultipartContent(request);
-        if (!isFile) {
-            request = new ParameterXssWrapper(request);
-        }
-        requestLog(request, isFile);
-        super.doFilterInternal(request, response, filterChain);
+        ParameterXssWrapper xssWrapper = new ParameterXssWrapper(request);
+        requestLog(xssWrapper);
+        super.doFilterInternal(xssWrapper, response, filterChain);
         responseLog(response);
         cleanThreadLocal();
     }
@@ -67,7 +63,7 @@ public class XssFilter extends CharacterEncodingFilter {
      *
      * @param request req
      */
-    private void requestLog(HttpServletRequest request, boolean isFile) {
+    private void requestLog(HttpServletRequest request) {
         // 获取请求信息
         Map<String, String> header = RequestUtil.getHeaderMapValues(request);
         REQUEST_HEADER_MAP.set(header);
@@ -89,7 +85,7 @@ public class XssFilter extends CharacterEncodingFilter {
                         if (i != 0) {
                             stringBuffer.append(",");
                         }
-                        stringBuffer.append(isFile ? ParameterXssWrapper.getUTF8(value[i]) : value[i]);
+                        stringBuffer.append(value[i]);
                     }
                 }
                 stringBuffer.append(";");

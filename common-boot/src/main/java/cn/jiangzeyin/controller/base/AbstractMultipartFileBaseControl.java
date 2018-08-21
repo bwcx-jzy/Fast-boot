@@ -106,7 +106,7 @@ public abstract class AbstractMultipartFileBaseControl extends AbstractBaseContr
         Map<String, String[]> map = getRequest().getParameterMap();
         boolean doXss = Boolean.valueOf(String.valueOf(getAttribute("ParameterXssWrapper.doXss")));
         if (!doXss) {
-            map = ParameterXssWrapper.doXss(map, false);
+            map = ParameterXssWrapper.doXss(map);
             setAttribute("ParameterXssWrapper.doXss", true);
         }
         return map;

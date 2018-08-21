@@ -1,11 +1,9 @@
 package cn.jiangzeyin.common.request;
 
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HtmlUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -16,7 +14,6 @@ import java.util.*;
  */
 public class ParameterXssWrapper extends HttpServletRequestWrapper {
     private final Map<String, String[]> parameters;
-    private final HttpServletRequest request;
 
     /**
      * Constructs a request object wrapping the given request.
@@ -25,8 +22,7 @@ public class ParameterXssWrapper extends HttpServletRequestWrapper {
      */
     ParameterXssWrapper(HttpServletRequest request) {
         super(request);
-        this.request = request;
-        this.parameters = doXss(request.getParameterMap(), true);
+        this.parameters = doXss(request.getParameterMap());
     }
 
     @Override
@@ -41,7 +37,11 @@ public class ParameterXssWrapper extends HttpServletRequestWrapper {
 
     @Override
     public String getParameter(String name) {
-        return request.getParameter(name);
+        String[] values = getParameterValues(name);
+        if (values == null) {
+            return null;
+        }
+        return values[0];
     }
 
     @Override
@@ -52,11 +52,10 @@ public class ParameterXssWrapper extends HttpServletRequestWrapper {
     /**
      * 处理xss 问题
      *
-     * @param map         map
-     * @param convertUtf8 utf8
+     * @param map map
      * @return 结果
      */
-    public static Map<String, String[]> doXss(Map<String, String[]> map, boolean convertUtf8) {
+    public static Map<String, String[]> doXss(Map<String, String[]> map) {
         Objects.requireNonNull(map);
         Iterator<Map.Entry<String, String[]>> iterator = map.entrySet().iterator();
         Map<String, String[]> valuesMap = new HashMap<>(20);
@@ -64,7 +63,7 @@ public class ParameterXssWrapper extends HttpServletRequestWrapper {
             Map.Entry<String, String[]> entry = iterator.next();
             String key = entry.getKey();
             String[] values = entry.getValue();
-            values = doXss(values, convertUtf8);
+            values = doXss(values);
             if (values != null) {
                 valuesMap.put(key, values);
             }
@@ -72,23 +71,13 @@ public class ParameterXssWrapper extends HttpServletRequestWrapper {
         return valuesMap;
     }
 
-    private static String[] doXss(String[] values, boolean convertUtf8) {
+    private static String[] doXss(String[] values) {
         if (values == null) {
             return null;
         }
         for (int i = 0, len = values.length; i < len; i++) {
-            if (!convertUtf8) {
-                values[i] = getUTF8(values[i]);
-            }
             values[i] = HtmlUtil.escape(values[i]);
         }
         return values;
-    }
-
-    static String getUTF8(String str) {
-        if (StrUtil.isEmpty(str)) {
-            return "";
-        }
-        return new String(str.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
     }
 }
