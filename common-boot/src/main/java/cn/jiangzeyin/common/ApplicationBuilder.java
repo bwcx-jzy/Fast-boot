@@ -79,7 +79,9 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
             }
         }
         this.applicationClass = this.application.getMainApplicationClass();
+        // 重写banner
         banner((environment, sourceClass, out) -> {
+            // 最早获取配置信息
             ApplicationBuilder.this.environment = environment;
             String msg = environment.getProperty(CommonPropertiesFinal.BANNER_MSG, "boot Application starting");
             out.println(msg);

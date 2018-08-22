@@ -92,9 +92,7 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
         // 请求异常记录
         if (event instanceof ServletRequestHandledEvent) {
             ServletRequestHandledEvent servletRequestHandledEvent = (ServletRequestHandledEvent) event;
-            if (!servletRequestHandledEvent.wasFailure()) {
-                DefaultSystemLog.LOG(DefaultSystemLog.LogType.REQUEST).info(servletRequestHandledEvent.toString());
-            } else {
+            if (servletRequestHandledEvent.wasFailure()) {
                 DefaultSystemLog.LOG(DefaultSystemLog.LogType.REQUEST).info("error:" + servletRequestHandledEvent.toString());
             }
         }

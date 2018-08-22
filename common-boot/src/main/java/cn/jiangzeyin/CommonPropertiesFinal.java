@@ -24,6 +24,10 @@ public final class CommonPropertiesFinal {
      */
     public static final String REQUEST_TIME_OUT = REQUEST + ".timeout";
     /**
+     * 是否记录日志  默认记录  true false
+     */
+    public static final String REQUEST_LOG = REQUEST + ".log";
+    /**
      * tomcat 配置
      */
     public static final String TOMCAT = "tomcat";

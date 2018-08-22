@@ -7,6 +7,7 @@ import cn.jiangzeyin.common.DefaultSystemLog;
 import cn.jiangzeyin.common.spring.SpringUtil;
 import cn.jiangzeyin.controller.base.RequestUtil;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
+import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
@@ -31,6 +32,7 @@ public class XssFilter extends CharacterEncodingFilter {
     private static final ThreadLocal<Map<String, String>> REQUEST_HEADER_MAP = new ThreadLocal<>();
     private static final ThreadLocal<Map<String, String[]>> REQUEST_PARAMETERS_MAP = new ThreadLocal<>();
     private static long request_timeout_log = -1;
+    private static Boolean LOG;
 
     public static Map<String, String> getRequestHeader() {
         return REQUEST_HEADER_MAP.get();
@@ -38,6 +40,14 @@ public class XssFilter extends CharacterEncodingFilter {
 
     public static Map<String, String[]> getRequestParameters() {
         return REQUEST_PARAMETERS_MAP.get();
+    }
+
+    static {
+        try {
+            LOG = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.REQUEST_LOG, Boolean.class, true);
+        } catch (ConversionFailedException ignored) {
+            LOG = false;
+        }
     }
 
     /**
@@ -72,6 +82,9 @@ public class XssFilter extends CharacterEncodingFilter {
      * @param request req
      */
     private void requestLog(HttpServletRequest request) {
+        if (LOG == null || !LOG) {
+            return;
+        }
         // 获取请求信息
         Map<String, String> header = RequestUtil.getHeaderMapValues(request);
         REQUEST_HEADER_MAP.set(header);
@@ -113,6 +126,9 @@ public class XssFilter extends CharacterEncodingFilter {
      * @param response rep
      */
     private void responseLog(HttpServletResponse response) {
+        if (LOG == null || !LOG) {
+            return;
+        }
         // 记录请求状态不正确
         int status = response.getStatus();
         if (status != HttpStatus.OK.value() && status != HttpStatus.FOUND.value()) {
