@@ -20,7 +20,7 @@ public class MultipartParameterXssWrapper extends StandardMultipartHttpServletRe
 
     public MultipartParameterXssWrapper(HttpServletRequest request) throws MultipartException {
         super(request);
-        parameters = ParameterXssWrapper.doXss(super.getParameterMap(), true);
+        parameters = ParameterXssWrapper.doXss(super.getParameterMap());
     }
 
 
