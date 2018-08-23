@@ -72,12 +72,12 @@ cn.jiangzeyin.common.BaseApplication  该类主要实现对该程序进行初始
     public class test {
         // 值越小越先加载
         @PreLoadMethod(1)
-        public static void load1() {
+        private static void load1() {
             System.out.println("load1");
         }
     
         @PreLoadMethod(2)
-        public static void load2() {
+        private static void load2() {
             System.out.println("load2");
         }
 
