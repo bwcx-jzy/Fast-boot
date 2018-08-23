@@ -60,7 +60,6 @@ public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
             Class controlClass = object.getClass();
             //  controller
             if (BaseCallbackController.class.isAssignableFrom(controlClass)) {
-                // baseCallbackController.resetInfo(this.request, this.session, this.response);
                 this.baseCallbackController = (BaseCallbackController) object;
             }
         }

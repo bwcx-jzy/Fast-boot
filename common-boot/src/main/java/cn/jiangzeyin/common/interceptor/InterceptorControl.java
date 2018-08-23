@@ -1,5 +1,6 @@
 package cn.jiangzeyin.common.interceptor;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Singleton;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ClassUtil;
@@ -13,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -45,25 +47,29 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
      */
     private void init() {
         //  加载application 注入
-        loadApplicationInterceptor();
-        // 用户添加的级别最低
+        Set<Class<?>> def = loadApplicationInterceptor();
+        // 用户添加的
         if (StrUtil.isNotEmpty(loadPath)) {
             Set<Class<?>> classSet = ClassUtil.scanPackageByAnnotation(loadPath, InterceptorPattens.class);
-            loadClass(classSet);
+            if (def == null && classSet == null) {
+                return;
+            }
+            // 合并
+            Collection<Class<?>> newClassSet = CollUtil.union(def, classSet);
+            loadClass(newClassSet);
         }
     }
 
-    private void loadApplicationInterceptor() {
+    private Set<Class<?>> loadApplicationInterceptor() {
         Set<Class<? extends BaseInterceptor>> interceptorClass = ApplicationBuilder.getInstance().getInterceptorClass();
         if (interceptorClass == null) {
-            return;
+            return null;
         }
         Class<?>[] cls = interceptorClass.toArray(new Class[0]);
-        Set<Class<?>> newSet = new HashSet<>(Arrays.asList(cls));
-        loadClass(newSet);
+        return new HashSet<>(Arrays.asList(cls));
     }
 
-    private void loadClass(Set<Class<?>> set) {
+    private void loadClass(Collection<Class<?>> set) {
         if (null == set) {
             return;
         }
@@ -81,15 +87,15 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
      * @param list list
      * @return 排序后的
      */
-    private static List<Map.Entry<Class, Integer>> splitClass(Set<Class<?>> list) {
+    private static List<Map.Entry<Class, Integer>> splitClass(Collection<Class<?>> list) {
         HashMap<Class, Integer> sortMap = new HashMap<>(10);
         for (Class item : list) {
             boolean isAbstract = Modifier.isAbstract(item.getModifiers());
             if (isAbstract) {
                 continue;
             }
-            if (!BaseInterceptor.class.isAssignableFrom(item)) {
-                DefaultSystemLog.LOG().info("加载拦截器异常: {} 没有继承 {}", item, BaseInterceptor.class);
+            if (!HandlerInterceptorAdapter.class.isAssignableFrom(item)) {
+                DefaultSystemLog.ERROR().error("加载拦截器异常: {} 没有继承 {}", item, HandlerInterceptorAdapter.class);
                 continue;
             }
             InterceptorPattens interceptorPattens = (InterceptorPattens) item.getAnnotation(InterceptorPattens.class);
