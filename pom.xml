@@ -6,7 +6,7 @@
     <packaging>pom</packaging>
     <groupId>cn.jiangzeyin.fast-boot</groupId>
     <artifactId>common-parent</artifactId>
-    <version>1.2.1</version>
+    <version>1.2.2</version>
     <name>Fast-boot</name>
     <url>http://blog.csdn.net/jiangzeyin_</url>
     <description>Spring Boot fast-boot</description>
@@ -17,7 +17,7 @@
         <fastjson.version>1.2.49</fastjson.version>
         <simple-util.version>1.0.12</simple-util.version>
         <!-- 声明版本号 -->
-        <fast-boot.version>1.2.1</fast-boot.version>
+        <fast-boot.version>1.2.2</fast-boot.version>
 
         <spring-boot.version>1.4.7.RELEASE</spring-boot.version>
 
