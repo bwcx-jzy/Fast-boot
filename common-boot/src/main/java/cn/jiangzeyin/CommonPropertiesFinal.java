@@ -28,6 +28,11 @@ public final class CommonPropertiesFinal {
      */
     public static final String REQUEST_LOG = REQUEST + ".log";
     /**
+     * 参数xss 提前过滤
+     */
+    public static final String REQUEST_PARAMETER_XSS = REQUEST + ".parameterXss";
+
+    /**
      * tomcat 配置
      */
     public static final String TOMCAT = "tomcat";

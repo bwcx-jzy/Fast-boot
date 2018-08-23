@@ -1,7 +1,10 @@
 package cn.jiangzeyin.common.request;
 
 import cn.hutool.core.convert.Convert;
+import cn.hutool.core.util.CharsetUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.ServletUtil;
+import cn.hutool.http.HtmlUtil;
 import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.common.DefaultSystemLog;
 import cn.jiangzeyin.common.spring.SpringUtil;
@@ -16,6 +19,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,21 +38,27 @@ public class XssFilter extends CharacterEncodingFilter {
     private static final ThreadLocal<Map<String, String>> REQUEST_HEADER_MAP = new ThreadLocal<>();
     private static final ThreadLocal<Map<String, String[]>> REQUEST_PARAMETERS_MAP = new ThreadLocal<>();
     private static long request_timeout_log = -1;
-    private static Boolean LOG;
-
-    public static Map<String, String> getRequestHeader() {
-        return REQUEST_HEADER_MAP.get();
-    }
-
-    public static Map<String, String[]> getRequestParameters() {
-        return REQUEST_PARAMETERS_MAP.get();
-    }
+    /**
+     * 默认true 配置错误 false
+     */
+    private static boolean LOG;
+    /**
+     * 默认true 配置错误 true
+     */
+    private static boolean XSS;
 
     static {
+        // 日志标记
         try {
             LOG = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.REQUEST_LOG, Boolean.class, true);
         } catch (ConversionFailedException ignored) {
             LOG = false;
+        }
+        // xss 标记
+        try {
+            XSS = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.REQUEST_PARAMETER_XSS, Boolean.class, true);
+        } catch (ConversionFailedException ignored) {
+            XSS = true;
         }
     }
 
@@ -82,7 +94,7 @@ public class XssFilter extends CharacterEncodingFilter {
      * @param request req
      */
     private void requestLog(HttpServletRequest request) {
-        if (LOG == null || !LOG) {
+        if (!LOG) {
             return;
         }
         // 获取请求信息
@@ -106,7 +118,7 @@ public class XssFilter extends CharacterEncodingFilter {
                         if (i != 0) {
                             stringBuffer.append(",");
                         }
-                        stringBuffer.append(value[i]);
+                        stringBuffer.append(HtmlUtil.unescape(value[i]));
                     }
                 }
                 stringBuffer.append(";");
@@ -126,7 +138,7 @@ public class XssFilter extends CharacterEncodingFilter {
      * @param response rep
      */
     private void responseLog(HttpServletResponse response) {
-        if (LOG == null || !LOG) {
+        if (!LOG) {
             return;
         }
         // 记录请求状态不正确
@@ -155,5 +167,59 @@ public class XssFilter extends CharacterEncodingFilter {
                     REQUEST_INFO.get();
             DefaultSystemLog.LOG(DefaultSystemLog.LogType.REQUEST_ERROR).error(stringBuffer);
         }
+    }
+
+    /**
+     * 处理xss 问题
+     *
+     * @param map map
+     * @return 结果
+     */
+    static Map<String, String[]> doXss(Map<String, String[]> map) {
+        if (null == map) {
+            return null;
+        }
+        Iterator<Map.Entry<String, String[]>> iterator = map.entrySet().iterator();
+        Map<String, String[]> valuesMap = new HashMap<>(map.size());
+        while (iterator.hasNext()) {
+            Map.Entry<String, String[]> entry = iterator.next();
+            String key = entry.getKey();
+            String[] values = entry.getValue();
+            values = doXss(values);
+            if (values != null) {
+                valuesMap.put(key, values);
+            }
+        }
+        return valuesMap;
+    }
+
+    private static String[] doXss(String[] values) {
+        if (values == null) {
+            return null;
+        }
+        for (int i = 0, len = values.length; i < len; i++) {
+            if (null == values[i]) {
+                continue;
+            }
+            // 自动处理utf-8
+            values[i] = autoToUtf8(values[i]);
+            if (XSS) {
+                //  xss 提前统一编码
+                values[i] = HtmlUtil.escape(values[i])
+                        .replace(StrUtil.HTML_QUOTE, "\"");
+            }
+        }
+        return values;
+    }
+
+    private static String autoToUtf8(String str) {
+        if (StrUtil.isEmpty(str)) {
+            return str;
+        }
+        String newStr = CharsetUtil.convert(str, StandardCharsets.ISO_8859_1, StandardCharsets.UTF_8);
+        if (str.length() == newStr.length()) {
+            return str;
+        }
+        return newStr;
     }
 }

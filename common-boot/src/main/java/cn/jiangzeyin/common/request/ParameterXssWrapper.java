@@ -1,13 +1,10 @@
 package cn.jiangzeyin.common.request;
 
-import cn.hutool.core.util.CharsetUtil;
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HtmlUtil;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Map;
+import java.util.Vector;
 
 /**
  * xss 注入拦截
@@ -25,7 +22,7 @@ public class ParameterXssWrapper extends HttpServletRequestWrapper {
      */
     ParameterXssWrapper(HttpServletRequest request) {
         super(request);
-        this.parameters = doXss(request.getParameterMap());
+        this.parameters = XssFilter.doXss(request.getParameterMap());
     }
 
     @Override
@@ -50,54 +47,5 @@ public class ParameterXssWrapper extends HttpServletRequestWrapper {
     @Override
     public String[] getParameterValues(String name) {
         return parameters.get(name);
-    }
-
-    /**
-     * 处理xss 问题
-     *
-     * @param map map
-     * @return 结果
-     */
-    public static Map<String, String[]> doXss(Map<String, String[]> map) {
-        if (null == map) {
-            return null;
-        }
-        Iterator<Map.Entry<String, String[]>> iterator = map.entrySet().iterator();
-        Map<String, String[]> valuesMap = new HashMap<>(map.size());
-        while (iterator.hasNext()) {
-            Map.Entry<String, String[]> entry = iterator.next();
-            String key = entry.getKey();
-            String[] values = entry.getValue();
-            values = doXss(values);
-            if (values != null) {
-                valuesMap.put(key, values);
-            }
-        }
-        return valuesMap;
-    }
-
-    private static String[] doXss(String[] values) {
-        if (values == null) {
-            return null;
-        }
-        for (int i = 0, len = values.length; i < len; i++) {
-            if (null == values[i]) {
-                continue;
-            }
-            values[i] = autoToUtf8(values[i]);
-            values[i] = HtmlUtil.escape(values[i]);
-        }
-        return values;
-    }
-
-    private static String autoToUtf8(String str) {
-        if (StrUtil.isEmpty(str)) {
-            return str;
-        }
-        String newStr = CharsetUtil.convert(str, StandardCharsets.ISO_8859_1, StandardCharsets.UTF_8);
-        if (str.length() == newStr.length()) {
-            return str;
-        }
-        return newStr;
     }
 }
