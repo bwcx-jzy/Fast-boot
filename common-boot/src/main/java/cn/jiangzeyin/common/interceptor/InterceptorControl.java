@@ -1,5 +1,6 @@
 package cn.jiangzeyin.common.interceptor;
 
+import cn.hutool.core.lang.Singleton;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ClassUtil;
 import cn.hutool.core.util.StrUtil;
@@ -10,6 +11,7 @@ import cn.jiangzeyin.common.spring.SpringUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.*;
 
 import java.lang.reflect.Modifier;
@@ -155,6 +157,28 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
         Set<HttpMessageConverter<?>> httpMessageConverters = ApplicationBuilder.getInstance().getHttpMessageConverters();
         if (httpMessageConverters != null) {
             converters.addAll(httpMessageConverters);
+        }
+    }
+
+    /**
+     * 参数解析器
+     *
+     * @param argumentResolvers arg
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+        super.addArgumentResolvers(argumentResolvers);
+        if (StrUtil.isNotEmpty(loadPath)) {
+            Set<Class<?>> classSet = ClassUtil.scanPackageBySuper(loadPath, HandlerMethodArgumentResolver.class);
+            if (classSet == null) {
+                return;
+            }
+            for (Class<?> cls : classSet) {
+                Object methodArgumentResolver = Singleton.get(cls);
+                argumentResolvers.add((HandlerMethodArgumentResolver) methodArgumentResolver);
+                DefaultSystemLog.LOG().info("参数解析器：" + cls);
+            }
         }
     }
 }
