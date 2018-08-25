@@ -181,6 +181,9 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
                 return;
             }
             for (Class<?> cls : classSet) {
+                if (Modifier.isAbstract(cls.getModifiers())) {
+                    continue;
+                }
                 Object methodArgumentResolver = Singleton.get(cls);
                 argumentResolvers.add((HandlerMethodArgumentResolver) methodArgumentResolver);
                 DefaultSystemLog.LOG().info("参数解析器：" + cls);
