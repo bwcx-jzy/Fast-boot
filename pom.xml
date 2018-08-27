@@ -21,7 +21,7 @@
 
         <spring-boot.version>1.4.7.RELEASE</spring-boot.version>
 
-        <hutool-all.version>4.1.8</hutool-all.version>
+        <hutool-all.version>4.1.9</hutool-all.version>
     </properties>
     <modules>
         <module>common-boot</module>

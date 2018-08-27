@@ -1,8 +1,8 @@
 package cn.jiangzeyin.pool;
 
+import cn.hutool.core.util.ClassUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jiangzeyin.common.DefaultSystemLog;
-import cn.jiangzeyin.util.StringUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
@@ -127,7 +127,7 @@ public final class ThreadPoolService {
         JSONArray jsonArray = new JSONArray();
         for (Entry<Class, PoolCacheInfo> entry : POOL_CACHE_INFO_CONCURRENT_HASH_MAP.entrySet()) {
             PoolCacheInfo poolCacheInfo = entry.getValue();
-            String name = StringUtil.simplifyClassName(entry.getKey().getName());
+            String name = ClassUtil.getShortClassName(entry.getKey().getName());
             JSONObject jsonObject = convertInfo(name, poolCacheInfo);
             jsonArray.add(jsonObject);
         }
@@ -171,7 +171,7 @@ public final class ThreadPoolService {
         for (Entry<Class, PoolCacheInfo> entry : POOL_CACHE_INFO_CONCURRENT_HASH_MAP.entrySet()) {
             DefaultSystemLog.LOG().info(String.format("关闭%s使用的线程池", entry.getKey()));
             entry.getValue().poolExecutor.shutdown();
-            String name = StringUtil.simplifyClassName(entry.getKey().getName());
+            String name = ClassUtil.getShortClassName(entry.getKey().getName());
             JSONObject jsonObject = convertInfo(name, entry.getValue());
             DefaultSystemLog.LOG().info("关闭完成:" + jsonObject);
         }
