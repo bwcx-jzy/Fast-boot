@@ -13,8 +13,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.*;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -90,8 +90,8 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
             if (isAbstract) {
                 continue;
             }
-            if (!HandlerInterceptorAdapter.class.isAssignableFrom(item)) {
-                DefaultSystemLog.ERROR().error("加载拦截器异常: {} 没有继承 {}", item, HandlerInterceptorAdapter.class);
+            if (!HandlerInterceptor.class.isAssignableFrom(item)) {
+                DefaultSystemLog.ERROR().error("加载拦截器异常: {} 没有实现 {}", item, HandlerInterceptor.class);
                 continue;
             }
             InterceptorPattens interceptorPattens = (InterceptorPattens) item.getAnnotation(InterceptorPattens.class);
@@ -112,9 +112,9 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
             return;
         }
         InterceptorPattens interceptorPattens = (InterceptorPattens) itemCls.getAnnotation(InterceptorPattens.class);
-        BaseInterceptor handlerInterceptor;
+        HandlerInterceptor handlerInterceptor;
         try {
-            handlerInterceptor = (BaseInterceptor) itemCls.newInstance();
+            handlerInterceptor = (HandlerInterceptor) itemCls.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
             DefaultSystemLog.ERROR().error("加载拦截器错误", e);
             return;
