@@ -39,24 +39,20 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         this.registry = registry;
-        init();
-    }
-
-    /**
-     * 预加载包中
-     */
-    private void init() {
         //  加载application 注入
         Set<Class<?>> def = loadApplicationInterceptor();
         // 用户添加的
         if (StrUtil.isNotEmpty(loadPath)) {
-            Set<Class<?>> classSet = ClassUtil.scanPackageByAnnotation(loadPath, InterceptorPattens.class);
-            if (def == null && classSet == null) {
-                return;
+            String[] paths = StrUtil.split(loadPath, StrUtil.COMMA);
+            Collection<Class<?>> newClassSet = CollUtil.union(def, new ArrayList<>());
+            for (String item : paths) {
+                Set<Class<?>> classSet = ClassUtil.scanPackageByAnnotation(item, InterceptorPattens.class);
+                // 合并
+                newClassSet = CollUtil.union(newClassSet, classSet);
             }
-            // 合并
-            Collection<Class<?>> newClassSet = CollUtil.union(def, classSet);
             loadClass(newClassSet);
+        } else if (def != null) {
+            loadClass(def);
         }
     }
 

@@ -23,8 +23,8 @@ import java.util.*;
 @ComponentScan(value = "cn.jiangzeyin")
 public class CommonInitPackage {
     private volatile static boolean init = false;
-    private static final List<Method> METHOD_LIST = new ArrayList<>();
-    private static final List<String> PACKAGE_NAME_LIST = new ArrayList<>();
+    private static final HashSet<Method> METHOD_LIST = new HashSet<>();
+    private static final HashSet<String> PACKAGE_NAME_LIST = new HashSet<>();
 
     /**
      * 系统预加载包名
@@ -38,7 +38,13 @@ public class CommonInitPackage {
         if (StrUtil.isBlank(pageName)) {
             return;
         }
-        load(pageName);
+        String[] pages = StrUtil.split(pageName, StrUtil.COMMA);
+        if (pages == null) {
+            return;
+        }
+        for (String item : pages) {
+            load(item);
+        }
         init = true;
     }
 

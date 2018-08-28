@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "name": "preload.packageName",
+      "type": "java.lang.String",
+      "description": "预加载包配置包名.多个包名请用逗号隔开",
+      "defaultValue": ""
+    }
+  ]
+}
