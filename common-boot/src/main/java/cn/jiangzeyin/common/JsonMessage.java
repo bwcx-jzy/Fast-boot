@@ -32,6 +32,9 @@ public class JsonMessage implements Serializable {
     private String msg;
     private Object data;
 
+    public JsonMessage() {
+    }
+
     public JsonMessage(int code, String msg, Object data) {
         this.code = code;
         this.msg = msg;

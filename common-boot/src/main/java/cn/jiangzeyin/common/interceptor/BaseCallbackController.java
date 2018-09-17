@@ -1,5 +1,6 @@
 package cn.jiangzeyin.common.interceptor;
 
+import org.springframework.context.annotation.Scope;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -11,9 +12,13 @@ import java.util.Objects;
 
 /**
  * 每次进入controller 回调
+ * <p>
+ * 暂时取消
+ * 实现序列化防止 Controller 对象作用域为session 时部分框架序列化session 对象问题
  *
  * @author jiangzeyin
  * data 2018/6/26
+ * @see Scope
  */
 public abstract class BaseCallbackController {
     /**
