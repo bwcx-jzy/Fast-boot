@@ -90,14 +90,7 @@ public abstract class AbstractBaseControl extends BaseCallbackController {
 
     protected long getParameterLong(String name, long def) {
         String value = getParameter(name);
-        if (value == null) {
-            return def;
-        }
-        try {
-            return Long.parseLong(value);
-        } catch (NumberFormatException ignored) {
-        }
-        return def;
+        return Convert.toLong(value, def);
     }
 
     protected long getParameterLong(String name) {
