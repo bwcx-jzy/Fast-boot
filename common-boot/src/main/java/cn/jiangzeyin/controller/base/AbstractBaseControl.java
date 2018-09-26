@@ -4,6 +4,7 @@ import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.SystemClock;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.extra.servlet.ServletUtil;
+import cn.hutool.http.HttpUtil;
 import cn.jiangzeyin.common.interceptor.BaseCallbackController;
 import cn.jiangzeyin.controller.multipart.MultipartFileConfig;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
@@ -15,7 +16,6 @@ import org.springframework.web.multipart.support.StandardMultipartHttpServletReq
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -108,11 +108,10 @@ public abstract class AbstractBaseControl extends BaseCallbackController {
      * 获取来源的url 参数
      *
      * @return map
-     * @throws UnsupportedEncodingException 编码异常
      */
-    protected Map<String, String> getRefererParameter() throws UnsupportedEncodingException {
+    protected Map<String, String> getRefererParameter() {
         String referer = getHeader(HttpHeaders.REFERER);
-        return RequestUtil.convertUrlMap(referer);
+        return HttpUtil.decodeParamMap(referer, "UTF-8");
     }
 
     /**
