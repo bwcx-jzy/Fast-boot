@@ -2,6 +2,8 @@ cd ../
 
 git checkout master
 
+echo 合并分支
+
 git merge dev
 
 git push gitee master
