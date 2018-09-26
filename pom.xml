@@ -14,7 +14,7 @@
     <properties>
         <!-- 声明版本号 -->
         <fast-boot.version>1.2.4</fast-boot.version>
-        
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
         <fastjson.version>1.2.49</fastjson.version>
@@ -92,21 +92,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- GPG -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.6</version>
-                <executions>
-                    <execution>
-                        <id>verify-gpg</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+
             <!--surefire插件，避免mvn test console乱码-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -118,20 +104,46 @@
             </plugin>
         </plugins>
     </build>
-    <distributionManagement>
-        <snapshotRepository>
-            <id>maven-repo</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-        </snapshotRepository>
-        <repository>
-            <id>maven-repo</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-        <!--<repository>-->
-        <!--<id>yokead-loc-repo</id>-->
-        <!--<url>http://bwcx:4040/repository/yokead/</url>-->
-        <!--</repository>-->
-    </distributionManagement>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>maven-repo</id>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+                </snapshotRepository>
+                <repository>
+                    <id>maven-repo</id>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+                <!--<repository>-->
+                <!--<id>yokead-loc-repo</id>-->
+                <!--<url>http://bwcx:4040/repository/yokead/</url>-->
+                <!--</repository>-->
+            </distributionManagement>
+            <build>
+                <plugins>
+                    <!-- GPG -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>verify-gpg</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
