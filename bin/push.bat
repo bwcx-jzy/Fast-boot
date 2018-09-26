@@ -2,8 +2,6 @@ cd ../
 
 git checkout master
 
-pause
-
 git merge dev
 
 git push gitee master
