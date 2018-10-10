@@ -29,7 +29,6 @@ import java.util.Objects;
  */
 public abstract class AbstractBaseControl extends BaseCallbackController {
 
-
     /**
      * 拦截器注入
      */
@@ -51,7 +50,12 @@ public abstract class AbstractBaseControl extends BaseCallbackController {
         return getRequest().getHeader(name);
     }
 
-
+    /**
+     * 获取cookie 值
+     *
+     * @param name name
+     * @return value
+     */
     protected String getCookieValue(String name) {
         Cookie cookie = ServletUtil.getCookie(getRequest(), name);
         if (cookie == null) {
@@ -118,6 +122,23 @@ public abstract class AbstractBaseControl extends BaseCallbackController {
         return ServletUtil.toBean(getRequest(), tClass, true);
     }
 
+    /**
+     * 获取所有请求头
+     *
+     * @return map
+     */
+    protected Map<String, String> getHeaders() {
+        return RequestUtil.getHeaderMapValues(getRequest());
+    }
+
+    /**
+     * 所有参数
+     *
+     * @return map 值为数组类型
+     */
+    protected Map<String, String[]> getParametersMap() {
+        return getRequest().getParameterMap();
+    }
 
     // ----------------文件上传
 

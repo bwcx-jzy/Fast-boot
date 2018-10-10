@@ -1,5 +1,6 @@
 package cn.jiangzeyin.common.interceptor;
 
+import cn.hutool.extra.servlet.ServletUtil;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -12,9 +13,6 @@ import java.util.Objects;
 
 /**
  * 每次进入controller 回调
- * <p>
- * 暂时取消
- * 实现序列化防止 Controller 对象作用域为session 时部分框架序列化session 对象问题
  *
  * @author jiangzeyin
  * data 2018/6/26
@@ -132,5 +130,22 @@ public abstract class BaseCallbackController {
      */
     public void setSessionAttribute(String name, Object object) {
         getRequestAttributes().setAttribute(name, object, RequestAttributes.SCOPE_SESSION);
+    }
+
+    /**
+     * 获取客户端的ip地址
+     *
+     * @return 如果没有就返回null
+     */
+    public static String getClientIP() {
+        ServletRequestAttributes servletRequest = tryGetRequestAttributes();
+        if (servletRequest == null) {
+            return null;
+        }
+        HttpServletRequest request = servletRequest.getRequest();
+        if (request == null) {
+            return null;
+        }
+        return ServletUtil.getClientIP(request);
     }
 }
