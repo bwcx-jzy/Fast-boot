@@ -15,9 +15,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import javax.servlet.FilterChain;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -75,6 +77,10 @@ public class XssFilter extends CharacterEncodingFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         REQUEST_TIME.set(System.currentTimeMillis());
+        File location = ((File) request.getServletContext().getAttribute(ServletContext.TEMPDIR));
+        if (!location.exists() && !location.mkdirs()) {
+            throw new IOException(location.getPath() + " 临时目录创建失败");
+        }
         boolean isFile = ServletFileUpload.isMultipartContent(request);
         HttpServletRequest newRequest;
         if (isFile) {
