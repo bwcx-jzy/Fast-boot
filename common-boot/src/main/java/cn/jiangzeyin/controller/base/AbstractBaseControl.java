@@ -2,6 +2,7 @@ package cn.jiangzeyin.controller.base;
 
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.text.UnicodeUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.ServletUtil;
@@ -152,6 +153,11 @@ public abstract class AbstractBaseControl extends BaseCallbackController {
         THREAD_LOCAL_MULTIPART_HTTP_SERVLET_REQUEST.remove();
     }
 
+    /**
+     * 获取文件上传请求对象
+     *
+     * @return multipart
+     */
     protected MultipartHttpServletRequest getMultiRequest() {
         HttpServletRequest request = getRequest();
         if (request instanceof MultipartHttpServletRequest) {
@@ -284,9 +290,11 @@ public abstract class AbstractBaseControl extends BaseCallbackController {
             throw new IOException("too big:" + fileSize + ">" + size);
         }
         String localPath = MultipartFileConfig.getFileTempPath();
+        // 防止中文乱码
+        fileName = UnicodeUtil.toUnicode(fileName);
         String filePath = FileUtil.normalize(String.format("%s/%s_%s", localPath, IdUtil.objectId(), fileName));
         FileUtil.writeFromStream(multiFile.getInputStream(), filePath);
-        return fileName;
+        return filePath;
     }
     // ------------------------文件上传结束
 }
