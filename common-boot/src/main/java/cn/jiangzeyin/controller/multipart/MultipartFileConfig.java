@@ -10,9 +10,15 @@ import cn.hutool.system.UserInfo;
  * data 2017/10/25
  */
 public class MultipartFileConfig {
+
     private static String fileTempPath;
     private static final UserInfo USER_INFO = new UserInfo();
 
+    /**
+     * 设置文件上传保存路径
+     *
+     * @param fileTempPath path
+     */
     public static void setFileTempPath(String fileTempPath) {
         MultipartFileConfig.fileTempPath = fileTempPath;
     }
