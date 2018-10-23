@@ -237,16 +237,20 @@ public class MultipartFileBuilder {
         // 文件名后缀
         if (this.fileExt != null) {
             String checkName = fileName.toLowerCase();
+            boolean find = false;
             for (String ext : this.fileExt) {
-                if (checkName.endsWith("." + ext.toLowerCase())) {
-                    continue;
+                find = checkName.endsWith("." + ext.toLowerCase());
+                if (find) {
+                    break;
                 }
-                throw new IllegalArgumentException("fileExt:类型错误:" + checkName + "  " + ext);
+            }
+            if (!find) {
+                throw new IllegalArgumentException("fileExt:类型错误:" + checkName);
             }
         }
         // 文件大小
         if (maxSize > 0 && fileSize > maxSize) {
-            throw new IOException("maxSize:too big:" + fileSize + ">" + maxSize);
+            throw new IllegalArgumentException("maxSize:too big:" + fileSize + ">" + maxSize);
         }
         // 文件流类型
         if (this.inputStreamType != null) {
@@ -267,9 +271,9 @@ public class MultipartFileBuilder {
             localPath = MultipartFileConfig.getFileTempPath();
         }
         // 防止中文乱码
-        fileName = UnicodeUtil.toUnicode(fileName);
+        String saveFileName = UnicodeUtil.toUnicode(fileName);
         // 生成唯一id
-        String filePath = FileUtil.normalize(String.format("%s/%s_%s", localPath, IdUtil.objectId(), fileName));
+        String filePath = FileUtil.normalize(String.format("%s/%s_%s", localPath, IdUtil.objectId(), saveFileName));
         FileUtil.writeFromStream(multiFile.getInputStream(), filePath);
         // 文件contentType
         if (this.contentTypePrefix != null) {
