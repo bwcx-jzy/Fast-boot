@@ -7,6 +7,7 @@ import cn.hutool.extra.servlet.ServletUtil;
 import cn.hutool.http.HtmlUtil;
 import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.common.DefaultSystemLog;
+import cn.jiangzeyin.common.interceptor.BaseCallbackController;
 import cn.jiangzeyin.common.spring.SpringUtil;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.springframework.core.convert.ConversionFailedException;
@@ -103,7 +104,7 @@ public class XssFilter extends CharacterEncodingFilter {
             return;
         }
         // 获取请求信息
-        Map<String, String> header = RequestUtil.getHeaderMapValues(request);
+        Map<String, String> header = BaseCallbackController.getHeaderMapValues(request);
         REQUEST_HEADER_MAP.set(header);
         Map<String, String[]> parameters = request.getParameterMap();
         REQUEST_PARAMETERS_MAP.set(parameters);
