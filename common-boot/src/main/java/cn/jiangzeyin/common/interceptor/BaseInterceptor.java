@@ -1,7 +1,7 @@
 package cn.jiangzeyin.common.interceptor;
 
 import cn.jiangzeyin.common.DefaultSystemLog;
-import cn.jiangzeyin.controller.base.AbstractBaseControl;
+import cn.jiangzeyin.controller.base.AbstractController;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -89,7 +89,7 @@ public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
             DefaultSystemLog.ERROR().error("controller 异常:" + request.getRequestURL(), ex);
         }
         // 释放资源
-        AbstractBaseControl.clearResources();
+        AbstractController.clearResources();
         clearResources();
     }
 }

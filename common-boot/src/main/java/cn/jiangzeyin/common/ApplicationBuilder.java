@@ -188,6 +188,7 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
      * 给程序添加默认包
      *
      * @param packageName 包名
+     * @return this
      * @throws NoSuchFieldException   e
      * @throws IllegalAccessException e
      */

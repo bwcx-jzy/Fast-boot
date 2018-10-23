@@ -41,11 +41,9 @@
  
 > **公共的Controller** 
  
-使用ThreadLocal 记录当前请求的request session respone
-  cn.jiangzeyin.controller.base.AbstractBaseControl
 在新建Controller 时请继承此类
-  cn.jiangzeyin.controller.base.AbstractMultipartFileBaseControl
-文件上传Controller 在需要接收上传文件请继承此类
+  cn.jiangzeyin.controller.base.AbstractController
+文件上传Controller 调用 cn.jiangzeyin.controller.base.AbstractController.createMultipart 即可
 
 > **自动加载拦截器** 
  
