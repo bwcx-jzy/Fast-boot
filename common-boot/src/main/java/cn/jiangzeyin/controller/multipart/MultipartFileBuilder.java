@@ -13,10 +13,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 文件上传builder
@@ -135,6 +132,15 @@ public class MultipartFileBuilder {
         return this;
     }
 
+    private void checkSaveOne() {
+        if (this.fieldNames.size() != 1) {
+            throw new IllegalArgumentException("fieldNames size:" + this.fieldNames.size() + "  use save");
+        }
+        if (this.multiple) {
+            throw new IllegalArgumentException("multiple use saves");
+        }
+    }
+
     /**
      * 接收单文件上传
      *
@@ -142,12 +148,7 @@ public class MultipartFileBuilder {
      * @throws IOException IO
      */
     public String save() throws IOException {
-        if (this.fieldNames.size() != 1) {
-            throw new IllegalArgumentException("fieldNames size:" + this.fieldNames.size() + "  use save");
-        }
-        if (this.multiple) {
-            throw new IllegalArgumentException("multiple use saves");
-        }
+        checkSaveOne();
         String[] paths = saves();
         return paths[0];
     }
@@ -168,24 +169,63 @@ public class MultipartFileBuilder {
             if (this.multiple) {
                 List<MultipartFile> multipartFiles = multipartHttpServletRequest.getFiles(fieldName);
                 for (MultipartFile multipartFile : multipartFiles) {
-                    paths[index++] = save(multipartFile);
+                    paths[index++] = saveAndName(multipartFile)[0];
                 }
             } else {
                 MultipartFile multipartFile = multipartHttpServletRequest.getFile(fieldName);
-                paths[index++] = save(multipartFile);
+                paths[index++] = saveAndName(multipartFile)[0];
             }
         }
         return paths;
     }
 
     /**
+     * 上传文件，并且返回原文件名
+     *
+     * @return 数组
+     * @throws IOException IO
+     */
+    public String[] saveAndName() throws IOException {
+        checkSaveOne();
+        List<String[]> list = saveAndNames();
+        return list.get(0);
+    }
+
+    /**
+     * 上传文件，并且返回原文件名
+     *
+     * @return 集合
+     * @throws IOException IO
+     */
+    public List<String[]> saveAndNames() throws IOException {
+        if (fieldNames.isEmpty()) {
+            throw new IllegalArgumentException("fieldNames:empty");
+        }
+        List<String[]> list = new ArrayList<>();
+        for (String fieldName : fieldNames) {
+            if (this.multiple) {
+                List<MultipartFile> multipartFiles = multipartHttpServletRequest.getFiles(fieldName);
+                for (MultipartFile multipartFile : multipartFiles) {
+                    String[] info = saveAndName(multipartFile);
+                    list.add(info);
+                }
+            } else {
+                MultipartFile multipartFile = multipartHttpServletRequest.getFile(fieldName);
+                String[] info = saveAndName(multipartFile);
+                list.add(info);
+            }
+        }
+        return list;
+    }
+
+    /**
      * 保存文件并验证类型
      *
      * @param multiFile file
-     * @return 本地路径
+     * @return 本地路径和原文件名
      * @throws IOException IO
      */
-    private String save(MultipartFile multiFile) throws IOException {
+    private String[] saveAndName(MultipartFile multiFile) throws IOException {
         String fileName = multiFile.getOriginalFilename();
         if (StrUtil.isEmpty(fileName)) {
             throw new IllegalArgumentException("fileName:不能获取到文件名");
@@ -242,7 +282,7 @@ public class MultipartFileBuilder {
                 throw new IllegalArgumentException("contentTypePrefix:文件类型不正确:" + contentType);
             }
         }
-        return filePath;
+        return new String[]{filePath, fileName};
     }
 
     public MultipartFileBuilder(MultipartHttpServletRequest multipartHttpServletRequest) {
