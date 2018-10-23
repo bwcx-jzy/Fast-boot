@@ -4,6 +4,7 @@
 ## 1.2.8
 
 *  改变文件上传模式使用Builder cn.jiangzeyin.controller.multipart.MultipartFileBuilder
+*  Controller 基类变更为 cn.jiangzeyin.controller.base.AbstractController
 
 ---------------------------------------------------------------------
 ## 1.2.7

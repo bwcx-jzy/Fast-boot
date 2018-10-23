@@ -9,6 +9,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -56,6 +59,43 @@ public abstract class BaseCallbackController {
         }
         return null;
     }
+
+    /**
+     * 获取客户端的ip地址
+     *
+     * @return 如果没有就返回null
+     */
+    public static String getClientIP() {
+        ServletRequestAttributes servletRequest = tryGetRequestAttributes();
+        if (servletRequest == null) {
+            return null;
+        }
+        HttpServletRequest request = servletRequest.getRequest();
+        if (request == null) {
+            return null;
+        }
+        return ServletUtil.getClientIP(request);
+    }
+
+    /**
+     * 获取header
+     *
+     * @param request req
+     * @return map
+     * @author jiangzeyin
+     */
+    public static Map<String, String> getHeaderMapValues(HttpServletRequest request) {
+        Enumeration<String> enumeration = request.getHeaderNames();
+        Map<String, String> headerMapValues = new HashMap<>(20);
+        if (enumeration != null) {
+            for (; enumeration.hasMoreElements(); ) {
+                String name = enumeration.nextElement();
+                headerMapValues.put(name, request.getHeader(name));
+            }
+        }
+        return headerMapValues;
+    }
+
 
     public HttpServletResponse getResponse() {
         HttpServletResponse response = getRequestAttributes().getResponse();
@@ -130,22 +170,5 @@ public abstract class BaseCallbackController {
      */
     public void setSessionAttribute(String name, Object object) {
         getRequestAttributes().setAttribute(name, object, RequestAttributes.SCOPE_SESSION);
-    }
-
-    /**
-     * 获取客户端的ip地址
-     *
-     * @return 如果没有就返回null
-     */
-    public static String getClientIP() {
-        ServletRequestAttributes servletRequest = tryGetRequestAttributes();
-        if (servletRequest == null) {
-            return null;
-        }
-        HttpServletRequest request = servletRequest.getRequest();
-        if (request == null) {
-            return null;
-        }
-        return ServletUtil.getClientIP(request);
     }
 }

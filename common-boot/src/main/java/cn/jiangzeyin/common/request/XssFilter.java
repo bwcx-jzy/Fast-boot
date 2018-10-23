@@ -8,7 +8,6 @@ import cn.hutool.http.HtmlUtil;
 import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.common.DefaultSystemLog;
 import cn.jiangzeyin.common.spring.SpringUtil;
-import cn.jiangzeyin.controller.base.RequestUtil;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.HttpStatus;

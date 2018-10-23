@@ -1,6 +1,7 @@
 package cn.jiangzeyin.controller.base;
 
 import cn.hutool.core.convert.Convert;
+import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import cn.hutool.http.HttpUtil;
 import cn.jiangzeyin.common.interceptor.BaseCallbackController;
@@ -28,7 +29,7 @@ public abstract class AbstractController extends BaseCallbackController {
      */
     @Override
     public void resetInfo() {
-        super.resetInfo();
+        
     }
 
     /**
@@ -102,7 +103,7 @@ public abstract class AbstractController extends BaseCallbackController {
      */
     protected Map<String, String> getRefererParameter() {
         String referer = getHeader(HttpHeaders.REFERER);
-        return HttpUtil.decodeParamMap(referer, "UTF-8");
+        return HttpUtil.decodeParamMap(referer, CharsetUtil.UTF_8);
     }
 
     /**
@@ -122,7 +123,7 @@ public abstract class AbstractController extends BaseCallbackController {
      * @return map
      */
     protected Map<String, String> getHeaders() {
-        return RequestUtil.getHeaderMapValues(getRequest());
+        return getHeaderMapValues(getRequest());
     }
 
     /**
