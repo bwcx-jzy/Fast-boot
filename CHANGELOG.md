@@ -1,7 +1,7 @@
 # 版本日志
 
 ---------------------------------------------------------------------
-## 1.2.8
+## 1.2.8-9
 
 *  改变文件上传模式使用Builder cn.jiangzeyin.controller.multipart.MultipartFileBuilder
 *  Controller 基类变更为 cn.jiangzeyin.controller.base.AbstractController
