@@ -1,5 +1,6 @@
 package cn.jiangzeyin.redis;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jiangzeyin.cache.RedisCacheConfig;
 import cn.jiangzeyin.common.spring.SpringUtil;
 import org.springframework.data.redis.cache.RedisCacheManager;
@@ -90,9 +91,6 @@ public final class RedisCacheManagerFactory {
         @Override
         protected long computeExpiration(String name) {
             Long time = RedisCacheConfig.getGroupExpires(database, name);
-            //            if (time == null) {
-            //                time = super.computeExpiration(name);
-            //            }
             return time == null ? super.computeExpiration(name) : time;
         }
     }
@@ -109,6 +107,10 @@ public final class RedisCacheManagerFactory {
             }
             if (redisProperties == null) {
                 redisProperties = SpringUtil.getBean(RedisProperties.class);
+            }
+            String host = redisProperties.getHost();
+            if (StrUtil.isEmpty(host)) {
+                throw new RuntimeException("请配置fast-bot.spring.redis 属性");
             }
             redisConnectionFactory = new RedisConnectionConfiguration(redisProperties, database).redisConnectionFactory();
             REDIS_CONNECTION_FACTORY_CONCURRENT_HASH_MAP.put(database, redisConnectionFactory);

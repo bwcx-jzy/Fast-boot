@@ -1,5 +1,6 @@
 package cn.jiangzeyin.controller.multipart;
 
+import ch.qos.logback.core.util.FileSize;
 import cn.hutool.core.io.FileTypeUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.text.UnicodeUtil;
@@ -52,6 +53,10 @@ public class MultipartFileBuilder {
      * 保存路径
      */
     private String savePath;
+    /**
+     * 使用原文件名
+     */
+    private boolean useOriginalFilename;
 
     /**
      * 文件上传大小限制
@@ -61,6 +66,27 @@ public class MultipartFileBuilder {
      */
     public MultipartFileBuilder setMaxSize(long maxSize) {
         this.maxSize = maxSize;
+        return this;
+    }
+
+    /**
+     * 文件上传大小限制
+     *
+     * @param maxSize 字符串
+     * @return this
+     */
+    public MultipartFileBuilder setMaxSize(String maxSize) {
+        this.maxSize = FileSize.valueOf(maxSize).getSize();
+        return this;
+    }
+
+    /**
+     * 是否使用原文件名保存
+     *
+     * @param useOriginalFilename true 是
+     */
+    public MultipartFileBuilder setUseOriginalFilename(boolean useOriginalFilename) {
+        this.useOriginalFilename = useOriginalFilename;
         return this;
     }
 
@@ -270,19 +296,29 @@ public class MultipartFileBuilder {
         } else {
             localPath = MultipartFileConfig.getFileTempPath();
         }
-        // 防止中文乱码
-        String saveFileName = UnicodeUtil.toUnicode(fileName);
-        // 生成唯一id
-        String filePath = FileUtil.normalize(String.format("%s/%s_%s", localPath, IdUtil.objectId(), saveFileName));
+        // 保存的文件名
+        String filePath;
+        if (useOriginalFilename) {
+            filePath = FileUtil.normalize(String.format("%s/%s", localPath, fileName));
+        } else {
+            // 防止中文乱码
+            String saveFileName = UnicodeUtil.toUnicode(fileName);
+            // 生成唯一id
+            filePath = FileUtil.normalize(String.format("%s/%s_%s", localPath, IdUtil.objectId(), saveFileName));
+        }
         FileUtil.writeFromStream(multiFile.getInputStream(), filePath);
         // 文件contentType
         if (this.contentTypePrefix != null) {
             Path source = Paths.get(filePath);
             String contentType = Files.probeContentType(source);
             if (contentType == null) {
+                // 自动清理文件
+                FileUtil.del(filePath);
                 throw new IllegalArgumentException("contentTypePrefix:获取文件类型失败");
             }
             if (!contentType.startsWith(contentTypePrefix)) {
+                // 自动清理文件
+                FileUtil.del(filePath);
                 throw new IllegalArgumentException("contentTypePrefix:文件类型不正确:" + contentType);
             }
         }
