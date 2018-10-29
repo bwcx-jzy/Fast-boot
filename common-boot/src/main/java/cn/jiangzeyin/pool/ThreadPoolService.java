@@ -131,6 +131,12 @@ public final class ThreadPoolService {
             JSONObject jsonObject = convertInfo(name, poolCacheInfo);
             jsonArray.add(jsonObject);
         }
+        // 排序
+        jsonArray.sort((o1, o2) -> {
+            JSONObject jsonObject1 = (JSONObject) o1;
+            JSONObject jsonObject2 = (JSONObject) o2;
+            return jsonObject2.getLong("taskCount").compareTo(jsonObject1.getLong("taskCount"));
+        });
         return jsonArray;
     }
 
