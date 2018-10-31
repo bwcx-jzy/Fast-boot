@@ -102,6 +102,18 @@ public class MultipartFileBuilder {
     }
 
     /**
+     * 清空数据并重新赋值
+     *
+     * @param fieldName 参数名
+     * @return this
+     */
+    public MultipartFileBuilder resetFieldName(String fieldName) {
+        this.fieldNames.clear();
+        this.fieldNames.add(fieldName);
+        return this;
+    }
+
+    /**
      * 是否为多文件上传
      *
      * @param multiple true
@@ -160,7 +172,7 @@ public class MultipartFileBuilder {
 
     private void checkSaveOne() {
         if (this.fieldNames.size() != 1) {
-            throw new IllegalArgumentException("fieldNames size:" + this.fieldNames.size() + "  use save");
+            throw new IllegalArgumentException("fieldNames size:" + this.fieldNames.size() + "  use saves");
         }
         if (this.multiple) {
             throw new IllegalArgumentException("multiple use saves");
