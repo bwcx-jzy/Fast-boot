@@ -223,7 +223,7 @@ public class XssFilter extends CharacterEncodingFilter {
             return str;
         }
         String newStr = CharsetUtil.convert(str, StandardCharsets.ISO_8859_1, StandardCharsets.UTF_8);
-        if (str.length() == newStr.length()) {
+        if (str.length() >= newStr.length()) {
             return str;
         }
         return newStr;
