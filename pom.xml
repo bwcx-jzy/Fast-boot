@@ -6,14 +6,14 @@
     <packaging>pom</packaging>
     <groupId>cn.jiangzeyin.fast-boot</groupId>
     <artifactId>common-parent</artifactId>
-    <version>1.2.11</version>
+    <version>1.2.12</version>
     <name>Fast-boot</name>
     <url>https://gitee.com/jiangzeyin/common-parent</url>
     <description>Spring Boot fast-boot</description>
     <inceptionYear>2017</inceptionYear>
     <properties>
         <!-- 声明版本号 -->
-        <fast-boot.version>1.2.11</fast-boot.version>
+        <fast-boot.version>1.2.12</fast-boot.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
