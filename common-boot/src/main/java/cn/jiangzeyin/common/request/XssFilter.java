@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -181,7 +182,7 @@ public class XssFilter extends CharacterEncodingFilter {
      * @param map map
      * @return 结果
      */
-    static Map<String, String[]> doXss(Map<String, String[]> map) {
+    static Map<String, String[]> doXss(Map<String, String[]> map, Charset charset) {
         if (null == map) {
             return null;
         }
@@ -191,7 +192,7 @@ public class XssFilter extends CharacterEncodingFilter {
             Map.Entry<String, String[]> entry = iterator.next();
             String key = entry.getKey();
             String[] values = entry.getValue();
-            values = doXss(values);
+            values = doXss(values, charset);
             if (values != null) {
                 valuesMap.put(key, values);
             }
@@ -199,7 +200,7 @@ public class XssFilter extends CharacterEncodingFilter {
         return valuesMap;
     }
 
-    private static String[] doXss(String[] values) {
+    private static String[] doXss(String[] values, Charset charset) {
         if (values == null) {
             return null;
         }
@@ -208,7 +209,7 @@ public class XssFilter extends CharacterEncodingFilter {
                 continue;
             }
             // 自动处理utf-8
-            values[i] = autoToUtf8(values[i]);
+            values[i] = autoToUtf8(values[i], charset);
             if (XSS) {
                 //  xss 提前统一编码
                 values[i] = HtmlUtil.escape(values[i])
@@ -218,14 +219,13 @@ public class XssFilter extends CharacterEncodingFilter {
         return values;
     }
 
-    private static String autoToUtf8(String str) {
+    private static String autoToUtf8(String str, Charset charset) {
         if (StrUtil.isEmpty(str)) {
             return str;
         }
-        String newStr = CharsetUtil.convert(str, StandardCharsets.ISO_8859_1, StandardCharsets.UTF_8);
-        if (str.length() >= newStr.length()) {
+        if (charset == CharsetUtil.CHARSET_UTF_8) {
             return str;
         }
-        return newStr;
+        return CharsetUtil.convert(str, charset, StandardCharsets.UTF_8);
     }
 }

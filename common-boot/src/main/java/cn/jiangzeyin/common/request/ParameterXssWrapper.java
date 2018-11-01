@@ -1,7 +1,13 @@
 package cn.jiangzeyin.common.request;
 
+import cn.hutool.core.util.ReUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import java.nio.charset.Charset;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Vector;
@@ -22,7 +28,22 @@ public class ParameterXssWrapper extends HttpServletRequestWrapper {
      */
     ParameterXssWrapper(HttpServletRequest request) {
         super(request);
-        this.parameters = XssFilter.doXss(request.getParameterMap());
+        // 获取请求头编码
+        Charset charset = getCharset(request);
+        this.parameters = XssFilter.doXss(request.getParameterMap(), charset);
+    }
+
+    static Charset getCharset(HttpServletRequest request) {
+        String contentType = request.getContentType();
+        String charsetName = ReUtil.get(HttpUtil.CHARSET_PATTERN, contentType, 1);
+        Charset charset = null;
+        if (StrUtil.isNotBlank(charsetName)) {
+            try {
+                charset = Charset.forName(charsetName);
+            } catch (UnsupportedCharsetException ignored) {
+            }
+        }
+        return charset;
     }
 
     @Override

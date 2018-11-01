@@ -4,6 +4,7 @@ import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.Charset;
 import java.util.Enumeration;
 import java.util.Map;
 
@@ -20,7 +21,9 @@ public class MultipartParameterXssWrapper extends StandardMultipartHttpServletRe
 
     public MultipartParameterXssWrapper(HttpServletRequest request) throws MultipartException {
         super(request);
-        parameters = XssFilter.doXss(super.getParameterMap());
+        // 获取请求头编码
+        Charset charset = ParameterXssWrapper.getCharset(request);
+        parameters = XssFilter.doXss(super.getParameterMap(), charset);
     }
 
 
