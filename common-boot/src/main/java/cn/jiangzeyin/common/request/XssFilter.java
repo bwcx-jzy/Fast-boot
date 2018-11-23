@@ -220,9 +220,6 @@ public class XssFilter extends CharacterEncodingFilter {
     }
 
     private static String autoToUtf8(String str, Charset charset) {
-        if (StrUtil.isEmpty(str)) {
-            return str;
-        }
         if (charset == CharsetUtil.CHARSET_UTF_8) {
             return str;
         }
