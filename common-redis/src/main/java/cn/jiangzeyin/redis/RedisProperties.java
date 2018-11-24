@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Configuration;
 import java.util.List;
 
 /**
+ * redis 配置实体
+ *
  * @author jiangzeyin
  * data 2017/12/12
  */

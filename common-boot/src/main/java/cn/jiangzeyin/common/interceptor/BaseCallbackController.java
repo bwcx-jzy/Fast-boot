@@ -6,6 +6,7 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -96,6 +97,11 @@ public abstract class BaseCallbackController {
         return headerMapValues;
     }
 
+    public HttpServletRequest getRequest() {
+        HttpServletRequest request = getRequestAttributes().getRequest();
+        Objects.requireNonNull(request, "request null");
+        return request;
+    }
 
     public HttpServletResponse getResponse() {
         HttpServletResponse response = getRequestAttributes().getResponse();
@@ -117,10 +123,13 @@ public abstract class BaseCallbackController {
         return session;
     }
 
-    public HttpServletRequest getRequest() {
-        HttpServletRequest request = getRequestAttributes().getRequest();
-        Objects.requireNonNull(request, "request null");
-        return request;
+    /**
+     * 获取Application
+     *
+     * @return Application
+     */
+    public ServletContext getApplication() {
+        return getRequest().getServletContext();
     }
 
     public Object getAttribute(String name) {

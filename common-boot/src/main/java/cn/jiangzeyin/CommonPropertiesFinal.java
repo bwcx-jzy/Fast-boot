@@ -18,7 +18,7 @@ public final class CommonPropertiesFinal {
     /**
      * 请求的相关配置
      */
-    public static final String REQUEST = "request";
+    private static final String REQUEST = "request";
     /**
      * 拦截器中记录超时请求时长
      */
@@ -31,11 +31,15 @@ public final class CommonPropertiesFinal {
      * 参数xss 提前过滤
      */
     public static final String REQUEST_PARAMETER_XSS = REQUEST + ".parameterXss";
+    /**
+     * 参数去掉前后空格
+     */
+    public static final String REQUEST_PARAMETER_TRIM_ALL = REQUEST + ".trimAll";
 
     /**
      * tomcat 配置
      */
-    public static final String TOMCAT = "tomcat";
+    private static final String TOMCAT = "tomcat";
     /**
      * 自定义浏览器中存储session id cookie 名称
      */

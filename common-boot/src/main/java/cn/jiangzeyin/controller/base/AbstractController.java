@@ -29,7 +29,7 @@ public abstract class AbstractController extends BaseCallbackController {
      */
     @Override
     public void resetInfo() {
-        
+
     }
 
     /**
@@ -41,6 +41,12 @@ public abstract class AbstractController extends BaseCallbackController {
         return ServletUtil.getClientIP(getRequest());
     }
 
+    /**
+     * 获取指定header
+     *
+     * @param name name
+     * @return value
+     */
     protected String getHeader(String name) {
         return getRequest().getHeader(name);
     }
@@ -136,7 +142,9 @@ public abstract class AbstractController extends BaseCallbackController {
     }
 
     // ----------------文件上传
-
+    /**
+     * cache
+     */
     private static final ThreadLocal<MultipartHttpServletRequest> THREAD_LOCAL_MULTIPART_HTTP_SERVLET_REQUEST = new ThreadLocal<>();
 
     /**

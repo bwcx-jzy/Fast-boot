@@ -1,6 +1,5 @@
 package cn.jiangzeyin.common.request;
 
-import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.ServletUtil;
@@ -40,7 +39,7 @@ public class XssFilter extends CharacterEncodingFilter {
     private static final ThreadLocal<StringBuffer> REQUEST_INFO = new ThreadLocal<>();
     private static final ThreadLocal<Map<String, String>> REQUEST_HEADER_MAP = new ThreadLocal<>();
     private static final ThreadLocal<Map<String, String[]>> REQUEST_PARAMETERS_MAP = new ThreadLocal<>();
-    private static long request_timeout_log = -1;
+    private static long request_timeout_log = 3000L;
     /**
      * 默认true 配置错误 false
      */
@@ -49,6 +48,10 @@ public class XssFilter extends CharacterEncodingFilter {
      * 默认true 配置错误 true
      */
     private static boolean XSS;
+    /**
+     * 参数前后空格 默认false
+     */
+    private static boolean TRIMAll;
 
     static {
         // 日志标记
@@ -62,6 +65,21 @@ public class XssFilter extends CharacterEncodingFilter {
             XSS = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.REQUEST_PARAMETER_XSS, Boolean.class, true);
         } catch (ConversionFailedException ignored) {
             XSS = true;
+        }
+        // 参数空格
+        try {
+            TRIMAll = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.REQUEST_PARAMETER_TRIM_ALL, Boolean.class, false);
+        } catch (ConversionFailedException ignored) {
+            TRIMAll = false;
+        }
+        // 超时时间
+        try {
+            Long timeOut = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.REQUEST_TIME_OUT, Long.class, request_timeout_log);
+            if (timeOut != null) {
+                request_timeout_log = timeOut;
+            }
+        } catch (ConversionFailedException ignored) {
+
         }
     }
 
@@ -160,13 +178,6 @@ public class XssFilter extends CharacterEncodingFilter {
         }
         // 记录请求超时
         long time = System.currentTimeMillis() - REQUEST_TIME.get();
-        if (request_timeout_log == -1) {
-            Long timeOut = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.REQUEST_TIME_OUT, Long.class, 3000L);
-            request_timeout_log = Convert.toLong(timeOut, 3000L);
-            if (request_timeout_log <= 0) {
-                request_timeout_log = 0;
-            }
-        }
         if (request_timeout_log > 0 && time > request_timeout_log) {
             String stringBuffer = "time:" +
                     time +
@@ -214,6 +225,10 @@ public class XssFilter extends CharacterEncodingFilter {
                 //  xss 提前统一编码
                 values[i] = HtmlUtil.escape(values[i])
                         .replace(StrUtil.HTML_QUOTE, "\"");
+            }
+            if (TRIMAll) {
+                // 空格
+                values[i] = values[i].trim();
             }
         }
         return values;
