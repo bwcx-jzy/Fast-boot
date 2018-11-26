@@ -7,6 +7,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import cn.hutool.http.HtmlUtil;
 import cn.jiangzeyin.common.DefaultSystemLog;
+import cn.jiangzeyin.common.EnableCommonBoot;
 import cn.jiangzeyin.common.JsonMessage;
 import cn.jiangzeyin.common.interceptor.BaseInterceptor;
 import cn.jiangzeyin.common.interceptor.InterceptorPattens;
@@ -23,9 +24,14 @@ import java.lang.reflect.Method;
 
 /**
  * 参数拦截器  验证参数是否正确  排序号是：-100
+ * <p>
+ * 配置方法 @see
+ * <p>
  * Created by jiangzeyin on 2018/8/21.
  *
  * @author jiangzeyin
+ * @see cn.jiangzeyin.common.ApplicationBuilder#addInterceptor(java.lang.Class)
+ * @see EnableCommonBoot#parameterValidator()
  */
 @InterceptorPattens(sort = -100)
 public class ParameterInterceptor extends BaseInterceptor {
