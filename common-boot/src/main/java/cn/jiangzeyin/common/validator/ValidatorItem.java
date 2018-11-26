@@ -46,8 +46,11 @@ public @interface ValidatorItem {
      * 范围写反也将不判断
      * <p>
      * 逻辑判断符 是 &gt; 或者 &lt;
+     * <p>
+     * 当 ValidatorRule 为 CUSTOMIZE 时此参数无效
      *
      * @return 1.2:2  或者 1  或者 1.2:2.5[1]
+     * @see cn.jiangzeyin.common.validator.ValidatorRule#CUSTOMIZE
      */
     String range() default "";
 }

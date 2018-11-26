@@ -37,4 +37,11 @@ public @interface ValidatorConfig {
      * @return 默认
      */
     String defaultVal() default ValueConstants.DEFAULT_NONE;
+
+    /**
+     * 自定义验证 Controller 中方法名
+     *
+     * @return 默认 customizeValidator
+     */
+    String customizeMethod() default "customizeValidator";
 }

@@ -2,6 +2,7 @@ package cn.jiangzeyin.common.validator;
 
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.lang.Validator;
+import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import cn.hutool.http.HtmlUtil;
@@ -17,6 +18,8 @@ import org.springframework.web.method.HandlerMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * 参数拦截器  验证参数是否正确  排序号是：-100
@@ -90,6 +93,13 @@ public class ParameterInterceptor extends BaseInterceptor {
                         if (validatorItem.unescape()) {
                             value = HtmlUtil.unescape(value);
                         }
+                        if (validatorItem.value() == ValidatorRule.CUSTOMIZE) {
+                            if (!customize(handlerMethod, validatorConfig, validatorItem, name, value)) {
+                                return false;
+                            }
+                            // 自定义条件只识别一次
+                            break;
+                        }
                         if (!validator(validatorItem, value)) {
                             //错误
                             interceptor.error(request, response, name, value, validatorItem);
@@ -98,6 +108,31 @@ public class ParameterInterceptor extends BaseInterceptor {
                     }
                 }
             }
+        }
+        return true;
+    }
+
+    private boolean customize(HandlerMethod handlerMethod, ValidatorConfig validatorConfig, ValidatorItem validatorItem, String name, String value) throws InvocationTargetException, IllegalAccessException {
+        // 自定义验证
+        Method method;
+        try {
+            method = ReflectUtil.getMethod(handlerMethod.getBeanType(), validatorConfig.customizeMethod(), String.class, String.class);
+        } catch (SecurityException sE) {
+            // 没有权限访问 直接拦截
+            DefaultSystemLog.ERROR().error(sE.getMessage(), sE);
+            interceptor.error(request, response, name, value, validatorItem);
+            return false;
+        }
+        if (method == null) {
+            // 没有配置对应方法
+            DefaultSystemLog.ERROR().error(handlerMethod.getBeanType() + "未配置验证方法：" + validatorConfig.customizeMethod());
+            interceptor.error(request, response, name, value, validatorItem);
+            return false;
+        }
+        Object obj = method.invoke(handlerMethod.getBean(), name, value);
+        if (!Convert.toBool(obj, false)) {
+            interceptor.error(request, response, name, value, validatorItem);
+            return false;
         }
         return true;
     }

@@ -45,5 +45,9 @@ public enum ValidatorRule {
     /**
      * 正整数  包括0  最大长度7位
      */
-    POSITIVE_INTEGER
+    POSITIVE_INTEGER,
+    /**
+     * 自定义验证
+     */
+    CUSTOMIZE
 }
