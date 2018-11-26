@@ -168,7 +168,6 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
      * @param argumentResolvers arg
      */
     @Override
-    @SuppressWarnings("unchecked")
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         super.addArgumentResolvers(argumentResolvers);
         if (StrUtil.isNotEmpty(loadPath)) {
