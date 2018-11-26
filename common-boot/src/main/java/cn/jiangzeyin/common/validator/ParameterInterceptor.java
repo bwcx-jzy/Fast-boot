@@ -60,11 +60,13 @@ public class ParameterInterceptor extends BaseInterceptor {
                         continue;
                     }
                     // 获取值
-                    String value = request.getParameter(name);
+                    String value;
                     // 指定name
                     String configName = validatorConfig.name();
                     if (StrUtil.isNotEmpty(configName)) {
                         value = request.getParameter(configName);
+                    } else {
+                        value = request.getParameter(name);
                     }
                     //
                     RequestParam requestParam = item.getParameterAnnotation(RequestParam.class);
