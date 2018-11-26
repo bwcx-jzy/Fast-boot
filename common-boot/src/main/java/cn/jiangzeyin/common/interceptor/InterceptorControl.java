@@ -98,7 +98,7 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
             sortMap.put(item, interceptorPattens.sort());
         }
         List<Map.Entry<Class, Integer>> newList = null;
-        if (sortMap.size() > 0) {
+        if (sortMap.size() >= 1) {
             newList = new ArrayList<>(sortMap.entrySet());
             newList.sort(Comparator.comparing(Map.Entry::getValue));
         }
