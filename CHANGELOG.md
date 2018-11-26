@@ -2,6 +2,8 @@
 
 ## 1.2.13
 
+*  【common-boot】 新增默认方法参数解析器
+*  【common-boot】 新增参数拦截器 [cn.jiangzeyin.common.validator]
 *  【common-boot】 基Controller 添加获取Application 方法
 *  【common-boot】 拦截器添加tramAll 配置
 

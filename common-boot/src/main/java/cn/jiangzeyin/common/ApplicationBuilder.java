@@ -5,6 +5,7 @@ import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.common.interceptor.BaseInterceptor;
 import cn.jiangzeyin.common.spring.event.ApplicationEventClient;
 import cn.jiangzeyin.common.spring.event.ApplicationEventLoad;
+import cn.jiangzeyin.common.validator.ParameterInterceptor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -89,6 +90,10 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
         EnableCommonBoot enableCommonBoot = (EnableCommonBoot) this.applicationClass.getAnnotation(EnableCommonBoot.class);
         if (enableCommonBoot == null) {
             addLoadPage("cn.jiangzeyin");
+        } else {
+            if (enableCommonBoot.parameterValidator()) {
+                addInterceptor(ParameterInterceptor.class);
+            }
         }
         //loadProperties();
         ApplicationBuilder.applicationBuilder = this;

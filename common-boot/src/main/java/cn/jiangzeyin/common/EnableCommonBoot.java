@@ -16,4 +16,10 @@ import java.lang.annotation.*;
 @Documented
 @Import(CommonInitPackage.class)
 public @interface EnableCommonBoot {
+    /**
+     * 是否开启参数验证拦截器
+     *
+     * @return 默认开启
+     */
+    boolean parameterValidator() default false;
 }
