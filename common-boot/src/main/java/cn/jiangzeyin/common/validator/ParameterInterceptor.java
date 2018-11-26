@@ -112,6 +112,18 @@ public class ParameterInterceptor extends BaseInterceptor {
         return true;
     }
 
+    /**
+     * 自定义参数效验
+     *
+     * @param handlerMethod   method
+     * @param validatorConfig config
+     * @param validatorItem   效验规则
+     * @param name            参数名
+     * @param value           值
+     * @return true 通过效验
+     * @throws InvocationTargetException 反射异常
+     * @throws IllegalAccessException    反射异常
+     */
     private boolean customize(HandlerMethod handlerMethod, ValidatorConfig validatorConfig, ValidatorItem validatorItem, String name, String value) throws InvocationTargetException, IllegalAccessException {
         // 自定义验证
         Method method;
