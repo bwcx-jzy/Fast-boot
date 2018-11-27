@@ -45,6 +45,11 @@
   cn.jiangzeyin.controller.base.AbstractController
 文件上传Controller 调用 cn.jiangzeyin.controller.base.AbstractController.createMultipart 即可
 
+> **全局Xss注入特殊字符转义**
+ 
+ 详细请查看[cn.jiangzeyin.common.request.XssFilter] 类。
+ 此类提交链接超时自动记录、全局自动UTF-8、参数自动trim  可以根据实际需求配置对应功能
+
 > **自动加载拦截器** 
  
    程序会对指定包下就行拦截器扫描创建 请配置
