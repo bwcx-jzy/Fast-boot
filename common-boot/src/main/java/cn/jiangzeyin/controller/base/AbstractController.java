@@ -8,6 +8,7 @@ import cn.jiangzeyin.common.interceptor.BaseCallbackController;
 import cn.jiangzeyin.controller.multipart.MultipartFileBuilder;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.springframework.http.HttpHeaders;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
 
@@ -174,6 +175,16 @@ public abstract class AbstractController extends BaseCallbackController {
             return multipartHttpServletRequest;
         }
         throw new IllegalArgumentException("not MultipartHttpServletRequest");
+    }
+
+    /**
+     * 判断是否存在文件
+     *
+     * @return true 存在文件
+     */
+    protected boolean hasFile() {
+        Map<String, MultipartFile> fileMap = getMultiRequest().getFileMap();
+        return fileMap != null && fileMap.size() > 0;
     }
 
     /**
