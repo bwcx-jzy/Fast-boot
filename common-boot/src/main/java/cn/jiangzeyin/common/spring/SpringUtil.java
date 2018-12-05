@@ -5,9 +5,12 @@ import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.common.ApplicationBuilder;
 import cn.jiangzeyin.common.CommonInitPackage;
 import cn.jiangzeyin.common.DefaultSystemLog;
+import cn.jiangzeyin.common.request.XssFilter;
+import cn.jiangzeyin.common.request.XssJsonStringCodec;
 import cn.jiangzeyin.common.spring.event.ApplicationEventClient;
 import cn.jiangzeyin.common.spring.event.ApplicationEventLoad;
 import cn.jiangzeyin.pool.ThreadPoolService;
+import com.alibaba.fastjson.serializer.SerializeConfig;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -80,6 +83,11 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
         // 启动最后的预加载
         if (event instanceof ApplicationReadyEvent) {
             CommonInitPackage.init();
+            // xss json
+            if (XssFilter.XSS) {
+                SerializeConfig serializeConfig = SerializeConfig.globalInstance;
+                serializeConfig.put(String.class, XssJsonStringCodec.instance);
+            }
             DefaultSystemLog.LOG().info("common-boot 启动完成");
             return;
         }
@@ -166,7 +174,6 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
      * @param <T>    t
      * @return obj
      */
-    @SuppressWarnings("unchecked")
     public static <T> T registerSingleton(Class<T> tClass) {
         Objects.requireNonNull(tClass);
         // 创建bean

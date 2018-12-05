@@ -171,11 +171,18 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         super.addArgumentResolvers(argumentResolvers);
         if (StrUtil.isNotEmpty(loadPath)) {
-            Set<Class<?>> classSet = ClassUtil.scanPackageBySuper(loadPath, HandlerMethodArgumentResolver.class);
-            if (classSet == null) {
+            String[] paths = StrUtil.split(loadPath, StrUtil.COMMA);
+            Collection<Class<?>> newClassSet = null;
+            for (String item : paths) {
+                Set<Class<?>> classSet = ClassUtil.scanPackageBySuper(item, HandlerMethodArgumentResolver.class);
+                // 合并
+                newClassSet = CollUtil.union(newClassSet, classSet);
+            }
+
+            if (newClassSet == null) {
                 return;
             }
-            for (Class<?> cls : classSet) {
+            for (Class<?> cls : newClassSet) {
                 if (Modifier.isAbstract(cls.getModifiers())) {
                     continue;
                 }

@@ -51,9 +51,9 @@ public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
         this.request = request;
         this.response = response;
         this.session = request.getSession();
-        this.application = session.getServletContext();
+        this.application = this.session.getServletContext();
         HTTP_SESSION_THREAD_LOCAL.set(this.session);
-        this.url = request.getRequestURI();
+        this.url = this.request.getRequestURI();
         if (handler instanceof HandlerMethod) {
             HandlerMethod handlerMethod = (HandlerMethod) handler;
             Object object = handlerMethod.getBean();
