@@ -47,7 +47,7 @@ public class XssFilter extends CharacterEncodingFilter {
     /**
      * 默认true 配置错误 true
      */
-    public static boolean XSS;
+    private static boolean XSS;
     /**
      * 参数前后空格 默认false
      */

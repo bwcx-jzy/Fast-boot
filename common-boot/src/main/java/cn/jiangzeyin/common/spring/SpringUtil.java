@@ -6,7 +6,6 @@ import cn.jiangzeyin.common.ApplicationBuilder;
 import cn.jiangzeyin.common.CommonInitPackage;
 import cn.jiangzeyin.common.DefaultSystemLog;
 import cn.jiangzeyin.common.request.XssFilter;
-import cn.jiangzeyin.common.request.XssJsonStringCodec;
 import cn.jiangzeyin.common.spring.event.ApplicationEventClient;
 import cn.jiangzeyin.common.spring.event.ApplicationEventLoad;
 import cn.jiangzeyin.pool.ThreadPoolService;
@@ -83,11 +82,6 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
         // 启动最后的预加载
         if (event instanceof ApplicationReadyEvent) {
             CommonInitPackage.init();
-            // xss json
-            if (XssFilter.XSS) {
-                SerializeConfig serializeConfig = SerializeConfig.globalInstance;
-                serializeConfig.put(String.class, XssJsonStringCodec.instance);
-            }
             DefaultSystemLog.LOG().info("common-boot 启动完成");
             return;
         }
