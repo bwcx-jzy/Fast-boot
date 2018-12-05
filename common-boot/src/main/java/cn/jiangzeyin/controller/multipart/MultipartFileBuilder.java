@@ -84,6 +84,7 @@ public class MultipartFileBuilder {
      * 是否使用原文件名保存
      *
      * @param useOriginalFilename true 是
+     * @return this
      */
     public MultipartFileBuilder setUseOriginalFilename(boolean useOriginalFilename) {
         this.useOriginalFilename = useOriginalFilename;
