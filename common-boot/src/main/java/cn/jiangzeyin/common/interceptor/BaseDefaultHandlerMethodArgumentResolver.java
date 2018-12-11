@@ -1,6 +1,7 @@
 package cn.jiangzeyin.common.interceptor;
 
 import cn.hutool.core.convert.Convert;
+import cn.hutool.core.util.StrUtil;
 import cn.jiangzeyin.common.spring.SpringUtil;
 import cn.jiangzeyin.common.validator.ValidatorConfig;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -40,10 +41,19 @@ public abstract class BaseDefaultHandlerMethodArgumentResolver implements Handle
         if (null == validatorConfig) {
             return null;
         }
-        String defaultVal = validatorConfig.defaultVal();
-        if (ValueConstants.DEFAULT_NONE.equals(defaultVal)) {
-            return null;
+        String val = null;
+        // 自定义参数
+        String name = validatorConfig.name();
+        if (StrUtil.isNotEmpty(name)) {
+            val = webRequest.getParameter(name);
         }
-        return Convert.convert(parameter.getParameterType(), defaultVal);
+        // 默认值
+        if (val == null) {
+            val = validatorConfig.defaultVal();
+            if (ValueConstants.DEFAULT_NONE.equals(val)) {
+                return null;
+            }
+        }
+        return Convert.convert(parameter.getParameterType(), val);
     }
 }
