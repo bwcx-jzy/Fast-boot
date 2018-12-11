@@ -54,7 +54,7 @@ public final class RedisCacheManagerFactory {
 //                REDIS_CACHE_MANAGER_CONCURRENT_HASH_MAP.put(key, redisCacheManager);
             return redisCacheManager1;
         });
-        Objects.requireNonNull(redisCacheManager, "init error");
+        Objects.requireNonNull(redisCacheManager, "RedisCacheManager init error");
         return redisCacheManager;
     }
 
@@ -71,7 +71,19 @@ public final class RedisCacheManagerFactory {
             getRedisCacheManager(database);
             template = REDIS_TEMPLATE_CONCURRENT_HASH_MAP.get(key);
         }
+        Objects.requireNonNull(template, "RedisTemplate init error");
         return template;
+    }
+
+    /**
+     * 获取连接信息
+     *
+     * @param database 索引号
+     * @return RedisConnectionFactory
+     */
+    public static RedisConnectionFactory getConnectionFactory(int database) {
+        RedisTemplate<String, Object> template = getRedisTemplate(database);
+        return template.getConnectionFactory();
     }
 
     private static class CustomizedRedisCacheManager extends RedisCacheManager {

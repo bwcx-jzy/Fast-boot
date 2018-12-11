@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * 缓存配置
+ *
  * @author jiangzeyin
  * data 2017/12/20
  * @since 1.0.1
@@ -90,6 +92,11 @@ public class RedisCacheConfig {
         return time;
     }
 
+    /**
+     * 获取数据源接口
+     *
+     * @return dataSource
+     */
     public static DataSource getDataSource() {
         return dataSource;
     }

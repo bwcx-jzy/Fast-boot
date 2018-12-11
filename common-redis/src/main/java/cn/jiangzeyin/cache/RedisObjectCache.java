@@ -9,10 +9,10 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 缓存操作封装
  *
  * @author jiangzeyin
  * data 2017/12/12
- *
  * @since 1.0.0
  */
 public class RedisObjectCache {
@@ -40,12 +40,7 @@ public class RedisObjectCache {
      */
     public static Object get(String key, int database) {
         Objects.requireNonNull(key);
-        if (database < 0) {
-            throw new RuntimeException("database error");
-        }
-        RedisCacheManager redisCacheManager = RedisCacheManagerFactory.getRedisCacheManager(database);
-        String group = RedisCacheConfig.getKeyGroup(key, database);
-        Cache cache = redisCacheManager.getCache(group);
+        Cache cache = getCache(key, database);
         Cache.ValueWrapper valueWrapper = cache.get(key);
         Object object = null;
         if (valueWrapper != null) {
@@ -66,6 +61,21 @@ public class RedisObjectCache {
     }
 
     /**
+     * 获取指定缓存后删除本缓存数据
+     *
+     * @param key      key
+     * @param database 数据库编号
+     * @return object
+     */
+    public static Object getAfterDelete(String key, int database) {
+        Object object = get(key, database);
+        if (object != null) {
+            delete(key, database);
+        }
+        return object;
+    }
+
+    /**
      * 添加缓存
      *
      * @param key    缓存的键
@@ -74,6 +84,15 @@ public class RedisObjectCache {
     public static void set(String key, Object object) {
         int defaultDatabase = RedisCacheConfig.getDefaultDatabase();
         set(key, object, defaultDatabase);
+    }
+
+    private static Cache getCache(String key, int database) {
+        if (database < 0) {
+            throw new RuntimeException("database error");
+        }
+        RedisCacheManager redisCacheManager = RedisCacheManagerFactory.getRedisCacheManager(database);
+        String group = RedisCacheConfig.getKeyGroup(key, database);
+        return redisCacheManager.getCache(group);
     }
 
     /**
@@ -86,20 +105,40 @@ public class RedisObjectCache {
     public static void set(String key, Object object, int database) {
         Objects.requireNonNull(key, "key");
         Objects.requireNonNull(object, "object");
-        if (database < 0) {
-            throw new RuntimeException("database error");
-        }
-        RedisCacheManager redisCacheManager = RedisCacheManagerFactory.getRedisCacheManager(database);
-        String group = RedisCacheConfig.getKeyGroup(key, database);
-        Cache cache = redisCacheManager.getCache(group);
+        Cache cache = getCache(key, database);
         cache.put(key, object);
     }
 
+    /**
+     * 添加缓存 并指定缓存时间
+     *
+     * @param key      缓存的key
+     * @param object   缓存的值
+     * @param database 数据库编号
+     * @param time     缓存的时间
+     * @param timeUnit 时间单位
+     */
+    public static void set(String key, Object object, int database, long time, TimeUnit timeUnit) {
+        set(key, object, database);
+        expire(key, time, timeUnit);
+    }
+
+    /**
+     * 删除某个缓存
+     *
+     * @param key 缓存的key
+     */
     public static void delete(String key) {
         int defaultDatabase = RedisCacheConfig.getDefaultDatabase();
         delete(key, defaultDatabase);
     }
 
+    /**
+     * 删除某个缓存
+     *
+     * @param key      缓存的key
+     * @param database 数据库编号
+     */
     public static void delete(String key, int database) {
         Objects.requireNonNull(key);
         if (database < 0) {
@@ -109,6 +148,13 @@ public class RedisObjectCache {
         redisTemplate.delete(key);
     }
 
+    /**
+     * 修改缓存的到期时间
+     *
+     * @param key      缓存的key
+     * @param time     时间
+     * @param timeUnit 时间单位
+     */
     public static void expire(String key, long time, TimeUnit timeUnit) {
         int defaultDatabase = RedisCacheConfig.getDefaultDatabase();
         expire(key, defaultDatabase, time, timeUnit);
