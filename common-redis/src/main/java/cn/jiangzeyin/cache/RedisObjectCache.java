@@ -49,6 +49,8 @@ public class RedisObjectCache {
             }
         } catch (SerializationException ignored) {
             // 序列化异常
+            // 自动清除缓存
+            delete(key, database);
         }
         if (object != null) {
             return object;
