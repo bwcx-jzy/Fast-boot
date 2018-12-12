@@ -4,6 +4,7 @@ import cn.jiangzeyin.redis.RedisCacheManagerFactory;
 import org.springframework.cache.Cache;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.SerializationException;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -39,25 +40,58 @@ public class RedisObjectCache {
      * @return object
      */
     public static Object get(String key, int database) {
-        Objects.requireNonNull(key);
         Cache cache = getCache(key, database);
-        Cache.ValueWrapper valueWrapper = cache.get(key);
         Object object = null;
-        if (valueWrapper != null) {
-            object = valueWrapper.get();
+        try {
+            Cache.ValueWrapper valueWrapper = cache.get(key);
+            if (valueWrapper != null) {
+                object = valueWrapper.get();
+            }
+        } catch (SerializationException ignored) {
+            // 序列化异常
         }
         if (object != null) {
             return object;
         }
+        return selectDataSource(cache, key, database);
+    }
+
+    /**
+     * 重数据源查询
+     *
+     * @param cache    cache
+     * @param key      缓存key
+     * @param database 数据库编号
+     * @return Object
+     */
+    private static Object selectDataSource(Cache cache, String key, int database) {
         RedisCacheConfig.DataSource dataSource = RedisCacheConfig.getDataSource();
         if (dataSource == null) {
             return null;
         }
-        object = dataSource.get(key, database);
+        Object object = dataSource.get(key, database);
         if (object != null) {
             cache.put(key, object);
         }
         return object;
+    }
+
+    /**
+     * 获取指定类型的缓存数据
+     *
+     * @param key      key
+     * @param database 数据库编号
+     * @param cls      要缓存的数据类型
+     * @param <T>      数据类型
+     * @return T
+     */
+    public static <T> T get(String key, int database, Class<T> cls) {
+        Cache cache = getCache(key, database);
+        T t = cache.get(key, cls);
+        if (t != null) {
+            return t;
+        }
+        return (T) selectDataSource(cache, key, database);
     }
 
     /**
@@ -87,6 +121,7 @@ public class RedisObjectCache {
     }
 
     private static Cache getCache(String key, int database) {
+        Objects.requireNonNull(key, "key");
         if (database < 0) {
             throw new RuntimeException("database error");
         }
@@ -103,10 +138,13 @@ public class RedisObjectCache {
      * @param database 数据库编号
      */
     public static void set(String key, Object object, int database) {
-        Objects.requireNonNull(key, "key");
-        Objects.requireNonNull(object, "object");
-        Cache cache = getCache(key, database);
-        cache.put(key, object);
+        if (object == null) {
+            // 没有数据就是删除缓存
+            delete(key, database);
+        } else {
+            Cache cache = getCache(key, database);
+            cache.put(key, object);
+        }
     }
 
     /**
