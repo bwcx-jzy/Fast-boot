@@ -112,16 +112,10 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
             return;
         }
         InterceptorPattens interceptorPattens = (InterceptorPattens) itemCls.getAnnotation(InterceptorPattens.class);
-        HandlerInterceptor handlerInterceptor;
-        try {
-            handlerInterceptor = (HandlerInterceptor) itemCls.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            DefaultSystemLog.ERROR().error("加载拦截器错误", e);
-            return;
-        }
+        Object handlerInterceptor = Singleton.get(itemCls);
         String[] patterns = interceptorPattens.value();
         // 注册
-        InterceptorRegistration registration = registry.addInterceptor(handlerInterceptor);
+        InterceptorRegistration registration = registry.addInterceptor((HandlerInterceptor) handlerInterceptor);
         registration.addPathPatterns(patterns);
         // 排除
         String[] exclude = interceptorPattens.exclude();

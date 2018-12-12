@@ -9,6 +9,7 @@ import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.annotation.ValueConstants;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.method.annotation.AbstractNamedValueMethodArgumentResolver;
 import org.springframework.web.method.annotation.RequestParamMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
@@ -21,9 +22,9 @@ import org.springframework.web.method.support.ModelAndViewContainer;
  */
 public abstract class BaseDefaultHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private final ConfigurableApplicationContext context = (ConfigurableApplicationContext) SpringUtil.getApplicationContext();
+    protected final ConfigurableApplicationContext context = (ConfigurableApplicationContext) SpringUtil.getApplicationContext();
 
-    private final RequestParamMethodArgumentResolver requestParamMethodArgumentResolver = new RequestParamMethodArgumentResolver(context.getBeanFactory(), false);
+    protected final RequestParamMethodArgumentResolver requestParamMethodArgumentResolver = new RequestParamMethodArgumentResolver(context.getBeanFactory(), false);
 
 
     @Override
@@ -31,9 +32,30 @@ public abstract class BaseDefaultHandlerMethodArgumentResolver implements Handle
         return true;
     }
 
+    /**
+     * 使用默认解析规则
+     *
+     * @param parameter     parameter
+     * @param mavContainer  mavContainer
+     * @param webRequest    webRequest
+     * @param binderFactory binderFactory
+     * @return object
+     * @throws Exception Exception
+     * @see AbstractNamedValueMethodArgumentResolver#resolveArgument(org.springframework.core.MethodParameter, org.springframework.web.method.support.ModelAndViewContainer, org.springframework.web.context.request.NativeWebRequest, org.springframework.web.bind.support.WebDataBinderFactory)
+     */
+    protected Object resolveDefaultArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+        Object object = null;
+        try {
+            object = requestParamMethodArgumentResolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory);
+        } catch (IllegalStateException ignored) {
+            // 参数解析异常忽略
+        }
+        return object;
+    }
+
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        Object object = requestParamMethodArgumentResolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory);
+        Object object = resolveDefaultArgument(parameter, mavContainer, webRequest, binderFactory);
         if (object != null) {
             return object;
         }

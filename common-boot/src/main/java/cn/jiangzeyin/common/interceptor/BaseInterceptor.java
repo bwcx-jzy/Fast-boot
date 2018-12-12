@@ -7,7 +7,6 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -19,15 +18,11 @@ import javax.servlet.http.HttpSession;
  * Created by jiangzeyin on 2017/2/17.
  */
 public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
-
-    protected HttpServletRequest request;
-    protected HttpServletResponse response;
-    protected HttpSession session;
-    protected ServletContext application;
-    protected String url;
-    private BaseCallbackController baseCallbackController;
-
-
+    /**
+     * controller 方法对象
+     */
+    private static final ThreadLocal<HandlerMethod> HANDLER_METHOD_THREAD_LOCAL = new ThreadLocal<>();
+    private static final ThreadLocal<BaseCallbackController> BASE_CALLBACK_CONTROLLER_THREAD_LOCAL = new ThreadLocal<>();
     private static final ThreadLocal<HttpSession> HTTP_SESSION_THREAD_LOCAL = new ThreadLocal<>();
 
     /**
@@ -35,6 +30,8 @@ public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
      */
     protected void clearResources() {
         HTTP_SESSION_THREAD_LOCAL.remove();
+        HANDLER_METHOD_THREAD_LOCAL.remove();
+        BASE_CALLBACK_CONTROLLER_THREAD_LOCAL.remove();
     }
 
     /**
@@ -48,28 +45,29 @@ public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        this.request = request;
-        this.response = response;
-        this.session = request.getSession();
-        this.application = this.session.getServletContext();
-        HTTP_SESSION_THREAD_LOCAL.set(this.session);
-        this.url = this.request.getRequestURI();
+        HTTP_SESSION_THREAD_LOCAL.set(request.getSession());
         if (handler instanceof HandlerMethod) {
             HandlerMethod handlerMethod = (HandlerMethod) handler;
+            HANDLER_METHOD_THREAD_LOCAL.set(handlerMethod);
             Object object = handlerMethod.getBean();
             Class controlClass = object.getClass();
             //  controller
             if (BaseCallbackController.class.isAssignableFrom(controlClass)) {
-                this.baseCallbackController = (BaseCallbackController) object;
+                BASE_CALLBACK_CONTROLLER_THREAD_LOCAL.set((BaseCallbackController) object);
             }
         }
         return true;
+    }
+
+    protected HandlerMethod getHandlerMethod() {
+        return HANDLER_METHOD_THREAD_LOCAL.get();
     }
 
     /**
      * 第二次回调
      */
     protected void reload() {
+        BaseCallbackController baseCallbackController = BASE_CALLBACK_CONTROLLER_THREAD_LOCAL.get();
         if (baseCallbackController != null) {
             baseCallbackController.resetInfo();
         }
