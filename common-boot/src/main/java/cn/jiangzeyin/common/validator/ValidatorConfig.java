@@ -44,4 +44,12 @@ public @interface ValidatorConfig {
      * @return 默认 customizeValidator
      */
     String customizeMethod() default "customizeValidator";
+
+    /**
+     * 判断参数为空 是字符串空
+     * 如果为false
+     *
+     * @return 默认true
+     */
+    boolean strEmpty() default true;
 }

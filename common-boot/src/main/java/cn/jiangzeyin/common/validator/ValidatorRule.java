@@ -15,16 +15,21 @@ public enum ValidatorRule {
      * 不为空白
      */
     NOT_BLANK,
+    /**
+     * 手机号码
+     */
     MOBILE,
+    /**
+     * 邮箱
+     */
     EMAIL,
     /**
      * 英文字母 、数字和下划线
      */
     GENERAL,
     /**
-     * 数字
+     * url
      */
-    NUMBERS,
     URL,
     /**
      * 汉字
@@ -36,8 +41,16 @@ public enum ValidatorRule {
     WORD,
     /**
      * 小数
+     *
+     * @see ParameterInterceptor#validatorNumber(cn.jiangzeyin.common.validator.ValidatorItem, java.lang.String)
      */
     DECIMAL,
+    /**
+     * 数字
+     *
+     * @see ParameterInterceptor#validatorNumber(cn.jiangzeyin.common.validator.ValidatorItem, java.lang.String)
+     */
+    NUMBERS,
     /**
      * 非零 正整数  最大长度7位
      */

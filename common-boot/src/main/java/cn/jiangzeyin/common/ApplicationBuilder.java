@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Boot 启动控制
@@ -58,6 +59,31 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
      *
      */
     private Set<HttpMessageConverter<?>> httpMessageConverters;
+
+    /**
+     * 系统预置参数  ，方便多模块间调用
+     */
+    private static final ConcurrentHashMap<String, Object> PRESET_PARAMETER = new ConcurrentHashMap<>();
+
+    /**
+     * 添加预置参数
+     *
+     * @param key   参数的名称
+     * @param value 值
+     */
+    public static void put(String key, Object value) {
+        PRESET_PARAMETER.put(key, value);
+    }
+
+    /**
+     * 根据参数名 获取值
+     *
+     * @param key 参数名
+     * @return Object
+     */
+    public static Object get(String key) {
+        return PRESET_PARAMETER.get(key);
+    }
 
     /**
      * 创建启动对象

@@ -36,6 +36,8 @@ import java.lang.reflect.Method;
 @InterceptorPattens(sort = -100)
 public class ParameterInterceptor extends BaseInterceptor {
 
+    public static int INT_MAX_LENGTH = 7;
+
     private static volatile Interceptor interceptor = new DefaultInterceptor();
 
     /**
@@ -54,63 +56,69 @@ public class ParameterInterceptor extends BaseInterceptor {
         if (interceptor == null) {
             return true;
         }
-        if (handler instanceof HandlerMethod) {
-            HandlerMethod handlerMethod = (HandlerMethod) handler;
-            MethodParameter[] methodParameters = handlerMethod.getMethodParameters();
-            if (methodParameters != null) {
-                for (MethodParameter item : methodParameters) {
-                    ValidatorConfig validatorConfig = item.getParameterAnnotation(ValidatorConfig.class);
-                    if (validatorConfig == null) {
-                        continue;
-                    }
-                    ValidatorItem[] validatorItems = validatorConfig.value();
-                    String name = item.getParameterName();
-                    if (name == null) {
-                        continue;
-                    }
-                    // 获取值
-                    String value;
-                    // 指定name
-                    String configName = validatorConfig.name();
-                    if (StrUtil.isNotEmpty(configName)) {
-                        value = request.getParameter(configName);
-                    } else {
-                        value = request.getParameter(name);
-                    }
-                    //
-                    RequestParam requestParam = item.getParameterAnnotation(RequestParam.class);
-                    if (requestParam != null && StrUtil.isNotEmpty(requestParam.name())) {
-                        value = request.getParameter(requestParam.name());
-                    }
-                    // 自定义
-                    if (value == null && interceptor != null) {
-                        value = interceptor.getParameter(request, name);
-                    }
-                    // 默认值
-                    if (value == null && !ValueConstants.DEFAULT_NONE.equals(validatorConfig.defaultVal())) {
+        HandlerMethod handlerMethod = getHandlerMethod();
+        if (handlerMethod == null) {
+            return true;
+        }
+        MethodParameter[] methodParameters = handlerMethod.getMethodParameters();
+        if (methodParameters != null) {
+            for (MethodParameter item : methodParameters) {
+                ValidatorConfig validatorConfig = item.getParameterAnnotation(ValidatorConfig.class);
+                if (validatorConfig == null) {
+                    continue;
+                }
+                ValidatorItem[] validatorItems = validatorConfig.value();
+                String name = item.getParameterName();
+                if (name == null) {
+                    continue;
+                }
+                // 获取值
+                String value;
+                // 指定name
+                String configName = validatorConfig.name();
+                if (StrUtil.isNotEmpty(configName)) {
+                    value = request.getParameter(configName);
+                } else {
+                    value = request.getParameter(name);
+                }
+                //
+                RequestParam requestParam = item.getParameterAnnotation(RequestParam.class);
+                if (requestParam != null && StrUtil.isNotEmpty(requestParam.name())) {
+                    value = request.getParameter(requestParam.name());
+                }
+                // 自定义
+                if (value == null && interceptor != null) {
+                    value = interceptor.getParameter(request, name);
+                }
+                // 默认值
+                if (!ValueConstants.DEFAULT_NONE.equals(validatorConfig.defaultVal())) {
+                    if (value == null && !validatorConfig.strEmpty()) {
                         value = validatorConfig.defaultVal();
                     }
-                    if (value == null && null != requestParam && !ValueConstants.DEFAULT_NONE.equals(requestParam.defaultValue())) {
-                        //   默认值
-                        value = requestParam.defaultValue();
+                    if (StrUtil.isEmpty(value) && validatorConfig.strEmpty()) {
+                        value = validatorConfig.defaultVal();
                     }
-                    // 验证每一项
-                    for (ValidatorItem validatorItem : validatorItems) {
-                        if (validatorItem.unescape()) {
-                            value = HtmlUtil.unescape(value);
-                        }
-                        if (validatorItem.value() == ValidatorRule.CUSTOMIZE) {
-                            if (!customize(handlerMethod, validatorConfig, validatorItem, name, value, request, response)) {
-                                return false;
-                            }
-                            // 自定义条件只识别一次
-                            break;
-                        }
-                        if (!validator(validatorItem, value)) {
-                            //错误
-                            interceptor.error(request, response, name, value, validatorItem);
+                }
+                if (value == null && null != requestParam && !ValueConstants.DEFAULT_NONE.equals(requestParam.defaultValue())) {
+                    //   默认值
+                    value = requestParam.defaultValue();
+                }
+                // 验证每一项
+                for (ValidatorItem validatorItem : validatorItems) {
+                    if (validatorItem.unescape()) {
+                        value = HtmlUtil.unescape(value);
+                    }
+                    if (validatorItem.value() == ValidatorRule.CUSTOMIZE) {
+                        if (!customize(handlerMethod, validatorConfig, validatorItem, name, value, request, response)) {
                             return false;
                         }
+                        // 自定义条件只识别一次
+                        break;
+                    }
+                    if (!validator(validatorItem, value)) {
+                        //错误
+                        interceptor.error(request, response, name, value, validatorItem);
+                        return false;
                     }
                 }
             }
@@ -184,6 +192,12 @@ public class ParameterInterceptor extends BaseInterceptor {
         return null;
     }
 
+    /**
+     * 拆分验证范围
+     *
+     * @param range 范围字符串
+     * @return 数组
+     */
     private Double[] spiltRangeDouble(String range) {
         if (StrUtil.isEmpty(range)) {
             return null;
@@ -270,7 +284,7 @@ public class ParameterInterceptor extends BaseInterceptor {
                     return false;
                 }
                 // 强制现在整数不能超过7位
-                if (value.length() > 7) {
+                if (value.length() > INT_MAX_LENGTH) {
                     return false;
                 }
                 if (!validatorNumber(validatorItem, value)) {
@@ -317,7 +331,13 @@ public class ParameterInterceptor extends BaseInterceptor {
         return true;
     }
 
-
+    /**
+     * 普通的验证规则
+     *
+     * @param validatorItem 规则item
+     * @param value         值
+     * @return true通过
+     */
     private boolean validator2(final ValidatorItem validatorItem, final String value) {
         ValidatorRule validatorRule = validatorItem.value();
         switch (validatorRule) {
