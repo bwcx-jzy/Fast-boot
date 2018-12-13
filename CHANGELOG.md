@@ -2,7 +2,7 @@
 
 ## 1.2.20
 
-*  【common-boot】 系统添加预置参数方法 cn.jiangzeyin.common.ApplicationBuilder.put 一般用户多模块间程序启动参数
+*  【common-boot】 系统添加预置参数方法 cn.jiangzeyin.common.ApplicationBuilder.put 一般用于多模块间程序启动参数
 *  【common-boot】 参数验证器新增 判断空方式，对象空或者字符串空
 
 ---------------------------------------------------------------------

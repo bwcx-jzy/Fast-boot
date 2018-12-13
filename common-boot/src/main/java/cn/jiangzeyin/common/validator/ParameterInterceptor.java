@@ -35,7 +35,9 @@ import java.lang.reflect.Method;
  */
 @InterceptorPattens(sort = -100)
 public class ParameterInterceptor extends BaseInterceptor {
-
+    /**
+     * int 类型的数字输入最大长度  防止数据库字段溢出
+     */
     public static int INT_MAX_LENGTH = 7;
 
     private static volatile Interceptor interceptor = new DefaultInterceptor();
