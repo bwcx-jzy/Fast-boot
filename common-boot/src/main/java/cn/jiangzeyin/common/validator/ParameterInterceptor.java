@@ -100,7 +100,7 @@ public class ParameterInterceptor extends BaseInterceptor {
                             value = HtmlUtil.unescape(value);
                         }
                         if (validatorItem.value() == ValidatorRule.CUSTOMIZE) {
-                            if (!customize(handlerMethod, validatorConfig, validatorItem, name, value)) {
+                            if (!customize(handlerMethod, validatorConfig, validatorItem, name, value, request, response)) {
                                 return false;
                             }
                             // 自定义条件只识别一次
@@ -130,7 +130,9 @@ public class ParameterInterceptor extends BaseInterceptor {
      * @throws InvocationTargetException 反射异常
      * @throws IllegalAccessException    反射异常
      */
-    private boolean customize(HandlerMethod handlerMethod, ValidatorConfig validatorConfig, ValidatorItem validatorItem, String name, String value) throws InvocationTargetException, IllegalAccessException {
+    private boolean customize(HandlerMethod handlerMethod, ValidatorConfig validatorConfig, ValidatorItem validatorItem, String name, String value,
+                              HttpServletRequest request, HttpServletResponse response
+    ) throws InvocationTargetException, IllegalAccessException {
         // 自定义验证
         Method method;
         try {
