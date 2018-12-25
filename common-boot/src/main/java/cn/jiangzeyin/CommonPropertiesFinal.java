@@ -45,7 +45,7 @@ public final class CommonPropertiesFinal {
      */
     public static final String TOMCAT_SESSION_COOKIE_NAME = TOMCAT + ".sessionCookieName";
     /**
-     * 定义session 过期时间 单位分钟
+     * 定义session 过期时间 单位秒
      */
     public static final String TOMCAT_SESSION_TIME_OUT = TOMCAT + ".sessionTimeOut";
     /**

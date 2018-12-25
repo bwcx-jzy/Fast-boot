@@ -12,6 +12,10 @@ public enum ValidatorRule {
      */
     NOT_EMPTY,
     /**
+     * 空
+     */
+    EMPTY,
+    /**
      * 不为空白
      */
     NOT_BLANK,

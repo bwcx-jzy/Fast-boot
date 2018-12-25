@@ -6,8 +6,6 @@ import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * tomcat
  * Created by jiangzeyin on 2017/3/31.
@@ -27,8 +25,7 @@ public class TomcatInitBean {
         return container -> {
             Integer timOut = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.TOMCAT_SESSION_TIME_OUT, Integer.class);
             if (timOut != null) {
-                //单位为分钟
-                container.setSessionTimeout(timOut, TimeUnit.MINUTES);
+                container.setSessionTimeout(timOut);
             }
         };
     }

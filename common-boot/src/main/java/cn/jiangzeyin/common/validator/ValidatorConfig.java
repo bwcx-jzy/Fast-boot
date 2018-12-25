@@ -52,4 +52,15 @@ public @interface ValidatorConfig {
      * @return 默认true
      */
     boolean strEmpty() default true;
+
+    /**
+     * 错误条件
+     * <p>
+     * or  一项错误结束整项
+     * <p>
+     * and 都错才猜结束
+     *
+     * @return 默认or
+     */
+    ErrorCondition errorCondition() default ErrorCondition.AND;
 }

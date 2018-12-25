@@ -57,7 +57,7 @@
     {
       "name": "tomcat.sessionTimeOut",
       "type": "java.lang.Integer",
-      "description": "tomcat session 超时时间配置 单位分钟 ",
+      "description": "tomcat session 超时时间配置 单位秒 ",
       "defaultValue": ""
     }
   ]

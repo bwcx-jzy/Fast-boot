@@ -106,7 +106,9 @@ public class ParameterInterceptor extends BaseInterceptor {
                     value = requestParam.defaultValue();
                 }
                 // 验证每一项
-                for (ValidatorItem validatorItem : validatorItems) {
+                int errorCount = 0;
+                for (int i = 0, len = validatorItems.length; i < len; i++) {
+                    ValidatorItem validatorItem = validatorItems[i];
                     if (validatorItem.unescape()) {
                         value = HtmlUtil.unescape(value);
                     }
@@ -117,10 +119,29 @@ public class ParameterInterceptor extends BaseInterceptor {
                         // 自定义条件只识别一次
                         break;
                     }
-                    if (!validator(validatorItem, value)) {
-                        //错误
-                        interceptor.error(request, response, name, value, validatorItem);
-                        return false;
+                    boolean error = validator(validatorItem, value);
+                    if (validatorConfig.errorCondition() == ErrorCondition.AND) {
+                        if (!error) {
+                            //错误
+                            interceptor.error(request, response, name, value, validatorItem);
+                            return false;
+                        }
+                    }
+                    if (validatorConfig.errorCondition() == ErrorCondition.OR) {
+                        if (error) {
+                            break;
+                        } else {
+                            errorCount++;
+                            if (i < len - 1) {
+                                continue;
+                            }
+                            // 最后一项
+                            if (i == len - 1 && errorCount == len) {
+                                //错误
+                                interceptor.error(request, response, name, value, validatorItem);
+                                return false;
+                            }
+                        }
                     }
                 }
             }
@@ -227,6 +248,11 @@ public class ParameterInterceptor extends BaseInterceptor {
     private boolean validator(final ValidatorItem validatorItem, final String value) {
         ValidatorRule validatorRule = validatorItem.value();
         switch (validatorRule) {
+            case EMPTY:
+                if (Validator.isNotEmpty(value)) {
+                    return false;
+                }
+                break;
             case NOT_EMPTY:
             case NOT_BLANK: {
                 if (validatorRule == ValidatorRule.NOT_EMPTY) {
