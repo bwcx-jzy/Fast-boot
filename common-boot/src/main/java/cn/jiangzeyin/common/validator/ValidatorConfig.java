@@ -56,9 +56,9 @@ public @interface ValidatorConfig {
     /**
      * 错误条件
      * <p>
-     * or  一项错误结束整项
+     * or  一项正确返回正确，所有错误抛出错误
      * <p>
-     * and 都错才猜结束
+     * and 一项错误 抛出错误并结束整个判断
      *
      * @return 默认or
      */

@@ -51,6 +51,50 @@ public class ParameterInterceptor extends BaseInterceptor {
         ParameterInterceptor.interceptor = interceptor;
     }
 
+    /**
+     * 获取值
+     *
+     * @param validatorConfig 验证规则
+     * @param request         req
+     * @param name            name
+     * @param item            item
+     * @return val
+     */
+    private String getValue(ValidatorConfig validatorConfig, HttpServletRequest request, String name, MethodParameter item) {
+        // 获取值
+        String value;
+        // 指定name
+        String configName = validatorConfig.name();
+        if (StrUtil.isNotEmpty(configName)) {
+            value = request.getParameter(configName);
+        } else {
+            value = request.getParameter(name);
+        }
+        //
+        RequestParam requestParam = item.getParameterAnnotation(RequestParam.class);
+        if (requestParam != null && StrUtil.isNotEmpty(requestParam.name())) {
+            value = request.getParameter(requestParam.name());
+        }
+        // 自定义
+        if (value == null && interceptor != null) {
+            value = interceptor.getParameter(request, name);
+        }
+        // 默认值
+        if (!ValueConstants.DEFAULT_NONE.equals(validatorConfig.defaultVal())) {
+            if (value == null && !validatorConfig.strEmpty()) {
+                value = validatorConfig.defaultVal();
+            }
+            if (StrUtil.isEmpty(value) && validatorConfig.strEmpty()) {
+                value = validatorConfig.defaultVal();
+            }
+        }
+        if (value == null && null != requestParam && !ValueConstants.DEFAULT_NONE.equals(requestParam.defaultValue())) {
+            //   默认值
+            value = requestParam.defaultValue();
+        }
+        return value;
+    }
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         super.preHandle(request, response, handler);
@@ -74,37 +118,7 @@ public class ParameterInterceptor extends BaseInterceptor {
                 if (name == null) {
                     continue;
                 }
-                // 获取值
-                String value;
-                // 指定name
-                String configName = validatorConfig.name();
-                if (StrUtil.isNotEmpty(configName)) {
-                    value = request.getParameter(configName);
-                } else {
-                    value = request.getParameter(name);
-                }
-                //
-                RequestParam requestParam = item.getParameterAnnotation(RequestParam.class);
-                if (requestParam != null && StrUtil.isNotEmpty(requestParam.name())) {
-                    value = request.getParameter(requestParam.name());
-                }
-                // 自定义
-                if (value == null && interceptor != null) {
-                    value = interceptor.getParameter(request, name);
-                }
-                // 默认值
-                if (!ValueConstants.DEFAULT_NONE.equals(validatorConfig.defaultVal())) {
-                    if (value == null && !validatorConfig.strEmpty()) {
-                        value = validatorConfig.defaultVal();
-                    }
-                    if (StrUtil.isEmpty(value) && validatorConfig.strEmpty()) {
-                        value = validatorConfig.defaultVal();
-                    }
-                }
-                if (value == null && null != requestParam && !ValueConstants.DEFAULT_NONE.equals(requestParam.defaultValue())) {
-                    //   默认值
-                    value = requestParam.defaultValue();
-                }
+                String value = getValue(validatorConfig, request, name, item);
                 // 验证每一项
                 int errorCount = 0;
                 for (int i = 0, len = validatorItems.length; i < len; i++) {
