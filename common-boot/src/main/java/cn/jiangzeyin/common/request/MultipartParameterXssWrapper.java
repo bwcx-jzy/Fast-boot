@@ -1,5 +1,7 @@
 package cn.jiangzeyin.common.request;
 
+import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.StrUtil;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
 
@@ -43,7 +45,7 @@ public class MultipartParameterXssWrapper extends StandardMultipartHttpServletRe
         if (values == null) {
             return null;
         }
-        return values[0];
+        return ArrayUtil.join(values, StrUtil.COMMA);
     }
 
     @Override

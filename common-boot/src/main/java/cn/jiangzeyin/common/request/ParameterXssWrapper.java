@@ -1,5 +1,6 @@
 package cn.jiangzeyin.common.request;
 
+import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ReUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
@@ -62,7 +63,7 @@ public class ParameterXssWrapper extends HttpServletRequestWrapper {
         if (values == null) {
             return null;
         }
-        return values[0];
+        return ArrayUtil.join(values, StrUtil.COMMA);
     }
 
     @Override
