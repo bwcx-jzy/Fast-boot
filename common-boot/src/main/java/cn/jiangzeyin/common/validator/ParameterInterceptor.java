@@ -107,54 +107,55 @@ public class ParameterInterceptor extends BaseInterceptor {
             return true;
         }
         MethodParameter[] methodParameters = handlerMethod.getMethodParameters();
-        if (methodParameters != null) {
-            for (MethodParameter item : methodParameters) {
-                ValidatorConfig validatorConfig = item.getParameterAnnotation(ValidatorConfig.class);
-                if (validatorConfig == null) {
-                    continue;
+        if (methodParameters == null) {
+            return true;
+        }
+        for (MethodParameter item : methodParameters) {
+            ValidatorConfig validatorConfig = item.getParameterAnnotation(ValidatorConfig.class);
+            if (validatorConfig == null) {
+                continue;
+            }
+            ValidatorItem[] validatorItems = validatorConfig.value();
+            String name = item.getParameterName();
+            if (name == null) {
+                continue;
+            }
+            String value = getValue(validatorConfig, request, name, item);
+            // 验证每一项
+            int errorCount = 0;
+            for (int i = 0, len = validatorItems.length; i < len; i++) {
+                ValidatorItem validatorItem = validatorItems[i];
+                if (validatorItem.unescape()) {
+                    value = HtmlUtil.unescape(value);
                 }
-                ValidatorItem[] validatorItems = validatorConfig.value();
-                String name = item.getParameterName();
-                if (name == null) {
-                    continue;
-                }
-                String value = getValue(validatorConfig, request, name, item);
-                // 验证每一项
-                int errorCount = 0;
-                for (int i = 0, len = validatorItems.length; i < len; i++) {
-                    ValidatorItem validatorItem = validatorItems[i];
-                    if (validatorItem.unescape()) {
-                        value = HtmlUtil.unescape(value);
+                if (validatorItem.value() == ValidatorRule.CUSTOMIZE) {
+                    if (!customize(handlerMethod, item, validatorConfig, validatorItem, name, value, request, response)) {
+                        return false;
                     }
-                    if (validatorItem.value() == ValidatorRule.CUSTOMIZE) {
-                        if (!customize(handlerMethod, validatorConfig, validatorItem, name, value, request, response)) {
-                            return false;
-                        }
-                        // 自定义条件只识别一次
+                    // 自定义条件只识别一次
+                    break;
+                }
+                boolean error = validator(validatorItem, value);
+                if (validatorConfig.errorCondition() == ErrorCondition.AND) {
+                    if (!error) {
+                        //错误
+                        interceptor.error(request, response, name, value, validatorItem);
+                        return false;
+                    }
+                }
+                if (validatorConfig.errorCondition() == ErrorCondition.OR) {
+                    if (error) {
                         break;
-                    }
-                    boolean error = validator(validatorItem, value);
-                    if (validatorConfig.errorCondition() == ErrorCondition.AND) {
-                        if (!error) {
+                    } else {
+                        errorCount++;
+                        if (i < len - 1) {
+                            continue;
+                        }
+                        // 最后一项
+                        if (i == len - 1 && errorCount == len) {
                             //错误
                             interceptor.error(request, response, name, value, validatorItem);
                             return false;
-                        }
-                    }
-                    if (validatorConfig.errorCondition() == ErrorCondition.OR) {
-                        if (error) {
-                            break;
-                        } else {
-                            errorCount++;
-                            if (i < len - 1) {
-                                continue;
-                            }
-                            // 最后一项
-                            if (i == len - 1 && errorCount == len) {
-                                //错误
-                                interceptor.error(request, response, name, value, validatorItem);
-                                return false;
-                            }
                         }
                     }
                 }
@@ -169,19 +170,20 @@ public class ParameterInterceptor extends BaseInterceptor {
      * @param handlerMethod   method
      * @param validatorConfig config
      * @param validatorItem   效验规则
+     * @param methodParameter 参数对象
      * @param name            参数名
      * @param value           值
      * @return true 通过效验
      * @throws InvocationTargetException 反射异常
      * @throws IllegalAccessException    反射异常
      */
-    private boolean customize(HandlerMethod handlerMethod, ValidatorConfig validatorConfig, ValidatorItem validatorItem, String name, String value,
+    private boolean customize(HandlerMethod handlerMethod, MethodParameter methodParameter, ValidatorConfig validatorConfig, ValidatorItem validatorItem, String name, String value,
                               HttpServletRequest request, HttpServletResponse response
     ) throws InvocationTargetException, IllegalAccessException {
         // 自定义验证
         Method method;
         try {
-            method = ReflectUtil.getMethod(handlerMethod.getBeanType(), validatorConfig.customizeMethod(), String.class, String.class);
+            method = ReflectUtil.getMethod(handlerMethod.getBeanType(), validatorConfig.customizeMethod(), MethodParameter.class, String.class);
         } catch (SecurityException sE) {
             // 没有权限访问 直接拦截
             DefaultSystemLog.ERROR().error(sE.getMessage(), sE);
@@ -194,7 +196,7 @@ public class ParameterInterceptor extends BaseInterceptor {
             interceptor.error(request, response, name, value, validatorItem);
             return false;
         }
-        Object obj = method.invoke(handlerMethod.getBean(), name, value);
+        Object obj = method.invoke(handlerMethod.getBean(), methodParameter, value);
         if (!Convert.toBool(obj, false)) {
             interceptor.error(request, response, name, value, validatorItem);
             return false;

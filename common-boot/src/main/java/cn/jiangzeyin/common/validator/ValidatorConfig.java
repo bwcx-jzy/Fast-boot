@@ -40,6 +40,8 @@ public @interface ValidatorConfig {
 
     /**
      * 自定义验证 Controller 中方法名
+     * <p>
+     * public boolean customizeValidator(MethodParameter methodParameter, String value)
      *
      * @return 默认 customizeValidator
      */
