@@ -5,11 +5,9 @@ import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.common.ApplicationBuilder;
 import cn.jiangzeyin.common.CommonInitPackage;
 import cn.jiangzeyin.common.DefaultSystemLog;
-import cn.jiangzeyin.common.request.XssFilter;
 import cn.jiangzeyin.common.spring.event.ApplicationEventClient;
 import cn.jiangzeyin.common.spring.event.ApplicationEventLoad;
 import cn.jiangzeyin.pool.ThreadPoolService;
-import com.alibaba.fastjson.serializer.SerializeConfig;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -174,11 +172,23 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
         AutowireCapableBeanFactory autowireCapableBeanFactory = getApplicationContext().getAutowireCapableBeanFactory();
         T obj = autowireCapableBeanFactory.createBean(tClass);
         String beanName = StrUtil.upperFirst(tClass.getSimpleName());
+        register(beanName, obj);
+        return obj;
+    }
+
+    /**
+     * 动态注入bean
+     *
+     * @param beanName beanName
+     * @param object   值
+     * @return 当前数量
+     */
+    public static int register(String beanName, Object object) {
         // 注册
         ConfigurableApplicationContext configurableApplicationContext = (ConfigurableApplicationContext) getApplicationContext();
         ConfigurableListableBeanFactory configurableListableBeanFactory = configurableApplicationContext.getBeanFactory();
-        configurableListableBeanFactory.registerSingleton(beanName, obj);
-        return obj;
+        configurableListableBeanFactory.registerSingleton(beanName, object);
+        return configurableListableBeanFactory.getSingletonCount();
     }
 }
 

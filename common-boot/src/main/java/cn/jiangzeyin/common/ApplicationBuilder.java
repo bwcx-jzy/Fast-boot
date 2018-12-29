@@ -13,6 +13,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.util.StringUtils;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 
 import java.lang.reflect.*;
 import java.util.HashSet;
@@ -25,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Boot 启动控制
  *
  * @author jiangzeyin
- * data 2018/4/13
+ * @date 2018/4/13
  */
 public class ApplicationBuilder extends SpringApplicationBuilder {
     /**
@@ -59,6 +60,10 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
      *
      */
     private Set<HttpMessageConverter<?>> httpMessageConverters;
+    /**
+     *
+     */
+    private Set<Class<? extends HandlerMethodArgumentResolver>> handlerMethodArgumentResolvers;
 
     /**
      * 系统预置参数  ，方便多模块间调用
@@ -211,8 +216,27 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
         if (applicationEventClients == null) {
             applicationEventClients = new HashSet<>();
         }
-        applicationEventClients.add(applicationEventClient);
+        this.applicationEventClients.add(applicationEventClient);
         return this;
+    }
+
+    /**
+     * 添加参数解析器
+     *
+     * @param cls cls
+     * @return this
+     */
+    public ApplicationBuilder addHandlerMethodArgumentResolver(Class<? extends HandlerMethodArgumentResolver> cls) {
+        Objects.requireNonNull(cls);
+        if (handlerMethodArgumentResolvers == null) {
+            handlerMethodArgumentResolvers = new HashSet<>();
+        }
+        this.handlerMethodArgumentResolvers.add(cls);
+        return this;
+    }
+
+    public Set<Class<? extends HandlerMethodArgumentResolver>> getHandlerMethodArgumentResolvers() {
+        return handlerMethodArgumentResolvers;
     }
 
     /**
@@ -224,6 +248,7 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
      * @throws IllegalAccessException e
      */
     @SuppressWarnings("unchecked")
+
     public ApplicationBuilder addLoadPage(String packageName) throws NoSuchFieldException, IllegalAccessException {
         if (StringUtils.isEmpty(packageName)) {
             throw new IllegalArgumentException("packageName");
@@ -271,7 +296,7 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
      * @throws Exception e
      */
     @SuppressWarnings("unchecked")
-    public void loadProperties(String packageName) throws Exception {
+    public ApplicationBuilder loadProperties(String packageName) throws Exception {
         Set<Class<?>> list = ClassUtil.scanPackageByAnnotation(packageName, AutoPropertiesClass.class);
         for (Class cls : list) {
             Method[] methods = cls.getDeclaredMethods();
@@ -298,5 +323,6 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
                 }
             }
         }
+        return this;
     }
 }

@@ -106,12 +106,12 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
     }
 
 
-    private void loadInterceptor(Class itemCls, InterceptorRegistry registry) {
+    private void loadInterceptor(Class<?> itemCls, InterceptorRegistry registry) {
         if (LOAD_OK.contains(itemCls) && !ApplicationBuilder.isRestart()) {
             DefaultSystemLog.LOG().info("重复注入拦截器" + itemCls);
             return;
         }
-        InterceptorPattens interceptorPattens = (InterceptorPattens) itemCls.getAnnotation(InterceptorPattens.class);
+        InterceptorPattens interceptorPattens = itemCls.getAnnotation(InterceptorPattens.class);
         Object handlerInterceptor = Singleton.get(itemCls);
         String[] patterns = interceptorPattens.value();
         // 注册
@@ -136,12 +136,12 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
         String resourceHandler = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.INTERCEPTOR_RESOURCE_HANDLER);
         ResourceHandlerRegistration resourceHandlerRegistration;
         if (StrUtil.isNotBlank(resourceHandler)) {
-            String[] handler = ArrayUtil.toArray(StrUtil.splitTrim(resourceHandler, ","), String.class);
+            String[] handler = ArrayUtil.toArray(StrUtil.splitTrim(resourceHandler, StrUtil.COMMA), String.class);
             resourceHandlerRegistration = registry.addResourceHandler(handler);
             // 资源文件路径
             String resourceLocation = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.INTERCEPTOR_RESOURCE_LOCATION);
             if (resourceHandlerRegistration != null && StrUtil.isNotBlank(resourceLocation)) {
-                String[] location = ArrayUtil.toArray(StrUtil.splitTrim(resourceLocation, ","), String.class);
+                String[] location = ArrayUtil.toArray(StrUtil.splitTrim(resourceLocation, StrUtil.COMMA), String.class);
                 resourceHandlerRegistration.addResourceLocations(location);
             }
         }
@@ -172,18 +172,25 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
                 // 合并
                 newClassSet = CollUtil.union(newClassSet, classSet);
             }
-
-            if (newClassSet == null) {
-                return;
-            }
-            for (Class<?> cls : newClassSet) {
-                if (Modifier.isAbstract(cls.getModifiers())) {
-                    continue;
+            if (newClassSet != null) {
+                for (Class<?> cls : newClassSet) {
+                    addArgumentResolvers(argumentResolvers, cls);
                 }
-                Object methodArgumentResolver = Singleton.get(cls);
-                argumentResolvers.add((HandlerMethodArgumentResolver) methodArgumentResolver);
-                DefaultSystemLog.LOG().info("参数解析器：" + cls);
             }
         }
+        // 加载默认注入
+        Set<Class<? extends HandlerMethodArgumentResolver>> methodArgumentResolvers = ApplicationBuilder.getInstance().getHandlerMethodArgumentResolvers();
+        if (methodArgumentResolvers != null) {
+            methodArgumentResolvers.forEach(aClass -> addArgumentResolvers(argumentResolvers, aClass));
+        }
+    }
+
+    private void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers, Class<?> aClass) {
+        if (Modifier.isAbstract(aClass.getModifiers())) {
+            return;
+        }
+        Object methodArgumentResolver = Singleton.get(aClass);
+        argumentResolvers.add((HandlerMethodArgumentResolver) methodArgumentResolver);
+        DefaultSystemLog.LOG().info("参数解析器：" + aClass);
     }
 }

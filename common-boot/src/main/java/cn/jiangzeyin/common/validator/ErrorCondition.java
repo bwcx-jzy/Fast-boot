@@ -2,7 +2,9 @@ package cn.jiangzeyin.common.validator;
 
 /**
  * 错误条件
- * Created by jiangzeyin on 2018/12/25.
+ *
+ * @author jiangzeyin
+ * @date 2018/12/25
  */
 public enum ErrorCondition {
     /**

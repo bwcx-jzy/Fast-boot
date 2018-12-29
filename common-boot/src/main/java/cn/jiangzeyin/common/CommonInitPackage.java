@@ -17,7 +17,7 @@ import java.util.*;
  * 控制初始化
  *
  * @author jiangzeyin
- * data 2017/10/24
+ * @date 2017/10/24
  */
 @Configuration
 @ComponentScan(value = "cn.jiangzeyin")
