@@ -160,7 +160,7 @@ public class RedisObjectCache {
      */
     public static void set(String key, Object object, int database, long time, TimeUnit timeUnit) {
         set(key, object, database);
-        expire(key, time, timeUnit);
+        expire(key, database, time, timeUnit);
     }
 
     /**
