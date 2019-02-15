@@ -261,7 +261,7 @@ public class ParameterInterceptor extends BaseInterceptor {
         return doubles;
     }
 
-    private boolean validator(final ValidatorItem validatorItem, final String value) {
+    private boolean validator(final ValidatorItem validatorItem, String value) {
         ValidatorRule validatorRule = validatorItem.value();
         switch (validatorRule) {
             case EMPTY:
@@ -348,7 +348,7 @@ public class ParameterInterceptor extends BaseInterceptor {
      * @param value         值
      * @return true 正确的
      */
-    private boolean validatorNumber(final ValidatorItem validatorItem, final String value) {
+    private boolean validatorNumber(final ValidatorItem validatorItem, String value) {
         Double[] douRange = spiltRangeDouble(validatorItem.range());
         if (douRange != null && douRange[2] != null) {
             int len = douRange[2].intValue();
@@ -382,7 +382,7 @@ public class ParameterInterceptor extends BaseInterceptor {
      * @param value         值
      * @return true通过
      */
-    private boolean validator2(final ValidatorItem validatorItem, final String value) {
+    private boolean validator2(final ValidatorItem validatorItem, String value) {
         ValidatorRule validatorRule = validatorItem.value();
         switch (validatorRule) {
             case EMAIL:
