@@ -24,13 +24,13 @@
 
 ## 版本变更
 
-- [Release版本变更说明](https://gitee.com/jiangzeyin/common-parent/blob/master/CHANGELOG.md)
+- [Release版本变更说明](/CHANGELOG.md)
 
 ## 文档
 
 [博客地址](http://blog.csdn.net/jiangzeyin_/article/details/78709043)
 
-[参考API](https://apidoc.gitee.com/jiangzeyin/common-parent/)
+[参考API](https://gitee.com/keepbx/common-parent/javadoc)
 
 ## 依赖
 [SpringBoot starter-web](https://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#spring-boot-starter-web)
@@ -55,7 +55,7 @@
     </dependency>
 
 
-地址：https://gitee.com/jiangzeyin/common-parent/tree/master/common-boot
+地址：[https://gitee.com/keepbx/common-parent/tree/master/common-boot](/common-boot)
 
 # 2.common-redis
 
@@ -71,10 +71,10 @@
 
 特点：支持动态指定Redis 索引库编号
 
-地址：https://gitee.com/jiangzeyin/common-parent/tree/master/common-redis
+地址：[https://gitee.com/keepbx/common-parent/tree/master/common-redis](/common-redis)
 
 
 ### 提供bug反馈或建议
 
-- [码云](https://gitee.com/jiangzeyin/common-parent/issues)
+- [码云](https://gitee.com/keepbx/common-parent/issues)
 - [Github](https://github.com/jiangzeyin/Fast-boot/issues)

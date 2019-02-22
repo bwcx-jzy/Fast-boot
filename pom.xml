@@ -8,7 +8,7 @@
     <artifactId>common-parent</artifactId>
     <version>1.2.25</version>
     <name>Fast-boot</name>
-    <url>https://gitee.com/jiangzeyin/common-parent</url>
+    <url>https://gitee.com/keepbx/common-parent</url>
     <description>Spring Boot fast-boot</description>
     <inceptionYear>2017</inceptionYear>
     <properties>
