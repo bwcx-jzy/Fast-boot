@@ -4,7 +4,10 @@ chcp 65001
 
 cd ../
 
+
 echo 拉取远程分支[master]
+call git checkout dev
+
 call git fetch github master:master
 
 call git fetch gitee master:master
@@ -17,6 +20,7 @@ call git fetch github dev:dev
 call git fetch gitee dev:dev
 
 call git checkout dev
+call git merge master
 
 echo 开始切换分支
 call git checkout master
