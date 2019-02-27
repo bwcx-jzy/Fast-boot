@@ -9,7 +9,7 @@
     <version>1.2.26</version>
     <name>Fast-boot</name>
     <url>https://gitee.com/keepbx/common-parent</url>
-    <description>Spring Boot fast-boot</description>
+    <description>Spring Boot fast-boot </description>
     <inceptionYear>2017</inceptionYear>
     <properties>
         <!-- 声明版本号 -->
