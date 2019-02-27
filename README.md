@@ -39,6 +39,8 @@
 
 [fastjson](https://github.com/alibaba/fastjson)
 
+[J2Cache](https://gitee.com/ld/J2Cache)
+
 ## 子项目：
 
 # 1.common-boot

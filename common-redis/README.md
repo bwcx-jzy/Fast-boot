@@ -29,4 +29,6 @@
     # 连接超时时间（毫秒）
     spring.redis.timeout=0
 
+
+> redis 模块还引入了J2Cache ，并封装了单项目使用多个database
     
