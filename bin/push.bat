@@ -24,4 +24,9 @@ call git push github dev
 
 call git push github master
 
+echo 推送tags
+call git push github --tags
+
+call git push github --tags
+
 call git checkout dev
