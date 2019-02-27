@@ -4,10 +4,12 @@ chcp 65001
 
 cd ../
 
-echo 拉取主分支
+echo 拉取远程分支
 
+call git fetch github dev:dev
 call git fetch github master:master
 
+call git fetch gitee dev:dev
 call git fetch gitee master:master
 
 echo 开始切换分支
