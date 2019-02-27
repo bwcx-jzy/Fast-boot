@@ -4,11 +4,11 @@ chcp 65001
 
 cd ../
 
-echo 拉取远程分支
-
+echo 拉取远程分支[master]
 call git fetch github master:master
 call git fetch gitee master:master
 
+echo 拉取远程分支[dev]
 call git checkout master
 call git fetch github dev:dev
 call git fetch gitee dev:dev
