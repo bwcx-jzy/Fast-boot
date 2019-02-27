@@ -19,13 +19,12 @@ call git fetch github dev:dev
 
 call git fetch gitee dev:dev
 
+echo 开始合并分支[master]
 call git checkout dev
 call git merge master
 
-echo 开始切换分支
+echo 开始合并分支[dev]
 call git checkout master
-
-echo 开始合并分支
 call git merge dev
 
 echo 推送到gitee
