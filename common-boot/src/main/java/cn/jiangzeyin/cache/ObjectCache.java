@@ -33,6 +33,16 @@ public final class ObjectCache {
     }
 
     /**
+     * 删除指定缓存
+     *
+     * @param key key
+     * @return oldValue
+     */
+    public static Object remove(String key) {
+        return CONCURRENT_HASH_MAP.remove(key);
+    }
+
+    /**
      * 添加缓存信息
      *
      * @param key       键
