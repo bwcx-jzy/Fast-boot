@@ -6,11 +6,13 @@ cd ../
 
 echo 拉取远程分支
 
-call git fetch github dev:dev
 call git fetch github master:master
-
-call git fetch gitee dev:dev
 call git fetch gitee master:master
+
+call git checkout master
+call git fetch github dev:dev
+call git fetch gitee dev:dev
+call git checkout dev
 
 echo 开始切换分支
 call git checkout master
