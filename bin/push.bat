@@ -25,6 +25,9 @@ echo 开始合并分支
 call git merge dev
 
 echo 推送到gitee
+
+call git push gitee dev
+
 call git push gitee master
 
 echo 推送到github
