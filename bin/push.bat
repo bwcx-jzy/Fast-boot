@@ -28,6 +28,9 @@ call git checkout master
 call git merge dev
 
 echo 推送到gitee
+
+call git push gitee dev
+
 call git push gitee master
 
 echo 推送到github
