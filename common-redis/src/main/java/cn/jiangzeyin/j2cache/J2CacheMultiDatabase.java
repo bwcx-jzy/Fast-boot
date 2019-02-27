@@ -52,7 +52,7 @@ public class J2CacheMultiDatabase {
         if (database < 0 || database > 255) {
             throw new IllegalArgumentException("0-255");
         }
-        return CACHE_CHANNEL_CONCURRENT_HASH_MAP.computeIfAbsent(database, integer -> {
+        CacheChannel cacheChannel = CACHE_CHANNEL_CONCURRENT_HASH_MAP.computeIfAbsent(database, integer -> {
             Properties nowProperties = (Properties) properties.clone();
             nowProperties.setProperty("redis.database", integer.toString());
             //
@@ -65,6 +65,7 @@ public class J2CacheMultiDatabase {
             }
             return null;
         });
-
+        Objects.requireNonNull(cacheChannel, "初始化失败:" + database);
+        return cacheChannel;
     }
 }

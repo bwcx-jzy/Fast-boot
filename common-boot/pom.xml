@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>common-boot</artifactId>
     <name>Fast-Boot common</name>
+    <description>fast-boot</description>
     <version>1.2.26</version>
     <dependencies>
         <dependency>

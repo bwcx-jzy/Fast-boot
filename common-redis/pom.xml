@@ -11,6 +11,7 @@
     <artifactId>common-redis</artifactId>
     <version>1.2.26</version>
     <name>Fast-boot cache-redis</name>
+    <description>封装SpringBoot的Redis 管理和J2Cache</description>
     <dependencies>
         <dependency>
             <groupId>cn.jiangzeyin.fast-boot</groupId>
