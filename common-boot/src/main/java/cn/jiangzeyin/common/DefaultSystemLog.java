@@ -53,6 +53,7 @@ public class DefaultSystemLog {
      *
      * @param path                路径
      * @param appendApplicationId 路径是否追加应用id
+     * @since 1.2.27
      */
     public static void configPath(String path, boolean appendApplicationId) {
         DefaultSystemLog.LOG_PATH = path;

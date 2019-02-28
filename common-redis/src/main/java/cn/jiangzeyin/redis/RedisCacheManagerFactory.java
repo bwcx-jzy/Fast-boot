@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 管理工厂
  *
  * @author jiangzeyin
- * data 2017/12/12
+ * @date 2017/12/12
  * @since 1.0.0
  */
 public final class RedisCacheManagerFactory {

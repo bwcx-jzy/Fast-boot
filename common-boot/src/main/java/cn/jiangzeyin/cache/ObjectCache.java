@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 内存缓存
  *
  * @author jiangzeyin
- * data 2017/12/1
+ * @date 2017/12/1
  */
 public final class ObjectCache {
     private static final ConcurrentHashMap<String, CacheEntity<String, Object>> CONCURRENT_HASH_MAP = new ConcurrentHashMap<>(100);

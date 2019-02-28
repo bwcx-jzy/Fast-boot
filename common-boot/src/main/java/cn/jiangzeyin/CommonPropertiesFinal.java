@@ -4,7 +4,7 @@ package cn.jiangzeyin;
  * 配置属性字段
  *
  * @author jiangzeyin
- * data 2017/8/25
+ * @date 2017/8/25
  */
 public final class CommonPropertiesFinal {
     /**

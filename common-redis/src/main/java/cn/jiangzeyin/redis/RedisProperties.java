@@ -9,7 +9,7 @@ import java.util.List;
  * redis 配置实体
  *
  * @author jiangzeyin
- * data 2017/12/12
+ * @date 2017/12/12
  */
 @Configuration
 @ConfigurationProperties(prefix = "fast-bot.spring.redis")

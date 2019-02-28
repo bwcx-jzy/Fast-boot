@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 缓存配置
  *
  * @author jiangzeyin
- * data 2017/12/20
+ * @date 2017/12/20
  * @since 1.0.1
  */
 public class RedisCacheConfig {
