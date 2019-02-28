@@ -24,6 +24,7 @@ public class DefaultSystemLog {
     private static final Map<LogType, Logger> LOG_TYPE_LOGGER_MAP = new ConcurrentHashMap<>();
     private static final String TYPE_ERROR_TAG = "ERROR";
     private static String LOG_PATH = "/log/cn.jiangzeyin";
+    private static boolean appendApplicationId = true;
     private static ConsoleAppender<ILoggingEvent> consoleAppender;
 
     private DefaultSystemLog() {
@@ -50,10 +51,12 @@ public class DefaultSystemLog {
     /**
      * 配置默认日志文件路径
      *
-     * @param path 路径
+     * @param path                路径
+     * @param appendApplicationId 路径是否追加应用id
      */
-    public static void configPath(String path) {
+    public static void configPath(String path, boolean appendApplicationId) {
         DefaultSystemLog.LOG_PATH = path;
+        DefaultSystemLog.appendApplicationId = appendApplicationId;
     }
 
     /**
@@ -116,7 +119,7 @@ public class DefaultSystemLog {
         SizeAndTimeBasedRollingPolicy<Object> policy = new SizeAndTimeBasedRollingPolicy<>();
         policy.setContext(LOGGER_CONTEXT);
 
-        String filePath = String.format("%s/%s/%s/%s", LOG_PATH, SpringUtil.getApplicationId(), tag, tag).toLowerCase();
+        String filePath = String.format("%s/%s/%s/%s", LOG_PATH, appendApplicationId ? SpringUtil.getApplicationId() : "", tag, tag).toLowerCase();
         String fileNamePattern = String.format("%s-%%d{yyyy-MM-dd}.%%i.log", filePath);
         policy.setFileNamePattern(fileNamePattern);
         policy.setMaxFileSize(FileSize.valueOf("100MB"));
