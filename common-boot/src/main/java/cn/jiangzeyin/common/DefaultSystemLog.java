@@ -23,7 +23,11 @@ public class DefaultSystemLog {
     private static final LoggerContext LOGGER_CONTEXT = (LoggerContext) LoggerFactory.getILoggerFactory();
     private static final Map<LogType, Logger> LOG_TYPE_LOGGER_MAP = new ConcurrentHashMap<>();
     private static final String TYPE_ERROR_TAG = "ERROR";
+    private static String LOG_PATH = "/log/cn.jiangzeyin";
     private static ConsoleAppender<ILoggingEvent> consoleAppender;
+
+    private DefaultSystemLog() {
+    }
 
     /**
      * 日志类型
@@ -43,7 +47,18 @@ public class DefaultSystemLog {
         ERROR
     }
 
+    /**
+     * 配置默认日志文件路径
+     *
+     * @param path 路径
+     */
+    public static void configPath(String path) {
+        DefaultSystemLog.LOG_PATH = path;
+    }
 
+    /**
+     * 加载日志
+     */
     public static void init() {
         consoleAppender = initConsole();
         initSystemLog();
@@ -59,7 +74,7 @@ public class DefaultSystemLog {
             if (tag.endsWith(TYPE_ERROR_TAG)) {
                 level = Level.ERROR;
             }
-            Logger logger = initLogger(tag, tag, level);
+            Logger logger = initLogger(tag, level);
             LOG_TYPE_LOGGER_MAP.put(type, logger);
         }
     }
@@ -84,12 +99,11 @@ public class DefaultSystemLog {
     /**
      * 创建日志对象
      *
-     * @param tag   tag
-     * @param path  path
-     * @param level lv
+     * @param tag   日志标记
+     * @param level 日志级别
      * @return logger
      */
-    private static Logger initLogger(String tag, String path, Level level) {
+    private static Logger initLogger(String tag, Level level) {
         Logger logger = (Logger) LoggerFactory.getLogger(tag);
         logger.detachAndStopAllAppenders();
         logger.setLevel(level);
@@ -97,13 +111,14 @@ public class DefaultSystemLog {
         asyncAppender.setDiscardingThreshold(0);
         asyncAppender.setQueueSize(512);
         //define appender
-        RollingFileAppender appender = new RollingFileAppender<>();
+        RollingFileAppender<ILoggingEvent> appender = new RollingFileAppender<>();
         //policy
         SizeAndTimeBasedRollingPolicy<Object> policy = new SizeAndTimeBasedRollingPolicy<>();
         policy.setContext(LOGGER_CONTEXT);
-        String logPath = "/log/cn.jiangzeyin";
-        String filePath = String.format("%s/%s/%s/%s", logPath, SpringUtil.getApplicationId(), path, tag).toLowerCase();
-        policy.setFileNamePattern(String.format("%s-%%d{yyyy-MM-dd}.%%event.log", filePath));
+
+        String filePath = String.format("%s/%s/%s/%s", LOG_PATH, SpringUtil.getApplicationId(), tag, tag).toLowerCase();
+        String fileNamePattern = String.format("%s-%%d{yyyy-MM-dd}.%%i.log", filePath);
+        policy.setFileNamePattern(fileNamePattern);
         policy.setMaxFileSize(FileSize.valueOf("100MB"));
         policy.setMaxHistory(30);
         policy.setTotalSizeCap(FileSize.valueOf("10GB"));
@@ -130,7 +145,7 @@ public class DefaultSystemLog {
         }
         //setup level
         // newLogger.setLevel(Level.ERROR);
-        //remove the appenders that inherited 'ROOT'.
+        // remove the appenders that inherited 'ROOT'.
         logger.setAdditive(true);
         return logger;
     }
@@ -143,11 +158,12 @@ public class DefaultSystemLog {
      */
     public static Logger LOG(LogType type) {
         Logger logger = LOG_TYPE_LOGGER_MAP.get(type);
-        if (logger == null && LogType.DEFAULT != type) {
-            logger = LOG(LogType.DEFAULT);
-        }
         if (logger == null) {
-            throw new IllegalArgumentException("not find");
+            if (type == LogType.DEFAULT) {
+                logger = (Logger) LoggerFactory.getLogger(DefaultSystemLog.class);
+            } else {
+                logger = LOG(LogType.DEFAULT);
+            }
         }
         return logger;
     }
