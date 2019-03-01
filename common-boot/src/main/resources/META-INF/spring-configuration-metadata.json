@@ -25,6 +25,12 @@
       "defaultValue": true
     },
     {
+      "name": "request.trimAll",
+      "type": "java.lang.Boolean",
+      "description": "是否开启强制过滤前后空格",
+      "defaultValue": false
+    },
+    {
       "name": "request.parameterXss",
       "type": "java.lang.Boolean",
       "description": "是否在过滤器中默认进行xss过滤 这样会对html标签等关键字进行转义",
