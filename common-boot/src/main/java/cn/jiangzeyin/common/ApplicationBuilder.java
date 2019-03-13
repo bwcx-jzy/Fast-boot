@@ -126,7 +126,7 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
                 addInterceptor(ParameterInterceptor.class);
             }
         }
-        //loadProperties();
+        loadProperties("cn.jiangzeyin");
         ApplicationBuilder.applicationBuilder = this;
     }
 
@@ -289,6 +289,8 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
         return "restartedMain".equalsIgnoreCase(name);
     }
 
+    private final HashSet<Class> cacheLoadProperties = new HashSet<>();
+
     /**
      * 加载配置
      *
@@ -299,6 +301,9 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
     public ApplicationBuilder loadProperties(String packageName) throws Exception {
         Set<Class<?>> list = ClassUtil.scanPackageByAnnotation(packageName, AutoPropertiesClass.class);
         for (Class cls : list) {
+            if (cacheLoadProperties.contains(cls)) {
+                continue;
+            }
             Method[] methods = cls.getDeclaredMethods();
             if (methods != null) {
                 for (Method method : methods) {
@@ -322,6 +327,7 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
                     }
                 }
             }
+            cacheLoadProperties.add(cls);
         }
         return this;
     }

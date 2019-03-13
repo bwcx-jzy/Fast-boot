@@ -316,6 +316,7 @@ public class MultipartFileBuilder {
         } else {
             // 防止中文乱码
             String saveFileName = UnicodeUtil.toUnicode(fileName);
+            saveFileName = saveFileName.replace(StrUtil.BACKSLASH, "_");
             // 生成唯一id
             filePath = FileUtil.normalize(String.format("%s/%s_%s", localPath, IdUtil.objectId(), saveFileName));
         }

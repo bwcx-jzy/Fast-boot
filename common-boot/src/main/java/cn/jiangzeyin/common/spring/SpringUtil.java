@@ -11,6 +11,8 @@ import cn.jiangzeyin.pool.ThreadPoolService;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.*;
@@ -172,7 +174,7 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
         AutowireCapableBeanFactory autowireCapableBeanFactory = getApplicationContext().getAutowireCapableBeanFactory();
         T obj = autowireCapableBeanFactory.createBean(tClass);
         String beanName = StrUtil.upperFirst(tClass.getSimpleName());
-        register(beanName, obj);
+        registerSingleton(beanName, obj);
         return obj;
     }
 
@@ -183,12 +185,25 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
      * @param object   值
      * @return 当前数量
      */
-    public static int register(String beanName, Object object) {
+    public static int registerSingleton(String beanName, Object object) {
         // 注册
         ConfigurableApplicationContext configurableApplicationContext = (ConfigurableApplicationContext) getApplicationContext();
         ConfigurableListableBeanFactory configurableListableBeanFactory = configurableApplicationContext.getBeanFactory();
         configurableListableBeanFactory.registerSingleton(beanName, object);
         return configurableListableBeanFactory.getSingletonCount();
+    }
+
+    public static void register(Class<?> tClass) {
+        ConfigurableApplicationContext configurableApplicationContext = (ConfigurableApplicationContext) getApplicationContext();
+        // 获取bean工厂并转换为DefaultListableBeanFactory
+        DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) configurableApplicationContext.getBeanFactory();
+        // 通过BeanDefinitionBuilder创建bean定义
+        BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(tClass);
+        // 设置属性userService,此属性引用已经定义的bean:userService,这里userService已经被spring容器管理了.
+        //        beanDefinitionBuilder.addPropertyReference("testService", "testService");
+        // 注册bean
+        String beanName = StrUtil.upperFirst(tClass.getSimpleName());
+        defaultListableBeanFactory.registerBeanDefinition(beanName, beanDefinitionBuilder.getRawBeanDefinition());
     }
 }
 
