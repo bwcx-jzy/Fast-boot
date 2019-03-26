@@ -9,7 +9,7 @@
     <version>1.2.27</version>
     <name>Fast-boot</name>
     <url>https://gitee.com/keepbx/common-parent</url>
-    <description>Spring Boot fast-boot </description>
+    <description>Spring Boot fast-boot</description>
     <inceptionYear>2017</inceptionYear>
     <properties>
         <!-- 声明版本号 -->
@@ -20,7 +20,7 @@
         <fastjson.version>1.2.49</fastjson.version>
         <!-- 项目中使用SpringBoot 版本号 -->
         <spring-boot.version>1.4.7.RELEASE</spring-boot.version>
-        <hutool-all.version>[4.4.0,4.4.99]</hutool-all.version>
+        <hutool-all.version>[4.5.0,4.5.99]</hutool-all.version>
     </properties>
     <modules>
         <module>common-boot</module>
