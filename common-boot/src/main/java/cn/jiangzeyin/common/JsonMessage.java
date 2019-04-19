@@ -7,6 +7,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.Objects;
 
 /**
  * 通用的json 数据格式
@@ -81,6 +82,25 @@ public class JsonMessage implements Serializable {
 
     public JSONObject toJson() {
         return (JSONObject) JSONObject.toJSON(this);
+    }
+
+    /**
+     * 将data 转换为对应实体
+     *
+     * @param tClass 类
+     * @param <T>    泛型
+     * @return Object
+     */
+    public <T> T dataToObj(Class<T> tClass) {
+        Objects.requireNonNull(tClass);
+        Object object = getData();
+        if (object == null) {
+            return null;
+        }
+        if (tClass == String.class) {
+            return (T) object.toString();
+        }
+        return JSONObject.parseObject(object.toString(), tClass);
     }
 
     /**

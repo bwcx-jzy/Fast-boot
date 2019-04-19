@@ -4,6 +4,7 @@ import ch.qos.logback.core.util.FileSize;
 import cn.hutool.core.io.FileTypeUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.text.UnicodeUtil;
+import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import org.springframework.web.multipart.MultipartFile;
@@ -295,11 +296,8 @@ public class MultipartFileBuilder {
         if (this.inputStreamType != null) {
             InputStream inputStream = multiFile.getInputStream();
             String fileType = FileTypeUtil.getType(inputStream);
-            for (String type : this.inputStreamType) {
-                if (type.equalsIgnoreCase(fileType)) {
-                    continue;
-                }
-                throw new IllegalArgumentException("inputStreamType:类型错误:" + fileType + "  " + type);
+            if (!ArrayUtil.containsIgnoreCase(this.inputStreamType, fileType)) {
+                throw new IllegalArgumentException("inputStreamType:类型错误:" + fileType);
             }
         }
         // 保存路径
