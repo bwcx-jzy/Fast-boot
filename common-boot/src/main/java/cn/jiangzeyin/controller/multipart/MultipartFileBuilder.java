@@ -10,11 +10,9 @@ import cn.hutool.core.util.StrUtil;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -44,10 +42,14 @@ public class MultipartFileBuilder {
     private String[] fileExt;
     /**
      * 文件类型
+     *
+     * @see FileUtil#getMimeType(String)
      */
     private String contentTypePrefix;
     /**
      * 文件流类型
+     *
+     * @see FileUtil#getType(File)
      */
     private String[] inputStreamType;
     /**
@@ -154,7 +156,7 @@ public class MultipartFileBuilder {
      *
      * @param contentTypePrefix 前缀
      * @return this
-     * @see java.nio.file.Files#probeContentType(java.nio.file.Path)
+     * @see FileUtil#getMimeType(String)
      */
     public MultipartFileBuilder setContentTypePrefix(String contentTypePrefix) {
         this.contentTypePrefix = contentTypePrefix;
@@ -276,10 +278,10 @@ public class MultipartFileBuilder {
         }
         // 文件名后缀
         if (this.fileExt != null) {
-            String checkName = fileName.toLowerCase();
+            String checkName = FileUtil.extName(fileName);
             boolean find = false;
             for (String ext : this.fileExt) {
-                find = checkName.endsWith("." + ext.toLowerCase());
+                find = StrUtil.equalsIgnoreCase(checkName, ext);
                 if (find) {
                     break;
                 }
@@ -321,8 +323,9 @@ public class MultipartFileBuilder {
         FileUtil.writeFromStream(multiFile.getInputStream(), filePath);
         // 文件contentType
         if (this.contentTypePrefix != null) {
-            Path source = Paths.get(filePath);
-            String contentType = Files.probeContentType(source);
+            //            Path source = Paths.get(filePath);
+            String contentType = FileUtil.getMimeType(filePath);
+            //Files.probeContentType(source);
             if (contentType == null) {
                 // 自动清理文件
                 FileUtil.del(filePath);
