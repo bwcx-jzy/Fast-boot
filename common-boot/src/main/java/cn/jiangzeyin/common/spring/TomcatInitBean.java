@@ -15,6 +15,12 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class TomcatInitBean {
 
+    private static Integer timOut;
+
+    public static Integer getTimOut() {
+        return timOut;
+    }
+
     /**
      * session 超时
      *
@@ -23,7 +29,7 @@ public class TomcatInitBean {
     @Bean
     public EmbeddedServletContainerCustomizer containerCustomizer() {
         return container -> {
-            Integer timOut = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.TOMCAT_SESSION_TIME_OUT, Integer.class);
+            timOut = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.TOMCAT_SESSION_TIME_OUT, Integer.class);
             if (timOut != null) {
                 container.setSessionTimeout(timOut);
             }

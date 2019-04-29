@@ -1,9 +1,11 @@
 package cn.jiangzeyin.common.request;
 
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.ReUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
+import org.springframework.http.HttpMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -30,7 +32,12 @@ public class ParameterXssWrapper extends HttpServletRequestWrapper {
     ParameterXssWrapper(HttpServletRequest request) {
         super(request);
         // 获取请求头编码
-        Charset charset = getCharset(request);
+        Charset charset;
+        if (HttpMethod.GET.name().equals(request.getMethod())) {
+            charset = CharsetUtil.CHARSET_UTF_8;
+        } else {
+            charset = getCharset(request);
+        }
         this.parameters = XssFilter.doXss(request.getParameterMap(), charset);
     }
 
