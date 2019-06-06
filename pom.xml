@@ -25,7 +25,6 @@
     <modules>
         <module>common-boot</module>
         <module>common-redis</module>
-        <module>common-velocity</module>
     </modules>
     <dependencyManagement>
         <dependencies>
