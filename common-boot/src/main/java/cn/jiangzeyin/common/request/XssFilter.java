@@ -223,8 +223,7 @@ public class XssFilter extends CharacterEncodingFilter {
             values[i] = autoToUtf8(values[i], charset);
             if (XSS) {
                 //  xss 提前统一编码
-                values[i] = HtmlUtil.escape(values[i])
-                        .replace(StrUtil.HTML_QUOTE, "\"");
+                values[i] = xss(values[i]);
             }
             if (TRIMAll) {
                 // 空格
@@ -234,10 +233,28 @@ public class XssFilter extends CharacterEncodingFilter {
         return values;
     }
 
+    public static String xss(String value) {
+        if (value == null) {
+            return null;
+        }
+        //  xss 提前统一编码
+        return HtmlUtil.escape(value)
+                .replace(StrUtil.HTML_QUOTE, "\"");
+    }
+
     private static String autoToUtf8(String str, Charset charset) {
         if (charset == CharsetUtil.CHARSET_UTF_8) {
             return str;
         }
         return CharsetUtil.convert(str, charset, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * 返回是否已经xss
+     *
+     * @return
+     */
+    public static boolean isXSS() {
+        return XSS;
     }
 }
