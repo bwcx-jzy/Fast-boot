@@ -133,8 +133,10 @@ public abstract class AbstractController extends BaseCallbackController {
         if (values == null) {
             return null;
         }
-        for (int i = 0, len = values.length; i < len; i++) {
-            values[i] = HtmlUtil.unescape(values[i]);
+        if (XssFilter.isXSS()) {
+            for (int i = 0, len = values.length; i < len; i++) {
+                values[i] = HtmlUtil.unescape(values[i]);
+            }
         }
         return values;
     }
@@ -151,7 +153,10 @@ public abstract class AbstractController extends BaseCallbackController {
         if (value == null) {
             return def;
         }
-        return HtmlUtil.unescape(value);
+        if (XssFilter.isXSS()) {
+            return HtmlUtil.unescape(value);
+        }
+        return value;
     }
 
     protected int getParameterInt(String name, int def) {

@@ -252,7 +252,7 @@ public class XssFilter extends CharacterEncodingFilter {
     /**
      * 返回是否已经xss
      *
-     * @return
+     * @return 配置的状态
      */
     public static boolean isXSS() {
         return XSS;
