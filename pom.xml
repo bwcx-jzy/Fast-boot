@@ -6,7 +6,7 @@
     <packaging>pom</packaging>
     <groupId>cn.jiangzeyin.fast-boot</groupId>
     <artifactId>common-parent</artifactId>
-    <version>1.2.32</version>
+    <version>1.2.33</version>
     <name>Fast-boot</name>
     <url>https://gitee.com/keepbx/common-parent</url>
     <description>Spring Boot fast-boot</description>

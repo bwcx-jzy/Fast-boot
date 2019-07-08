@@ -88,6 +88,8 @@ public abstract class AbstractController extends BaseCallbackController {
         return value == null ? def : value;
     }
 
+    //----------------------------------------------  xss start
+
     protected String getXssParameter(String name) {
         return getXssParameter(name, null);
     }
@@ -124,6 +126,10 @@ public abstract class AbstractController extends BaseCallbackController {
         return XssFilter.xss(value);
     }
 
+    //----------------------------------------------  xss end
+
+    //----------------------------------------------  unescape start
+
     protected String getUnescapeParameter(String name) {
         return getUnescapeParameter(name, null);
     }
@@ -140,6 +146,8 @@ public abstract class AbstractController extends BaseCallbackController {
         }
         return values;
     }
+
+    //----------------------------------------------  unescape end
 
     /**
      * 获取指定参数名的值,自动还原标签过滤
