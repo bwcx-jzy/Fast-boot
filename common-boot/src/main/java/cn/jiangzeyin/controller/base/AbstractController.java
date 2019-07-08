@@ -3,8 +3,10 @@ package cn.jiangzeyin.controller.base;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.extra.servlet.ServletUtil;
+import cn.hutool.http.HtmlUtil;
 import cn.hutool.http.HttpUtil;
 import cn.jiangzeyin.common.interceptor.BaseCallbackController;
+import cn.jiangzeyin.common.request.XssFilter;
 import cn.jiangzeyin.controller.multipart.MultipartFileBuilder;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.springframework.http.HttpHeaders;
@@ -84,6 +86,77 @@ public abstract class AbstractController extends BaseCallbackController {
     protected String getParameter(String name, String def) {
         String value = getRequest().getParameter(name);
         return value == null ? def : value;
+    }
+
+    protected String getXssParameter(String name) {
+        return getParameter(name, null);
+    }
+
+    protected String[] getXssParameters(String name) {
+        String[] values = getRequest().getParameterValues(name);
+        if (values == null) {
+            return null;
+        }
+        if (XssFilter.isXSS()) {
+            return values;
+        }
+        for (int i = 0, len = values.length; i < len; i++) {
+            values[i] = XssFilter.xss(values[i]);
+        }
+        return values;
+    }
+
+    /**
+     * 获取指定参数名的值,自动xss标签过滤
+     *
+     * @param name 参数名
+     * @param def  默认值
+     * @return str
+     */
+    protected String getXssParameter(String name, String def) {
+        String value = getRequest().getParameter(name);
+        if (value == null) {
+            return def;
+        }
+        if (XssFilter.isXSS()) {
+            return value;
+        }
+        return XssFilter.xss(value);
+    }
+
+    protected String getUnescapeParameter(String name) {
+        return getParameter(name, null);
+    }
+
+    protected String[] getUnescapeParameters(String name) {
+        String[] values = getRequest().getParameterValues(name);
+        if (values == null) {
+            return null;
+        }
+        if (XssFilter.isXSS()) {
+            for (int i = 0, len = values.length; i < len; i++) {
+                values[i] = HtmlUtil.unescape(values[i]);
+            }
+        }
+        return values;
+    }
+
+    /**
+     * 获取指定参数名的值,自动还原标签过滤
+     *
+     * @param name 参数名
+     * @param def  默认值
+     * @return str
+     */
+    protected String getUnescapeParameter(String name, String def) {
+        String value = getRequest().getParameter(name);
+        if (value == null) {
+            return def;
+        }
+        if (XssFilter.isXSS()) {
+            return HtmlUtil.unescape(value);
+        }
+        return value;
     }
 
     protected int getParameterInt(String name, int def) {
