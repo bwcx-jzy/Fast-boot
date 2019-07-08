@@ -98,11 +98,11 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
      * @throws NoSuchFieldException   e
      * @throws IllegalAccessException e
      */
-    public static ApplicationBuilder createBuilder(Object... sources) throws Exception {
+    public static ApplicationBuilder createBuilder(Class<?>... sources) throws Exception {
         return new ApplicationBuilder(sources);
     }
 
-    protected ApplicationBuilder(Object... sources) throws Exception {
+    protected ApplicationBuilder(Class<?>... sources) throws Exception {
         super(sources);
         this.application = application();
         if (applicationBuilder != null) {
