@@ -93,7 +93,7 @@ public abstract class AbstractController extends BaseCallbackController {
     }
 
     protected String[] getXssParameters(String name) {
-        String[] values = getRequest().getParameterValues(name);
+        String[] values = getParameters(name);
         if (values == null) {
             return null;
         }
@@ -114,7 +114,7 @@ public abstract class AbstractController extends BaseCallbackController {
      * @return str
      */
     protected String getXssParameter(String name, String def) {
-        String value = getRequest().getParameter(name);
+        String value = getParameter(name);
         if (value == null) {
             return def;
         }
@@ -129,7 +129,7 @@ public abstract class AbstractController extends BaseCallbackController {
     }
 
     protected String[] getUnescapeParameters(String name) {
-        String[] values = getRequest().getParameterValues(name);
+        String[] values = getParameters(name);
         if (values == null) {
             return null;
         }
@@ -149,7 +149,7 @@ public abstract class AbstractController extends BaseCallbackController {
      * @return str
      */
     protected String getUnescapeParameter(String name, String def) {
-        String value = getRequest().getParameter(name);
+        String value = getParameter(name);
         if (value == null) {
             return def;
         }
