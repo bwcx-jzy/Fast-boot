@@ -45,11 +45,11 @@ public final class RedisCacheManagerFactory {
             template.setConnectionFactory(connectionFactory);
             template.afterPropertiesSet();
             REDIS_TEMPLATE_CONCURRENT_HASH_MAP.put(key, template);
-            RedisCacheManager redisCacheManager1 = RedisCacheManager.builder(connectionFactory).build();
+            RedisCacheManager redisCacheManager1 = new CustomizedRedisCacheManager(database, template);
             // 指定缓存时间
-//            redisCacheManager1.setExpires(RedisCacheConfig.getExpires(database));
+            redisCacheManager1.setExpires(RedisCacheConfig.getExpires(database));
             // 默认时间
-//            redisCacheManager1.setDefaultExpiration(RedisCacheConfig.getDefaultExpireTime(database));
+            redisCacheManager1.setDefaultExpiration(RedisCacheConfig.getDefaultExpireTime(database));
             redisCacheManager1.afterPropertiesSet();
 //                REDIS_CACHE_MANAGER_CONCURRENT_HASH_MAP.put(key, redisCacheManager);
             return redisCacheManager1;
@@ -86,26 +86,26 @@ public final class RedisCacheManagerFactory {
         return template.getConnectionFactory();
     }
 
-//    private static class CustomizedRedisCacheManager extends RedisCacheManager {
-//        private int database;
-//
-//        CustomizedRedisCacheManager(int database, RedisOperations redisOperations) {
-//            super(redisOperations);
-//            this.database = database;
-//        }
-//
-//        /**
-//         * 计算到期时间
-//         *
-//         * @param name 组名
-//         * @return long
-//         */
-//        @Override
-//        protected long computeExpiration(String name) {
-//            Long time = RedisCacheConfig.getGroupExpires(database, name);
-//            return time == null ? super.computeExpiration(name) : time;
-//        }
-//    }
+    private static class CustomizedRedisCacheManager extends RedisCacheManager {
+        private int database;
+
+        CustomizedRedisCacheManager(int database, RedisOperations redisOperations) {
+            super(redisOperations);
+            this.database = database;
+        }
+
+        /**
+         * 计算到期时间
+         *
+         * @param name 组名
+         * @return long
+         */
+        @Override
+        protected long computeExpiration(String name) {
+            Long time = RedisCacheConfig.getGroupExpires(database, name);
+            return time == null ? super.computeExpiration(name) : time;
+        }
+    }
 
 
     private static class RedisConnectionFactoryPool {
