@@ -95,7 +95,12 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
         if (event instanceof ServletRequestHandledEvent) {
             ServletRequestHandledEvent servletRequestHandledEvent = (ServletRequestHandledEvent) event;
             if (servletRequestHandledEvent.wasFailure()) {
-                DefaultSystemLog.LOG(DefaultSystemLog.LogType.REQUEST).info("error:" + servletRequestHandledEvent.toString());
+                DefaultSystemLog.LogCallback logCallback = DefaultSystemLog.getLogCallback();
+                if (logCallback != null) {
+                    logCallback.log(DefaultSystemLog.LogType.REQUEST_ERROR, "servletRequestHandledEvent", servletRequestHandledEvent);
+                } else {
+                    DefaultSystemLog.LOG(DefaultSystemLog.LogType.REQUEST).info("error:" + servletRequestHandledEvent.toString());
+                }
             }
         }
     }

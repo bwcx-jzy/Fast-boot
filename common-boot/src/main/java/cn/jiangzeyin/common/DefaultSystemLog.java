@@ -8,7 +8,6 @@ import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy;
 import ch.qos.logback.core.util.FileSize;
 import cn.jiangzeyin.common.spring.SpringUtil;
-import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,12 +19,13 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by jiangzeyin on 2017/2/3.
  */
 public class DefaultSystemLog {
-    private static final LoggerContext LOGGER_CONTEXT = (LoggerContext) LoggerFactory.getILoggerFactory();
+    private static final LoggerContext LOGGER_CONTEXT = new LoggerContext();
     private static final Map<LogType, Logger> LOG_TYPE_LOGGER_MAP = new ConcurrentHashMap<>();
     private static final String TYPE_ERROR_TAG = "ERROR";
     private static String LOG_PATH = "/log/cn.jiangzeyin";
     private static boolean appendApplicationId = true;
     private static ConsoleAppender<ILoggingEvent> consoleAppender;
+    private static volatile LogCallback logCallback;
 
     private DefaultSystemLog() {
     }
@@ -46,6 +46,14 @@ public class DefaultSystemLog {
          * 异常
          */
         ERROR
+    }
+
+    public static void setLogCallback(LogCallback logCallback) {
+        DefaultSystemLog.logCallback = logCallback;
+    }
+
+    public static LogCallback getLogCallback() {
+        return logCallback;
     }
 
     /**
@@ -108,7 +116,7 @@ public class DefaultSystemLog {
      * @return logger
      */
     private static Logger initLogger(String tag, Level level) {
-        Logger logger = (Logger) LoggerFactory.getLogger(tag);
+        Logger logger = LOGGER_CONTEXT.getLogger(tag);
         logger.detachAndStopAllAppenders();
         logger.setLevel(level);
         AsyncAppender asyncAppender = new AsyncAppender();
@@ -164,7 +172,7 @@ public class DefaultSystemLog {
         Logger logger = LOG_TYPE_LOGGER_MAP.get(type);
         if (logger == null) {
             if (type == LogType.DEFAULT) {
-                logger = (Logger) LoggerFactory.getLogger(DefaultSystemLog.class);
+                logger = LOGGER_CONTEXT.getLogger(DefaultSystemLog.class);
             } else {
                 logger = LOG(LogType.DEFAULT);
             }
@@ -178,5 +186,19 @@ public class DefaultSystemLog {
 
     public static Logger ERROR() {
         return LOG(LogType.ERROR);
+    }
+
+    /**
+     * 日志回调
+     */
+    public interface LogCallback {
+
+        /**
+         * 普通日志
+         *
+         * @param type 日志类型
+         * @param log  日志信息
+         */
+        void log(LogType type, Object... log);
     }
 }

@@ -1,6 +1,7 @@
 package cn.jiangzeyin.common.request;
 
 import cn.hutool.core.util.CharsetUtil;
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import cn.hutool.http.HtmlUtil;
@@ -36,7 +37,7 @@ import java.util.Set;
 public class XssFilter extends CharacterEncodingFilter {
 
     private static final ThreadLocal<Long> REQUEST_TIME = new ThreadLocal<>();
-    private static final ThreadLocal<StringBuffer> REQUEST_INFO = new ThreadLocal<>();
+    private static final ThreadLocal<String> REQUEST_INFO = new ThreadLocal<>();
     private static final ThreadLocal<Map<String, String>> REQUEST_HEADER_MAP = new ThreadLocal<>();
     private static final ThreadLocal<Map<String, String[]>> REQUEST_PARAMETERS_MAP = new ThreadLocal<>();
     private static long request_timeout_log = 3000L;
@@ -127,34 +128,42 @@ public class XssFilter extends CharacterEncodingFilter {
         REQUEST_HEADER_MAP.set(header);
         Map<String, String[]> parameters = request.getParameterMap();
         REQUEST_PARAMETERS_MAP.set(parameters);
-        StringBuffer stringBuffer = new StringBuffer();
-        stringBuffer.append(request.getRequestURI())
-                .append(",ip:").append(ServletUtil.getClientIP(request))
-                .append(" parameters:");
-        if (parameters != null) {
-            Set<Map.Entry<String, String[]>> entries = parameters.entrySet();
-            stringBuffer.append("{");
-            for (Map.Entry<String, String[]> entry : entries) {
-                String key = entry.getKey();
-                stringBuffer.append(key).append(":");
-                String[] value = entry.getValue();
-                if (value != null) {
-                    for (int i = 0; i < value.length; i++) {
-                        if (i != 0) {
-                            stringBuffer.append(",");
-                        }
-                        stringBuffer.append(HtmlUtil.unescape(value[i]));
-                    }
-                }
-                stringBuffer.append(";");
-            }
-            stringBuffer.append("}");
+        String ip = ServletUtil.getClientIP(request);
+        DefaultSystemLog.LogCallback logCallback = DefaultSystemLog.getLogCallback();
+        if (logCallback != null) {
+            String id = IdUtil.fastSimpleUUID();
+            logCallback.log(DefaultSystemLog.LogType.REQUEST, id, request.getRequestURI(), ip, parameters, header);
+            REQUEST_INFO.set(id);
         } else {
-            stringBuffer.append("null");
+            StringBuilder stringBuffer = new StringBuilder();
+            stringBuffer.append(request.getRequestURI())
+                    .append(",ip:").append(ip)
+                    .append(" parameters:");
+            if (parameters != null) {
+                Set<Map.Entry<String, String[]>> entries = parameters.entrySet();
+                stringBuffer.append("{");
+                for (Map.Entry<String, String[]> entry : entries) {
+                    String key = entry.getKey();
+                    stringBuffer.append(key).append(":");
+                    String[] value = entry.getValue();
+                    if (value != null) {
+                        for (int i = 0; i < value.length; i++) {
+                            if (i != 0) {
+                                stringBuffer.append(",");
+                            }
+                            stringBuffer.append(HtmlUtil.unescape(value[i]));
+                        }
+                    }
+                    stringBuffer.append(";");
+                }
+                stringBuffer.append("}");
+            } else {
+                stringBuffer.append("null");
+            }
+            stringBuffer.append(",header:").append(header);
+            DefaultSystemLog.LOG(DefaultSystemLog.LogType.REQUEST).info(stringBuffer.toString());
+            REQUEST_INFO.set(stringBuffer.toString());
         }
-        stringBuffer.append(",header:").append(header);
-        DefaultSystemLog.LOG(DefaultSystemLog.LogType.REQUEST).info(stringBuffer.toString());
-        REQUEST_INFO.set(stringBuffer);
     }
 
     /**
@@ -168,22 +177,31 @@ public class XssFilter extends CharacterEncodingFilter {
         }
         // 记录请求状态不正确
         int status = response.getStatus();
+        DefaultSystemLog.LogCallback logCallback = DefaultSystemLog.getLogCallback();
         if (status != HttpStatus.OK.value() && status != HttpStatus.FOUND.value()) {
-            String stringBuffer = "status:" +
-                    status +
-                    ",url:" +
-                    REQUEST_INFO.get();
-            DefaultSystemLog.LOG(DefaultSystemLog.LogType.REQUEST_ERROR).error(stringBuffer);
+            if (logCallback != null) {
+                logCallback.log(DefaultSystemLog.LogType.REQUEST_ERROR, "status", REQUEST_INFO.get(), status);
+            } else {
+                String stringBuffer = "status:" +
+                        status +
+                        ",url:" +
+                        REQUEST_INFO.get();
+                DefaultSystemLog.LOG(DefaultSystemLog.LogType.REQUEST_ERROR).error(stringBuffer);
+            }
             return;
         }
         // 记录请求超时
         long time = System.currentTimeMillis() - REQUEST_TIME.get();
         if (request_timeout_log > 0 && time > request_timeout_log) {
-            String stringBuffer = "time:" +
-                    time +
-                    ",url:" +
-                    REQUEST_INFO.get();
-            DefaultSystemLog.LOG(DefaultSystemLog.LogType.REQUEST_ERROR).error(stringBuffer);
+            if (logCallback != null) {
+                logCallback.log(DefaultSystemLog.LogType.REQUEST_ERROR, "time", REQUEST_INFO.get(), time);
+            } else {
+                String stringBuffer = "time:" +
+                        time +
+                        ",url:" +
+                        REQUEST_INFO.get();
+                DefaultSystemLog.LOG(DefaultSystemLog.LogType.REQUEST_ERROR).error(stringBuffer);
+            }
         }
     }
 
