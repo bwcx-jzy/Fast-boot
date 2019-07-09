@@ -5,7 +5,9 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 缓存类配置
- * Created by jiangzeyin on 2017/12/1.
+ *
+ * @author jiangzeyin
+ * @date 2017/12/1
  */
 @Documented
 @Target(ElementType.TYPE)

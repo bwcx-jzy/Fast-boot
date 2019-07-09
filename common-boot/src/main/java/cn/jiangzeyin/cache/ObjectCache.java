@@ -11,7 +11,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @author jiangzeyin
  * @date 2017/12/1
+ * @see cn.hutool.cache.CacheUtil
  */
+@Deprecated
 public final class ObjectCache {
     private static final ConcurrentHashMap<String, CacheEntity<String, Object>> CONCURRENT_HASH_MAP = new ConcurrentHashMap<>(100);
     private static final ConcurrentHashMap<String, CacheInfo> CACHE_INFO_CONCURRENT_HASH_MAP = new ConcurrentHashMap<>(100);

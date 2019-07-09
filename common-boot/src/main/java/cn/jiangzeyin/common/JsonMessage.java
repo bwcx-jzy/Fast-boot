@@ -13,7 +13,7 @@ import java.util.Objects;
  * 通用的json 数据格式
  *
  * @author jiangzeyin
- * Created by jiangzeyin on 2017/2/6.
+ * @date 2017/2/6.
  */
 public class JsonMessage implements Serializable {
     public static final String CODE = "code";

@@ -6,9 +6,9 @@ import java.lang.annotation.*;
 
 /**
  * 开启Common boot
- * Created by jiangzeyin on 2018/8/13.
  *
  * @author jiangzeyin
+ * @date 2018/8/13.
  * @since 1.1.22
  */
 @Target({ElementType.TYPE})

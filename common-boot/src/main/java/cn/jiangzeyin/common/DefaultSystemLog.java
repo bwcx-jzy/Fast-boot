@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 系统日志
  *
  * @author jiangzeyin
- * Created by jiangzeyin on 2017/2/3.
+ * @date 2017/2/3.
  */
 public class DefaultSystemLog {
     private static final LoggerContext LOGGER_CONTEXT = new LoggerContext();
@@ -190,6 +190,8 @@ public class DefaultSystemLog {
 
     /**
      * 日志回调
+     *
+     * @see 1.2.34
      */
     public interface LogCallback {
 

@@ -23,7 +23,7 @@ import java.util.Map;
  * 公共的获取参数
  *
  * @author jiangzeyin
- * Created by jiangzeyin on 2017/1/12.
+ * @date 2017/1/12.
  */
 public abstract class AbstractController extends BaseCallbackController {
 

@@ -251,6 +251,13 @@ public class XssFilter extends CharacterEncodingFilter {
         return values;
     }
 
+    /**
+     * xss标签过滤
+     *
+     * @param value 需要过滤的值
+     * @return 过滤后的
+     * @since 1.2.33
+     */
     public static String xss(String value) {
         if (value == null) {
             return null;
@@ -271,6 +278,7 @@ public class XssFilter extends CharacterEncodingFilter {
      * 返回是否已经xss
      *
      * @return 配置的状态
+     * @since 1.2.33
      */
     public static boolean isXSS() {
         return XSS;
