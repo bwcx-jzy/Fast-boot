@@ -8,9 +8,9 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * tomcat
- * Created by jiangzeyin on 2017/3/31.
  *
  * @author jiangzeyin
+ * @date 2017/3/31.
  */
 @Configuration
 public class TomcatInitBean {

@@ -16,9 +16,9 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 /**
  * 默认的controller  方法参数解析器
- * Created by jiangzeyin on 2018/8/24.
  *
  * @author jiangzeyin
+ * @date 2018/8/24.
  */
 public abstract class BaseDefaultHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
 

@@ -4,9 +4,9 @@ import org.springframework.context.ApplicationEvent;
 
 /**
  * 系统启动监听
- * Created by jiangzeyin on 2017/11/2.
  *
  * @author jiangzeyin
+ * @date 2017/11/2.
  */
 public interface ApplicationEventClient {
     /**

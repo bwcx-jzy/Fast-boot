@@ -5,8 +5,9 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 缓存静态字段配置注解
- * Created by jiangzeyin on 2017/12/13.
  *
+ * @author jiangzeyin
+ * @date 2017/12/13
  * @see RedisCacheConfig#loadClass(java.lang.Class)
  */
 @Documented

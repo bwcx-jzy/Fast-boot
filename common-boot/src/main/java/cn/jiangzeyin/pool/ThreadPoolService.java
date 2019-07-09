@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 系统线程池管理
  *
  * @author jiangzeyin
- * create 2016-10-24
+ * @date 2016-10-24
  */
 public final class ThreadPoolService {
     private final static ConcurrentHashMap<Class, PoolCacheInfo> POOL_CACHE_INFO_CONCURRENT_HASH_MAP = new ConcurrentHashMap<>();

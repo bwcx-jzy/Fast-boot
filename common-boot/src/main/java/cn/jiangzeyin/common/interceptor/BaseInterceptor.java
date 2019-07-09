@@ -15,7 +15,7 @@ import javax.servlet.http.HttpSession;
  * 公共的拦截器
  *
  * @author jiangzeyin
- * Created by jiangzeyin on 2017/2/17.
+ * @date 2017/2/17.
  */
 public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
     /**

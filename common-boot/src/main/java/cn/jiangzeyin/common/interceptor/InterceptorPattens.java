@@ -4,7 +4,9 @@ import java.lang.annotation.*;
 
 /**
  * 拦截器注解
- * Created by jiangzeyin on 2017/7/8.
+ *
+ * @author jiangzeyin
+ * @date 2017/7/8
  */
 @Documented
 @Target(ElementType.TYPE)

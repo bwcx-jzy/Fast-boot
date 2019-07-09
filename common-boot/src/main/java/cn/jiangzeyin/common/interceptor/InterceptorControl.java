@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
  * 拦截器控制器
  *
  * @author jiangzeyin
- * Created by jiangzeyin on 2017/2/4.
+ * @date 2017/2/4.
  */
 @Configuration
 @EnableWebMvc

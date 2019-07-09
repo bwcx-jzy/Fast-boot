@@ -5,7 +5,9 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 线程池配置注解
- * Created by jiangzeyin on 2017/12/2.
+ *
+ * @author jiangzeyin
+ * @date 2017/12/2.
  */
 @Documented
 @Target(ElementType.TYPE)

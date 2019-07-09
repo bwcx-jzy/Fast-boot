@@ -29,7 +29,7 @@ import java.util.Set;
  * 通用的Spring Context util
  *
  * @author jiangzeyin
- * Created by jiangzeyin on 2017/1/5.
+ * @date 2017/1/5.
  */
 @Configuration
 public class SpringUtil implements ApplicationListener, ApplicationContextAware {
