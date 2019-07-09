@@ -32,7 +32,7 @@ import java.util.Set;
  * xss 过滤器
  *
  * @author jiangzeyin
- * Created by jiangzeyin on 2017/1/5.
+ * @date 2017/1/5.
  */
 public class XssFilter extends CharacterEncodingFilter {
 

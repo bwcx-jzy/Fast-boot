@@ -247,8 +247,6 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
      * @throws NoSuchFieldException   e
      * @throws IllegalAccessException e
      */
-    @SuppressWarnings("unchecked")
-
     public ApplicationBuilder addLoadPage(String packageName) throws NoSuchFieldException, IllegalAccessException {
         if (StringUtils.isEmpty(packageName)) {
             throw new IllegalArgumentException("packageName");
@@ -271,6 +269,7 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
         InvocationHandler invocationHandler = Proxy.getInvocationHandler(proxy);
         Field value = invocationHandler.getClass().getDeclaredField("memberValues");
         value.setAccessible(true);
+        @SuppressWarnings("unchecked")
         Map<String, Object> memberValues = (Map<String, Object>) value.get(invocationHandler);
         String[] values = (String[]) memberValues.get(fliedName);
         String[] newValues = new String[]{packageName};
@@ -305,26 +304,24 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
                 continue;
             }
             Method[] methods = cls.getDeclaredMethods();
-            if (methods != null) {
-                for (Method method : methods) {
-                    AutoPropertiesMethod autoPropertiesMethod = method.getAnnotation(AutoPropertiesMethod.class);
-                    if (autoPropertiesMethod == null) {
-                        continue;
+            for (Method method : methods) {
+                AutoPropertiesMethod autoPropertiesMethod = method.getAnnotation(AutoPropertiesMethod.class);
+                if (autoPropertiesMethod == null) {
+                    continue;
+                }
+                method.setAccessible(true);
+                ParameterizedType parameterizedType = (ParameterizedType) method.getGenericReturnType();
+                Type type = parameterizedType.getRawType();
+                Class retCls = (Class) type;
+                int modifiers = method.getModifiers();
+                Type[] parameters = method.getParameterTypes();
+                if (parameters.length <= 0 && Map.class == retCls && Modifier.isStatic(modifiers) && Modifier.isPrivate(modifiers)) {
+                    Map<String, Object> map = (Map<String, Object>) method.invoke(null);
+                    if (map != null) {
+                        properties(map);
                     }
-                    method.setAccessible(true);
-                    ParameterizedType parameterizedType = (ParameterizedType) method.getGenericReturnType();
-                    Type type = parameterizedType.getRawType();
-                    Class retCls = (Class) type;
-                    int modifiers = method.getModifiers();
-                    Type[] parameters = method.getParameterTypes();
-                    if (parameters.length <= 0 && Map.class == retCls && Modifier.isStatic(modifiers) && Modifier.isPrivate(modifiers)) {
-                        Map<String, Object> map = (Map<String, Object>) method.invoke(null);
-                        if (map != null) {
-                            properties(map);
-                        }
-                    } else {
-                        throw new IllegalArgumentException(cls + "  " + method + "  " + PreLoadMethod.class + " must use empty parameters static Map private");
-                    }
+                } else {
+                    throw new IllegalArgumentException(cls + "  " + method + "  " + PreLoadMethod.class + " must use empty parameters static Map private");
                 }
             }
             cacheLoadProperties.add(cls);

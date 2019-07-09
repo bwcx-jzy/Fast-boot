@@ -4,7 +4,9 @@ import java.lang.annotation.*;
 
 /**
  * 验证规则
- * Created by jiangzeyin on 2018/8/21.
+ *
+ * @author jiangzeyin
+ * @date 2018/8/21
  */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)

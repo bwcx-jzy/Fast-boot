@@ -6,9 +6,9 @@ import java.lang.annotation.*;
 
 /**
  * 字段验证配置
- * Created by jiangzeyin on 2018/8/21.
  *
  * @author jiangzeyin
+ * @date 2018/8/21.
  */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)

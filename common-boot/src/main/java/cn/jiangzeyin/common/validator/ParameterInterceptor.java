@@ -25,11 +25,10 @@ import java.lang.reflect.Method;
 /**
  * 参数拦截器  验证参数是否正确  排序号是：-100
  * <p>
- * 配置方法 @see
- * <p>
- * Created by jiangzeyin on 2018/8/21.
+ * 配置方法
  *
  * @author jiangzeyin
+ * @date 2018/8/21.
  * @see cn.jiangzeyin.common.ApplicationBuilder#addInterceptor(java.lang.Class)
  * @see EnableCommonBoot#parameterValidator()
  */

@@ -2,9 +2,9 @@ package cn.jiangzeyin.common.validator;
 
 /**
  * 验证规则
- * Created by jiangzeyin on 2018/8/21.
  *
  * @author jiangzeyin
+ * @date 2018/8/21.
  */
 public enum ValidatorRule {
     /**

@@ -12,9 +12,9 @@ import java.util.Map;
 
 /**
  * 文件上传拦截器
- * Created by jiangzeyin on 2018/8/21.
  *
  * @author jiangzeyin
+ * @date 2018/8/21.
  */
 public class MultipartParameterXssWrapper extends StandardMultipartHttpServletRequest {
 

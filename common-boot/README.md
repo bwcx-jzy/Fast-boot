@@ -128,4 +128,8 @@ cn.jiangzeyin.common.BaseApplication  该类主要实现对该程序进行初始
   getPoolQueuedTasks(Class tClass)  获取线程池队列数
   getPoolRejectedExecutionCount(Class tclass) 获取线程池取消执行的任务数
   shutdown() 关闭所有线程池
+  
+> **参数拦截**
+
+> **完整的请求日志**
 

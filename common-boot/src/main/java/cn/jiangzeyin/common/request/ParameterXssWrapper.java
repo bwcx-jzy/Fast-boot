@@ -19,7 +19,7 @@ import java.util.Vector;
  * xss 注入拦截
  *
  * @author jiangzeyin
- * Created by jiangzeyin on 2017/2/4.
+ * @date 2017/2/4.
  */
 public class ParameterXssWrapper extends HttpServletRequestWrapper {
     private final Map<String, String[]> parameters;
