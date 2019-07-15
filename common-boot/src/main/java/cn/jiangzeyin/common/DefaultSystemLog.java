@@ -8,6 +8,7 @@ import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy;
 import ch.qos.logback.core.util.FileSize;
 import cn.jiangzeyin.common.spring.SpringUtil;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2017/2/3.
  */
 public class DefaultSystemLog {
-    private static final LoggerContext LOGGER_CONTEXT = new LoggerContext();
+    private static final LoggerContext LOGGER_CONTEXT = (LoggerContext) LoggerFactory.getILoggerFactory();
     private static final Map<LogType, Logger> LOG_TYPE_LOGGER_MAP = new ConcurrentHashMap<>();
     private static final String TYPE_ERROR_TAG = "ERROR";
     private static String LOG_PATH = "/log/cn.jiangzeyin";
@@ -191,7 +192,7 @@ public class DefaultSystemLog {
     /**
      * 日志回调
      *
-     * @see 1.2.34
+     * @since 1.2.34
      */
     public interface LogCallback {
 

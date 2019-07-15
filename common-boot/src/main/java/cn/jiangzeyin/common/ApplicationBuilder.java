@@ -294,6 +294,7 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
      * 加载配置
      *
      * @param packageName 指定包名
+     * @return this
      * @throws Exception e
      */
     @SuppressWarnings("unchecked")
