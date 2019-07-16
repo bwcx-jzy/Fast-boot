@@ -11,7 +11,9 @@ import cn.jiangzeyin.common.EnableCommonBoot;
 import cn.jiangzeyin.common.JsonMessage;
 import cn.jiangzeyin.common.interceptor.BaseInterceptor;
 import cn.jiangzeyin.common.interceptor.InterceptorPattens;
+import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.MethodParameter;
+import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ValueConstants;
@@ -40,6 +42,8 @@ public class ParameterInterceptor extends BaseInterceptor {
     public static int INT_MAX_LENGTH = 7;
 
     private static volatile Interceptor interceptor = new DefaultInterceptor();
+
+    private static final ParameterNameDiscoverer PARAMETER_NAME_DISCOVERER = new DefaultParameterNameDiscoverer();
 
     /**
      * 设置参数拦截器 拦截响应接口
@@ -117,7 +121,11 @@ public class ParameterInterceptor extends BaseInterceptor {
             ValidatorItem[] validatorItems = validatorConfig.value();
             String name = item.getParameterName();
             if (name == null) {
-                continue;
+                item.initParameterNameDiscovery(PARAMETER_NAME_DISCOVERER);
+                name = item.getParameterName();
+                if (name == null) {
+                    continue;
+                }
             }
             String value = getValue(validatorConfig, request, name, item);
             // 验证每一项
@@ -447,7 +455,12 @@ public class ParameterInterceptor extends BaseInterceptor {
         @Override
         public void error(HttpServletRequest request, HttpServletResponse response, String parameterName, String value, ValidatorItem validatorItem) {
             JsonMessage jsonMessage = new JsonMessage(validatorItem.code(), validatorItem.msg());
-            DefaultSystemLog.LOG().info("{} {} {} {} {}", request.getRequestURI(), parameterName, value, validatorItem.value(), jsonMessage);
+            DefaultSystemLog.LogCallback logCallback = DefaultSystemLog.getLogCallback();
+            if (logCallback == null) {
+                DefaultSystemLog.LOG(DefaultSystemLog.LogType.REQUEST).info("{} {} {} {} {}", request.getRequestURI(), parameterName, value, validatorItem.value(), jsonMessage);
+            } else {
+                logCallback.log(DefaultSystemLog.LogType.REQUEST, request.getRequestURI(), parameterName, value, validatorItem.value(), jsonMessage);
+            }
             ServletUtil.write(response, jsonMessage.toString(), MediaType.APPLICATION_JSON_UTF8_VALUE);
         }
 
