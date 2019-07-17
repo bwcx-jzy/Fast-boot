@@ -6,10 +6,10 @@
     <parent>
         <groupId>cn.jiangzeyin.fast-boot</groupId>
         <artifactId>common-parent</artifactId>
-        <version>1.2.34</version>
+        <version>1.2.35</version>
     </parent>
     <artifactId>common-redis</artifactId>
-    <version>1.2.34</version>
+    <version>1.2.35</version>
     <name>Fast-boot cache-redis</name>
     <description>封装SpringBoot的Redis 管理和J2Cache</description>
     <dependencies>
