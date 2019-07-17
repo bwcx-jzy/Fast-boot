@@ -67,7 +67,10 @@ public class ParameterInterceptor extends BaseInterceptor {
         // 获取值
         String value;
         // 指定name
-        String configName = validatorConfig.name();
+        String configName = null;
+        if (validatorConfig != null) {
+            configName = validatorConfig.name();
+        }
         if (StrUtil.isNotEmpty(configName)) {
             value = request.getParameter(configName);
         } else {
@@ -83,7 +86,7 @@ public class ParameterInterceptor extends BaseInterceptor {
             value = interceptor.getParameter(request, name);
         }
         // 默认值
-        if (!ValueConstants.DEFAULT_NONE.equals(validatorConfig.defaultVal())) {
+        if (validatorConfig != null && !ValueConstants.DEFAULT_NONE.equals(validatorConfig.defaultVal())) {
             if (value == null && !validatorConfig.strEmpty()) {
                 value = validatorConfig.defaultVal();
             }
@@ -114,11 +117,18 @@ public class ParameterInterceptor extends BaseInterceptor {
             return true;
         }
         for (MethodParameter item : methodParameters) {
+            ValidatorItem[] validatorItems;
             ValidatorConfig validatorConfig = item.getParameterAnnotation(ValidatorConfig.class);
             if (validatorConfig == null) {
-                continue;
+                ValidatorItem validatorItem = item.getParameterAnnotation(ValidatorItem.class);
+                if (validatorItem == null) {
+                    continue;
+                } else {
+                    validatorItems = new ValidatorItem[]{validatorItem};
+                }
+            } else {
+                validatorItems = validatorConfig.value();
             }
-            ValidatorItem[] validatorItems = validatorConfig.value();
             String name = item.getParameterName();
             if (name == null) {
                 item.initParameterNameDiscovery(PARAMETER_NAME_DISCOVERER);
@@ -135,7 +145,7 @@ public class ParameterInterceptor extends BaseInterceptor {
                 if (validatorItem.unescape()) {
                     value = HtmlUtil.unescape(value);
                 }
-                if (validatorItem.value() == ValidatorRule.CUSTOMIZE) {
+                if (validatorConfig != null && validatorItem.value() == ValidatorRule.CUSTOMIZE) {
                     if (!customize(handlerMethod, item, validatorConfig, validatorItem, name, value, request, response)) {
                         return false;
                     }
@@ -143,26 +153,32 @@ public class ParameterInterceptor extends BaseInterceptor {
                     break;
                 }
                 boolean error = validator(validatorItem, value);
-                if (validatorConfig.errorCondition() == ErrorCondition.AND) {
-                    if (!error) {
-                        //错误
-                        interceptor.error(request, response, name, value, validatorItem);
-                        return false;
-                    }
-                }
-                if (validatorConfig.errorCondition() == ErrorCondition.OR) {
-                    if (error) {
-                        break;
-                    } else {
-                        errorCount++;
-                        if (i < len - 1) {
-                            continue;
-                        }
-                        // 最后一项
-                        if (i == len - 1 && errorCount == len) {
+                if (validatorConfig == null) {
+                    //错误
+                    interceptor.error(request, response, name, value, validatorItem);
+                    return false;
+                } else {
+                    if (validatorConfig.errorCondition() == ErrorCondition.AND) {
+                        if (!error) {
                             //错误
                             interceptor.error(request, response, name, value, validatorItem);
                             return false;
+                        }
+                    }
+                    if (validatorConfig.errorCondition() == ErrorCondition.OR) {
+                        if (error) {
+                            break;
+                        } else {
+                            errorCount++;
+                            if (i < len - 1) {
+                                continue;
+                            }
+                            // 最后一项
+                            if (i == len - 1 && errorCount == len) {
+                                //错误
+                                interceptor.error(request, response, name, value, validatorItem);
+                                return false;
+                            }
                         }
                     }
                 }
@@ -191,9 +207,9 @@ public class ParameterInterceptor extends BaseInterceptor {
         Method method;
         try {
             method = ReflectUtil.getMethod(handlerMethod.getBeanType(), validatorConfig.customizeMethod(), MethodParameter.class, String.class);
-        } catch (SecurityException sE) {
+        } catch (SecurityException s) {
             // 没有权限访问 直接拦截
-            DefaultSystemLog.ERROR().error(sE.getMessage(), sE);
+            DefaultSystemLog.ERROR().error(s.getMessage(), s);
             interceptor.error(request, response, name, value, validatorItem);
             return false;
         }
