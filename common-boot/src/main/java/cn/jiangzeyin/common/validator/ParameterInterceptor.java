@@ -154,9 +154,11 @@ public class ParameterInterceptor extends BaseInterceptor {
                 }
                 boolean error = validator(validatorItem, value);
                 if (validatorConfig == null) {
-                    //错误
-                    interceptor.error(request, response, name, value, validatorItem);
-                    return false;
+                    if (!error) {
+                        //错误
+                        interceptor.error(request, response, name, value, validatorItem);
+                        return false;
+                    }
                 } else {
                     if (validatorConfig.errorCondition() == ErrorCondition.AND) {
                         if (!error) {
