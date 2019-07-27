@@ -1,5 +1,11 @@
 # 版本日志
 
+## 1.2.32+
+
+* 升级hutool
+* xss日志排除字段
+* ValidatorItem 单个配置
+* 升级fastjson
 
 ## 1.2.31
 *   xss方法扩展

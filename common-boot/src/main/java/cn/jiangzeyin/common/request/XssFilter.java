@@ -53,6 +53,10 @@ public class XssFilter extends CharacterEncodingFilter {
      * 参数前后空格 默认false
      */
     private static boolean TRIMAll;
+    /**
+     * 控制台日志管理字段
+     */
+    public static String[] logFilterPar = new String[]{"pwd", "pass", "password"};
 
     static {
         // 日志标记
@@ -144,6 +148,9 @@ public class XssFilter extends CharacterEncodingFilter {
                 stringBuffer.append("{");
                 for (Map.Entry<String, String[]> entry : entries) {
                     String key = entry.getKey();
+                    if (StrUtil.containsAnyIgnoreCase(key, logFilterPar)) {
+                        continue;
+                    }
                     stringBuffer.append(key).append(":");
                     String[] value = entry.getValue();
                     if (value != null) {
