@@ -6,7 +6,7 @@
     <packaging>pom</packaging>
     <groupId>cn.jiangzeyin.fast-boot</groupId>
     <artifactId>common-parent</artifactId>
-    <version>1.2.37</version>
+    <version>1.2.38</version>
     <name>Fast-boot</name>
     <url>https://gitee.com/keepbx/Fast-boot</url>
     <description>Spring Boot fast-boot</description>
@@ -20,7 +20,7 @@
         <fastjson.version>1.2.58</fastjson.version>
         <!-- 项目中使用SpringBoot 版本号 -->
         <spring-boot.version>1.4.7.RELEASE</spring-boot.version>
-        <hutool-all.version>[4.5.0,4.5.99]</hutool-all.version>
+        <hutool-all.version>[4.6.0,4.6.99]</hutool-all.version>
     </properties>
     <modules>
         <module>common-boot</module>
