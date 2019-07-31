@@ -1,7 +1,6 @@
 package cn.jiangzeyin.common.spring;
 
 import cn.jiangzeyin.CommonPropertiesFinal;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,21 +21,6 @@ public class TomcatInitBean {
     }
 
     /**
-     * session 超时
-     *
-     * @return embedded
-     */
-    @Bean
-    public EmbeddedServletContainerCustomizer containerCustomizer() {
-        return container -> {
-            timOut = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.TOMCAT_SESSION_TIME_OUT, Integer.class);
-            if (timOut != null) {
-                container.setSessionTimeout(timOut);
-            }
-        };
-    }
-
-    /**
      * session cookie 名称
      *
      * @return servletContext
@@ -47,6 +31,10 @@ public class TomcatInitBean {
             String name = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.TOMCAT_SESSION_COOKIE_NAME);
             if (name != null && name.length() > 0) {
                 servletContext.getSessionCookieConfig().setName(name);
+            }
+            timOut = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.TOMCAT_SESSION_TIME_OUT, Integer.class);
+            if (timOut != null) {
+                servletContext.setSessionTimeout(timOut);
             }
         };
     }

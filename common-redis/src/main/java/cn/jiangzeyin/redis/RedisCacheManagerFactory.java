@@ -1,7 +1,6 @@
 package cn.jiangzeyin.redis;
 
 import cn.hutool.core.util.StrUtil;
-import cn.jiangzeyin.cache.RedisCacheConfig;
 import cn.jiangzeyin.common.spring.SpringUtil;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisClusterConfiguration;
@@ -9,7 +8,6 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisNode;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
-import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -45,11 +43,12 @@ public final class RedisCacheManagerFactory {
             template.setConnectionFactory(connectionFactory);
             template.afterPropertiesSet();
             REDIS_TEMPLATE_CONCURRENT_HASH_MAP.put(key, template);
-            RedisCacheManager redisCacheManager1 = new CustomizedRedisCacheManager(database, template);
+
+            RedisCacheManager redisCacheManager1 = RedisCacheManager.builder(connectionFactory).build();
             // 指定缓存时间
-            redisCacheManager1.setExpires(RedisCacheConfig.getExpires(database));
+            //  redisCacheManager1.setExpires(RedisCacheConfig.getExpires(database));
             // 默认时间
-            redisCacheManager1.setDefaultExpiration(RedisCacheConfig.getDefaultExpireTime(database));
+            //redisCacheManager1.setDefaultExpiration(RedisCacheConfig.getDefaultExpireTime(database));
             redisCacheManager1.afterPropertiesSet();
 //                REDIS_CACHE_MANAGER_CONCURRENT_HASH_MAP.put(key, redisCacheManager);
             return redisCacheManager1;
@@ -86,26 +85,26 @@ public final class RedisCacheManagerFactory {
         return template.getConnectionFactory();
     }
 
-    private static class CustomizedRedisCacheManager extends RedisCacheManager {
-        private int database;
-
-        CustomizedRedisCacheManager(int database, RedisOperations redisOperations) {
-            super(redisOperations);
-            this.database = database;
-        }
-
-        /**
-         * 计算到期时间
-         *
-         * @param name 组名
-         * @return long
-         */
-        @Override
-        protected long computeExpiration(String name) {
-            Long time = RedisCacheConfig.getGroupExpires(database, name);
-            return time == null ? super.computeExpiration(name) : time;
-        }
-    }
+//    private static class CustomizedRedisCacheManager extends RedisCacheManager {
+//        private int database;
+//
+//        CustomizedRedisCacheManager(int database, RedisOperations redisOperations) {
+//            super(redisOperations);
+//            this.database = database;
+//        }
+//
+//        /**
+//         * 计算到期时间
+//         *
+//         * @param name 组名
+//         * @return long
+//         */
+//        @Override
+//        protected long computeExpiration(String name) {
+//            Long time = RedisCacheConfig.getGroupExpires(database, name);
+//            return time == null ? super.computeExpiration(name) : time;
+//        }
+//    }
 
 
     private static class RedisConnectionFactoryPool {
