@@ -24,7 +24,7 @@
 
 ## 版本变更
 
-- [Release版本变更说明](/CHANGELOG.md)
+- [Release版本变更说明](/CHANGELOG-1.x.md)
 
 ## 文档
 
