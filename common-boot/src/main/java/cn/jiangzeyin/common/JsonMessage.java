@@ -46,8 +46,25 @@ public class JsonMessage<T> implements Serializable {
         this(code, msg, null);
     }
 
-    public Object getData() {
+    public T getData() {
         return data;
+    }
+
+    /**
+     * 将data 转换为对应实体
+     *
+     * @param tClass 类
+     * @param <E>    泛型
+     * @return Object
+     */
+    public <E> E getData(Class<E> tClass) {
+        if (data == null) {
+            return null;
+        }
+        if (tClass.isAssignableFrom(data.getClass())) {
+            return (E) data;
+        }
+        return JSONObject.parseObject(data.toString(), tClass);
     }
 
     public void setData(T data) {
@@ -84,23 +101,12 @@ public class JsonMessage<T> implements Serializable {
         return (JSONObject) JSONObject.toJSON(this);
     }
 
-    /**
-     * 将data 转换为对应实体
-     *
-     * @param tClass 类
-     * @param <E>    泛型
-     * @return Object
-     */
-    public <E> E dataToObj(Class<E> tClass) {
-        Objects.requireNonNull(tClass);
-        Object object = getData();
+    public String dataToString() {
+        T object = getData();
         if (object == null) {
             return null;
         }
-        if (tClass == String.class) {
-            return (E) object.toString();
-        }
-        return JSONObject.parseObject(object.toString(), tClass);
+        return object.toString();
     }
 
     /**
@@ -117,7 +123,7 @@ public class JsonMessage<T> implements Serializable {
     }
 
     public static JSONObject toJson(int code, String msg, Object data) {
-        JsonMessage jsonMessage = new JsonMessage<>(code, msg, data);
+        JsonMessage<Object> jsonMessage = new JsonMessage<>(code, msg, data);
         return jsonMessage.toJson();
     }
 
@@ -140,5 +146,21 @@ public class JsonMessage<T> implements Serializable {
      */
     public static String getString(int code, String msg, Object data) {
         return toJson(code, msg, data).toString();
+    }
+
+    /**
+     * json字符串转 jsonMessage对象
+     *
+     * @param json   json字符串
+     * @param tClass data类型
+     * @param <T>    泛型
+     * @return jsonMessage
+     */
+    public static <T> JsonMessage<T> toJsonMessage(String json, Class<T> tClass) {
+        JsonMessage<T> jsonMessage = JSONObject.parseObject(json, JsonMessage.class);
+        // 自动转换
+        T data = jsonMessage.getData(tClass);
+        jsonMessage.setData(data);
+        return jsonMessage;
     }
 }
