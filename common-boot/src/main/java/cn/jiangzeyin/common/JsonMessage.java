@@ -15,7 +15,7 @@ import java.util.Objects;
  * @author jiangzeyin
  * @date 2017/2/6.
  */
-public class JsonMessage implements Serializable {
+public class JsonMessage<T> implements Serializable {
     public static final String CODE = "code";
     public static final String MSG = "msg";
     public static final String DATA = "data";
@@ -31,12 +31,12 @@ public class JsonMessage implements Serializable {
 
     private int code;
     private String msg;
-    private Object data;
+    private T data;
 
     public JsonMessage() {
     }
 
-    public JsonMessage(int code, String msg, Object data) {
+    public JsonMessage(int code, String msg, T data) {
         this.code = code;
         this.msg = msg;
         this.data = data;
@@ -50,7 +50,7 @@ public class JsonMessage implements Serializable {
         return data;
     }
 
-    public void setData(Object data) {
+    public void setData(T data) {
         this.data = data;
     }
 
@@ -88,17 +88,17 @@ public class JsonMessage implements Serializable {
      * 将data 转换为对应实体
      *
      * @param tClass 类
-     * @param <T>    泛型
+     * @param <E>    泛型
      * @return Object
      */
-    public <T> T dataToObj(Class<T> tClass) {
+    public <E> E dataToObj(Class<E> tClass) {
         Objects.requireNonNull(tClass);
         Object object = getData();
         if (object == null) {
             return null;
         }
         if (tClass == String.class) {
-            return (T) object.toString();
+            return (E) object.toString();
         }
         return JSONObject.parseObject(object.toString(), tClass);
     }
@@ -117,7 +117,7 @@ public class JsonMessage implements Serializable {
     }
 
     public static JSONObject toJson(int code, String msg, Object data) {
-        JsonMessage jsonMessage = new JsonMessage(code, msg, data);
+        JsonMessage jsonMessage = new JsonMessage<>(code, msg, data);
         return jsonMessage.toJson();
     }
 

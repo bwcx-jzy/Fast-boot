@@ -5,7 +5,7 @@ import cn.jiangzeyin.common.JsonMessage;
  */
 public class json {
     public static void main(String[] args) {
-        JsonMessage jsonMessage = new JsonMessage(1, "ss", 18523345054L);
+        JsonMessage jsonMessage = new JsonMessage<>(1, "ss", 18523345054L);
         System.out.println(jsonMessage.toFormatJson());
     }
 }
