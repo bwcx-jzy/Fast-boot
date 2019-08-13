@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Configuration
 @EnableWebMvc
-public class InterceptorControl extends WebMvcConfigurerAdapter {
+public class InterceptorControl implements WebMvcConfigurer {
     @Value("${" + CommonPropertiesFinal.INTERCEPTOR_INIT_PACKAGE_NAME + ":}")
     private String loadPath;
     /**
@@ -156,7 +156,6 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        super.configureMessageConverters(converters);
         Set<HttpMessageConverter<?>> httpMessageConverters = ApplicationBuilder.getInstance().getHttpMessageConverters();
         if (httpMessageConverters != null) {
             converters.addAll(httpMessageConverters);
@@ -170,7 +169,6 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
      */
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-        super.addArgumentResolvers(argumentResolvers);
         if (StrUtil.isNotEmpty(loadPath)) {
             String[] paths = StrUtil.split(loadPath, StrUtil.COMMA);
             Collection<Class<?>> newClassSet = null;
@@ -186,9 +184,18 @@ public class InterceptorControl extends WebMvcConfigurerAdapter {
             }
         }
         // 加载默认注入
+        boolean ext = false;
         Set<Class<? extends HandlerMethodArgumentResolver>> methodArgumentResolvers = ApplicationBuilder.getInstance().getHandlerMethodArgumentResolvers();
         if (methodArgumentResolvers != null) {
-            methodArgumentResolvers.forEach(aClass -> addArgumentResolvers(argumentResolvers, aClass));
+            for (Class<? extends HandlerMethodArgumentResolver> methodArgumentResolver : methodArgumentResolvers) {
+                addArgumentResolvers(argumentResolvers, methodArgumentResolver);
+                if (!ext && ClassUtil.isAssignable(DefaultHandlerMethodArgumentResolver.class, methodArgumentResolver)) {
+                    ext = true;
+                }
+            }
+        }
+        if (!ext) {
+            addArgumentResolvers(argumentResolvers, DefaultHandlerMethodArgumentResolver.class);
         }
     }
 

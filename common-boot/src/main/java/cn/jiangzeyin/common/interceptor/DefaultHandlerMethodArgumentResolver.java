@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ValueConstants;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.annotation.AbstractNamedValueMethodArgumentResolver;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.method.annotation.RequestParamMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
@@ -20,7 +21,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
  * @author jiangzeyin
  * @date 2018/8/24.
  */
-public abstract class BaseDefaultHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
+public class DefaultHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
     protected final ConfigurableApplicationContext context = (ConfigurableApplicationContext) SpringUtil.getApplicationContext();
 
@@ -47,7 +48,7 @@ public abstract class BaseDefaultHandlerMethodArgumentResolver implements Handle
         Object object = null;
         try {
             object = requestParamMethodArgumentResolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory);
-        } catch (IllegalStateException ignored) {
+        } catch (IllegalStateException | MethodArgumentTypeMismatchException ignored) {
             // 参数解析异常忽略
         }
         return object;
