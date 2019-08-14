@@ -36,9 +36,9 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
     /**
      * 程序主类
      */
-    private Class applicationClass;
+    protected Class applicationClass;
 
-    private SpringApplication application;
+    protected SpringApplication application;
     /**
      * 程序配置变量
      */

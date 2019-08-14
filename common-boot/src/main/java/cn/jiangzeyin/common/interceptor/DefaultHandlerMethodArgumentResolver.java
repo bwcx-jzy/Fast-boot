@@ -1,7 +1,10 @@
 package cn.jiangzeyin.common.interceptor;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.convert.Convert;
+import cn.hutool.core.util.ClassUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.servlet.ServletUtil;
 import cn.jiangzeyin.common.spring.SpringUtil;
 import cn.jiangzeyin.common.validator.ValidatorConfig;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -50,6 +53,21 @@ public class DefaultHandlerMethodArgumentResolver implements HandlerMethodArgume
             object = requestParamMethodArgumentResolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory);
         } catch (IllegalStateException | MethodArgumentTypeMismatchException ignored) {
             // 参数解析异常忽略
+        }
+        if (object != null) {
+            return object;
+        }
+        boolean basicType = ClassUtil.isBasicType(parameter.getParameterType());
+        if (!basicType) {
+            try {
+                object = ServletUtil.toBean(BaseCallbackController.getRequestAttributes().getRequest(), parameter.getParameterType(), false);
+                boolean empty = BeanUtil.isEmpty(object);
+                if (empty) {
+                    return null;
+                }
+                return object;
+            } catch (Exception ignored) {
+            }
         }
         return object;
     }
