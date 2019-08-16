@@ -5,13 +5,13 @@
     <parent>
         <groupId>cn.jiangzeyin.fast-boot</groupId>
         <artifactId>common-parent</artifactId>
-        <version>2.0.1</version>
+        <version>2.0.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>common-boot</artifactId>
     <name>Fast-Boot common</name>
     <description>fast-boot</description>
-    <version>2.0.1</version>
+    <version>2.0.2</version>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
