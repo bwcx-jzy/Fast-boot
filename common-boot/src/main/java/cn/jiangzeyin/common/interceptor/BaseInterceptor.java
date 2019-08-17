@@ -21,14 +21,12 @@ public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
     /**
      * controller 方法对象
      */
-    private static final ThreadLocal<HandlerMethod> HANDLER_METHOD_THREAD_LOCAL = new ThreadLocal<>();
     private static final ThreadLocal<BaseCallbackController> BASE_CALLBACK_CONTROLLER_THREAD_LOCAL = new ThreadLocal<>();
 
     /**
      * 释放资源
      */
     protected void clearResources() {
-        HANDLER_METHOD_THREAD_LOCAL.remove();
         BASE_CALLBACK_CONTROLLER_THREAD_LOCAL.remove();
     }
 
@@ -43,25 +41,28 @@ public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        HandlerMethod handlerMethod = HANDLER_METHOD_THREAD_LOCAL.get();
-        if (handlerMethod != null) {
+        HandlerMethod handlerMethod = getHandlerMethod(handler);
+        if (handlerMethod == null) {
             return true;
         }
-        if (handler instanceof HandlerMethod) {
-            handlerMethod = (HandlerMethod) handler;
-            HANDLER_METHOD_THREAD_LOCAL.set(handlerMethod);
-            Object object = handlerMethod.getBean();
-            Class controlClass = object.getClass();
-            //  controller
-            if (BaseCallbackController.class.isAssignableFrom(controlClass)) {
-                BASE_CALLBACK_CONTROLLER_THREAD_LOCAL.set((BaseCallbackController) object);
-            }
+        Object object = handlerMethod.getBean();
+        Class controlClass = object.getClass();
+        //  controller
+        if (BaseCallbackController.class.isAssignableFrom(controlClass)) {
+            BASE_CALLBACK_CONTROLLER_THREAD_LOCAL.set((BaseCallbackController) object);
         }
-        return true;
+        return preHandle(request, response, handlerMethod);
     }
 
-    protected HandlerMethod getHandlerMethod() {
-        return HANDLER_METHOD_THREAD_LOCAL.get();
+    protected HandlerMethod getHandlerMethod(Object handler) {
+        if (handler instanceof HandlerMethod) {
+            return (HandlerMethod) handler;
+        }
+        return null;
+    }
+
+    protected boolean preHandle(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
+        return true;
     }
 
     /**

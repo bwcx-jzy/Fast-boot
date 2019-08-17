@@ -7,7 +7,6 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
 
 import java.io.Serializable;
 import java.math.BigInteger;
-import java.util.Objects;
 
 /**
  * 通用的json 数据格式

@@ -102,14 +102,9 @@ public class ParameterInterceptor extends BaseInterceptor {
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        super.preHandle(request, response, handler);
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
         // 没有实现拦截器响应
         if (interceptor == null) {
-            return true;
-        }
-        HandlerMethod handlerMethod = getHandlerMethod();
-        if (handlerMethod == null) {
             return true;
         }
         MethodParameter[] methodParameters = handlerMethod.getMethodParameters();
@@ -472,7 +467,7 @@ public class ParameterInterceptor extends BaseInterceptor {
     public static class DefaultInterceptor implements Interceptor {
         @Override
         public void error(HttpServletRequest request, HttpServletResponse response, String parameterName, String value, ValidatorItem validatorItem) {
-            JsonMessage jsonMessage = new JsonMessage(validatorItem.code(), validatorItem.msg());
+            JsonMessage jsonMessage = new JsonMessage<>(validatorItem.code(), validatorItem.msg());
             DefaultSystemLog.LogCallback logCallback = DefaultSystemLog.getLogCallback();
             if (logCallback == null) {
                 DefaultSystemLog.LOG(DefaultSystemLog.LogType.REQUEST).info("{} {} {} {} {}", request.getRequestURI(), parameterName, value, validatorItem.value(), jsonMessage);
