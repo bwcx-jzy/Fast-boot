@@ -1,5 +1,6 @@
 package cn.jiangzeyin.common.request;
 
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
@@ -57,6 +58,10 @@ public class XssFilter extends CharacterEncodingFilter {
      * 控制台日志管理字段
      */
     public static String[] logFilterPar = new String[]{"pwd", "pass", "password"};
+    /**
+     *
+     */
+    private static String[] RESOURCE_HANDLER;
 
     static {
         // 日志标记
@@ -84,7 +89,11 @@ public class XssFilter extends CharacterEncodingFilter {
                 request_timeout_log = timeOut;
             }
         } catch (ConversionFailedException ignored) {
-
+        }
+        // 静态资源url
+        String val = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.INTERCEPTOR_RESOURCE_HANDLER);
+        if (StrUtil.isNotEmpty(val)) {
+            RESOURCE_HANDLER = StrUtil.split(val, StrUtil.COMMA);
         }
     }
 
@@ -127,6 +136,18 @@ public class XssFilter extends CharacterEncodingFilter {
         if (!LOG) {
             return;
         }
+        String url = request.getRequestURI();
+        // 静态资源部记录
+        if (RESOURCE_HANDLER != null) {
+            for (String item : RESOURCE_HANDLER) {
+                if (StrUtil.endWith(item, "/**")) {
+                    item = item.substring(0, item.length() - 2);
+                }
+                if (StrUtil.startWith(url, FileUtil.normalize(StrUtil.SLASH + item))) {
+                    return;
+                }
+            }
+        }
         // 获取请求信息
         Map<String, String> header = BaseCallbackController.getHeaderMapValues(request);
         REQUEST_HEADER_MAP.set(header);
@@ -136,11 +157,11 @@ public class XssFilter extends CharacterEncodingFilter {
         DefaultSystemLog.LogCallback logCallback = DefaultSystemLog.getLogCallback();
         if (logCallback != null) {
             String id = IdUtil.fastSimpleUUID();
-            logCallback.log(DefaultSystemLog.LogType.REQUEST, id, request.getRequestURI(), ip, parameters, header);
+            logCallback.log(DefaultSystemLog.LogType.REQUEST, id, url, ip, parameters, header);
             REQUEST_INFO.set(id);
         } else {
             StringBuilder stringBuffer = new StringBuilder();
-            stringBuffer.append(request.getRequestURI())
+            stringBuffer.append(url)
                     .append(",ip:").append(ip)
                     .append(" parameters:");
             if (parameters != null) {
