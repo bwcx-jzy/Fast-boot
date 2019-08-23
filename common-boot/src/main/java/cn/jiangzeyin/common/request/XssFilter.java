@@ -206,7 +206,7 @@ public class XssFilter extends CharacterEncodingFilter {
         // 记录请求状态不正确
         int status = response.getStatus();
         DefaultSystemLog.LogCallback logCallback = DefaultSystemLog.getLogCallback();
-        if (status != HttpStatus.OK.value() && status != HttpStatus.FOUND.value()) {
+        if (status >= HttpStatus.BAD_REQUEST.value()) {
             if (logCallback != null) {
                 logCallback.log(DefaultSystemLog.LogType.REQUEST_ERROR, "status", REQUEST_INFO.get(), status);
             } else {
