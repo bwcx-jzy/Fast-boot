@@ -1,7 +1,10 @@
 package cn.jiangzeyin.common.interceptor;
 
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.servlet.ServletUtil;
 import cn.jiangzeyin.common.DefaultSystemLog;
 import cn.jiangzeyin.controller.base.AbstractController;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -10,6 +13,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
 /**
  * 公共的拦截器
@@ -91,5 +95,27 @@ public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
         // 释放资源
         AbstractController.clearResources();
         clearResources();
+    }
+
+    /**
+     * 获取 protocol 协议完全跳转
+     *
+     * @param request  请求
+     * @param response 响应
+     * @param url      跳转url
+     * @throws IOException io
+     */
+    public static void sendRedirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException {
+        String proto = ServletUtil.getHeaderIgnoreCase(request, "X-Forwarded-Proto");
+        if (proto == null) {
+            response.sendRedirect(url);
+        } else {
+            String host = request.getHeader(HttpHeaders.HOST);
+            if (StrUtil.isEmpty(host)) {
+                throw new RuntimeException("请配置host header");
+            }
+            String toUrl = StrUtil.format("{}://{}{}", proto, host, url);
+            response.sendRedirect(toUrl);
+        }
     }
 }
