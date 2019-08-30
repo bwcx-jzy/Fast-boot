@@ -16,10 +16,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 
 import java.lang.reflect.*;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -169,7 +166,7 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
     public ApplicationBuilder addHttpMessageConverter(HttpMessageConverter<?> httpMessageConverter) {
         Objects.requireNonNull(httpMessageConverter);
         if (httpMessageConverters == null) {
-            this.httpMessageConverters = new HashSet<>();
+            this.httpMessageConverters = new LinkedHashSet<>();
         }
         this.httpMessageConverters.add(httpMessageConverter);
         return this;
@@ -184,7 +181,7 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
     public ApplicationBuilder addInterceptor(Class<? extends BaseInterceptor> cls) {
         Objects.requireNonNull(cls);
         if (interceptorClass == null) {
-            this.interceptorClass = new HashSet<>();
+            this.interceptorClass = new LinkedHashSet<>();
         }
         this.interceptorClass.add(cls);
         return this;
@@ -199,7 +196,7 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
     public ApplicationBuilder addApplicationEventLoad(ApplicationEventLoad applicationEventLoad) {
         Objects.requireNonNull(applicationEventLoad);
         if (applicationEventLoads == null) {
-            this.applicationEventLoads = new HashSet<>();
+            this.applicationEventLoads = new LinkedHashSet<>();
         }
         this.applicationEventLoads.add(applicationEventLoad);
         return this;
@@ -214,7 +211,7 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
     public ApplicationBuilder addApplicationEventClient(ApplicationEventClient applicationEventClient) {
         Objects.requireNonNull(applicationEventClient);
         if (applicationEventClients == null) {
-            applicationEventClients = new HashSet<>();
+            applicationEventClients = new LinkedHashSet<>();
         }
         this.applicationEventClients.add(applicationEventClient);
         return this;
