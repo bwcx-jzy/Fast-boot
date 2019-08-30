@@ -1,5 +1,6 @@
 package cn.jiangzeyin.common.interceptor;
 
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import cn.jiangzeyin.common.DefaultSystemLog;
@@ -117,5 +118,23 @@ public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
             String toUrl = StrUtil.format("{}://{}{}", proto, host, url);
             response.sendRedirect(toUrl);
         }
+    }
+
+    /**
+     * 二级代理路径
+     *
+     * @param request req
+     * @return 请求头配置 + context-path
+     */
+    public static String getHeaderProxyPath(HttpServletRequest request, String headerName) {
+        String proxyPath = ServletUtil.getHeaderIgnoreCase(request, headerName);
+        if (StrUtil.isEmpty(proxyPath)) {
+            return request.getContextPath();
+        }
+        proxyPath = FileUtil.normalize(proxyPath + StrUtil.SLASH + request.getContextPath());
+        if (proxyPath.endsWith(StrUtil.SLASH)) {
+            proxyPath = proxyPath.substring(0, proxyPath.length() - 1);
+        }
+        return proxyPath;
     }
 }
