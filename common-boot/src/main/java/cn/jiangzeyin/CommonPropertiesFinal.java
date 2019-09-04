@@ -43,11 +43,11 @@ public final class CommonPropertiesFinal {
     /**
      * 自定义浏览器中存储session id cookie 名称
      */
-    public static final String TOMCAT_SESSION_COOKIE_NAME = TOMCAT + ".sessionCookieName";
+    //    public static final String TOMCAT_SESSION_COOKIE_NAME = TOMCAT + ".sessionCookieName";
     /**
      * 定义session 过期时间 单位秒
      */
-    public static final String TOMCAT_SESSION_TIME_OUT = TOMCAT + ".sessionTimeOut";
+    //    public static final String TOMCAT_SESSION_TIME_OUT = TOMCAT + ".sessionTimeOut";
     /**
      * 自定义外部代理中已经获取到的ip header 信息名称（比如nginx 中代理）
      */

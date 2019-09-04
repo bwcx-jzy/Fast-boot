@@ -53,18 +53,6 @@
       "type": "java.lang.String",
       "description": "拦截器资源本地location 配置",
       "defaultValue": ""
-    },
-    {
-      "name": "tomcat.sessionCookieName",
-      "type": "java.lang.String",
-      "description": "tomcat session cookie名称配置",
-      "defaultValue": ""
-    },
-    {
-      "name": "tomcat.sessionTimeOut",
-      "type": "java.lang.Integer",
-      "description": "tomcat session 超时时间配置 单位秒 ",
-      "defaultValue": ""
     }
   ]
 }

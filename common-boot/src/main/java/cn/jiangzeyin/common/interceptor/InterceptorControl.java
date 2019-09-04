@@ -9,10 +9,8 @@ import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.common.ApplicationBuilder;
 import cn.jiangzeyin.common.DefaultSystemLog;
 import cn.jiangzeyin.common.spring.SpringUtil;
-import cn.jiangzeyin.common.spring.TomcatInitBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.CacheControl;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -20,7 +18,6 @@ import org.springframework.web.servlet.config.annotation.*;
 
 import java.lang.reflect.Modifier;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 拦截器控制器
@@ -141,10 +138,6 @@ public class InterceptorControl implements WebMvcConfigurer {
         if (StrUtil.isNotBlank(resourceHandler)) {
             String[] handler = ArrayUtil.toArray(StrUtil.splitTrim(resourceHandler, StrUtil.COMMA), String.class);
             resourceHandlerRegistration = registry.addResourceHandler(handler);
-            Integer timeOut = TomcatInitBean.getTimOut();
-            if (timeOut != null) {
-                resourceHandlerRegistration.setCacheControl(CacheControl.maxAge(timeOut, TimeUnit.SECONDS).cachePublic());
-            }
             // 资源文件路径
             String resourceLocation = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.INTERCEPTOR_RESOURCE_LOCATION);
             if (StrUtil.isNotBlank(resourceLocation)) {
