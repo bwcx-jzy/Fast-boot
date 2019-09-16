@@ -3,6 +3,7 @@ package cn.jiangzeyin.common;
 import cn.hutool.core.util.ClassUtil;
 import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.common.interceptor.BaseInterceptor;
+import cn.jiangzeyin.common.spring.SpringUtil;
 import cn.jiangzeyin.common.spring.event.ApplicationEventClient;
 import cn.jiangzeyin.common.spring.event.ApplicationEventLoad;
 import cn.jiangzeyin.common.validator.ParameterInterceptor;
@@ -127,34 +128,47 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
         ApplicationBuilder.applicationBuilder = this;
     }
 
-    public static ApplicationBuilder getInstance() {
+    public static Environment getEnvironment() {
+        if (applicationBuilder == null || applicationBuilder.environment == null) {
+            return SpringUtil.getBean(Environment.class);
+        }
+        return applicationBuilder.environment;
+    }
+
+    public static Set<ApplicationEventClient> getApplicationEventClients() {
         if (applicationBuilder == null) {
-            throw new RuntimeException("Application not start");
+            return null;
         }
-        return applicationBuilder;
+        return applicationBuilder.applicationEventClients;
     }
 
-    public Environment getEnvironment() {
-        if (environment == null) {
-            throw new RuntimeException("Application not start");
+    public static Set<ApplicationEventLoad> getApplicationEventLoads() {
+        if (applicationBuilder == null) {
+            return null;
         }
-        return environment;
+        return applicationBuilder.applicationEventLoads;
     }
 
-    public Set<ApplicationEventClient> getApplicationEventClients() {
-        return applicationEventClients;
+    public static Set<Class<? extends BaseInterceptor>> getInterceptorClass() {
+        if (applicationBuilder == null) {
+            return null;
+        }
+        return applicationBuilder.interceptorClass;
     }
 
-    public Set<ApplicationEventLoad> getApplicationEventLoads() {
-        return applicationEventLoads;
+    public static Set<HttpMessageConverter<?>> getHttpMessageConverters() {
+        if (applicationBuilder == null) {
+            return null;
+        }
+        return applicationBuilder.httpMessageConverters;
     }
 
-    public Set<Class<? extends BaseInterceptor>> getInterceptorClass() {
-        return interceptorClass;
-    }
 
-    public Set<HttpMessageConverter<?>> getHttpMessageConverters() {
-        return httpMessageConverters;
+    public static Set<Class<? extends HandlerMethodArgumentResolver>> getHandlerMethodArgumentResolvers() {
+        if (applicationBuilder == null) {
+            return null;
+        }
+        return applicationBuilder.handlerMethodArgumentResolvers;
     }
 
     /**
@@ -230,10 +244,6 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
         }
         this.handlerMethodArgumentResolvers.add(cls);
         return this;
-    }
-
-    public Set<Class<? extends HandlerMethodArgumentResolver>> getHandlerMethodArgumentResolvers() {
-        return handlerMethodArgumentResolvers;
     }
 
     /**

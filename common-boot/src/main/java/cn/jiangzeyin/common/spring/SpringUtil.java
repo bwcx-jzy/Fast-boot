@@ -51,7 +51,7 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
 //        SpringUtil.applicationContext = applicationContext;
         setApplicationContexts(applicationContext);
         DefaultSystemLog.init();
-        Set<ApplicationEventLoad> applicationEventLoads = ApplicationBuilder.getInstance().getApplicationEventLoads();
+        Set<ApplicationEventLoad> applicationEventLoads = ApplicationBuilder.getApplicationEventLoads();
         if (applicationEventLoads != null) {
             for (ApplicationEventLoad applicationEventLoad : applicationEventLoads) {
                 applicationEventLoad.applicationLoad();
@@ -73,7 +73,7 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
             return;
         }
         //  通知子级
-        Set<ApplicationEventClient> applicationEventClients = ApplicationBuilder.getInstance().getApplicationEventClients();
+        Set<ApplicationEventClient> applicationEventClients = ApplicationBuilder.getApplicationEventClients();
         if (applicationEventClients != null) {
             for (ApplicationEventClient applicationEventClient : applicationEventClients) {
                 applicationEventClient.onApplicationEvent(event);
@@ -155,7 +155,7 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
      * @return environment
      */
     public static Environment getEnvironment() {
-        return ApplicationBuilder.getInstance().getEnvironment();
+        return ApplicationBuilder.getEnvironment();
     }
 
     /**
