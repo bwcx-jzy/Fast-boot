@@ -203,17 +203,21 @@ public class XssFilter extends CharacterEncodingFilter {
         if (!LOG) {
             return;
         }
+        String urlInfo = REQUEST_INFO.get();
+        if (urlInfo == null) {
+            return;
+        }
         // 记录请求状态不正确
         int status = response.getStatus();
         DefaultSystemLog.LogCallback logCallback = DefaultSystemLog.getLogCallback();
         if (status >= HttpStatus.BAD_REQUEST.value()) {
             if (logCallback != null) {
-                logCallback.log(DefaultSystemLog.LogType.REQUEST_ERROR, "status", REQUEST_INFO.get(), status);
+                logCallback.log(DefaultSystemLog.LogType.REQUEST_ERROR, "status", urlInfo, status);
             } else {
                 String stringBuffer = "status:" +
                         status +
                         ",url:" +
-                        REQUEST_INFO.get();
+                        urlInfo;
                 DefaultSystemLog.LOG(DefaultSystemLog.LogType.REQUEST_ERROR).error(stringBuffer);
             }
             return;
@@ -222,12 +226,12 @@ public class XssFilter extends CharacterEncodingFilter {
         long time = System.currentTimeMillis() - REQUEST_TIME.get();
         if (request_timeout_log > 0 && time > request_timeout_log) {
             if (logCallback != null) {
-                logCallback.log(DefaultSystemLog.LogType.REQUEST_ERROR, "time", REQUEST_INFO.get(), time);
+                logCallback.log(DefaultSystemLog.LogType.REQUEST_ERROR, "time", urlInfo, time);
             } else {
                 String stringBuffer = "time:" +
                         time +
                         ",url:" +
-                        REQUEST_INFO.get();
+                        urlInfo;
                 DefaultSystemLog.LOG(DefaultSystemLog.LogType.REQUEST_ERROR).error(stringBuffer);
             }
         }
