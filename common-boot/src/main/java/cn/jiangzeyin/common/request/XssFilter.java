@@ -189,7 +189,7 @@ public class XssFilter extends CharacterEncodingFilter {
                 stringBuffer.append("null");
             }
             stringBuffer.append(",header:").append(header);
-            DefaultSystemLog.LOG(DefaultSystemLog.LogType.REQUEST).info(stringBuffer.toString());
+            DefaultSystemLog.getLog().info(stringBuffer.toString());
             REQUEST_INFO.set(stringBuffer.toString());
         }
     }
@@ -218,7 +218,7 @@ public class XssFilter extends CharacterEncodingFilter {
                         status +
                         ",url:" +
                         urlInfo;
-                DefaultSystemLog.LOG(DefaultSystemLog.LogType.REQUEST_ERROR).error(stringBuffer);
+                DefaultSystemLog.getLog().error(stringBuffer);
             }
             return;
         }
@@ -232,7 +232,7 @@ public class XssFilter extends CharacterEncodingFilter {
                         time +
                         ",url:" +
                         urlInfo;
-                DefaultSystemLog.LOG(DefaultSystemLog.LogType.REQUEST_ERROR).error(stringBuffer);
+                DefaultSystemLog.getLog().error(stringBuffer);
             }
         }
     }
