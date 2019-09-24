@@ -12,7 +12,7 @@ import java.util.List;
  * @date 2017/12/12
  */
 @Configuration
-@ConfigurationProperties(prefix = "fast-bot.spring.redis")
+@ConfigurationProperties(prefix = "fast-boot.spring.redis")
 public class RedisProperties {
     /**
      * Database index used by the connection factory.
