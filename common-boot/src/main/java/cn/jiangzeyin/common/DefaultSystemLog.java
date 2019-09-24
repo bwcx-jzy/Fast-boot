@@ -24,15 +24,8 @@ public class DefaultSystemLog {
         /**
          * 请求
          */
-        REQUEST, REQUEST_ERROR,
-        /**
-         * 默认
-         */
-        DEFAULT,
-        /**
-         * 异常
-         */
-        ERROR
+        REQUEST,
+        REQUEST_ERROR,
     }
 
     public static void setLogCallback(LogCallback logCallback) {

@@ -139,6 +139,7 @@ public class XssFilter extends CharacterEncodingFilter {
         String url = request.getRequestURI();
         // 静态资源部记录
         if (RESOURCE_HANDLER != null) {
+            //AntPathMatcher antPathMatcher = new AntPathMatcher();
             for (String item : RESOURCE_HANDLER) {
                 if (StrUtil.endWith(item, "/**")) {
                     item = item.substring(0, item.length() - 2);
