@@ -31,7 +31,7 @@ public class CommonInitPackage {
      */
     public static void init() {
         if (init && !ApplicationBuilder.isRestart()) {
-            DefaultSystemLog.LOG().info("系统init 包已经被初始化过啦！");
+            DefaultSystemLog.getLog().warn("系统init 包已经被初始化过啦！");
             return;
         }
         String pageName = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.PRELOAD_PACKAGE_NAME);
@@ -55,7 +55,7 @@ public class CommonInitPackage {
      */
     public static void load(String packageName) {
         if (PACKAGE_NAME_LIST.contains(packageName) && !ApplicationBuilder.isRestart()) {
-            DefaultSystemLog.LOG().info(packageName + " 包已经被初始化过啦！");
+            DefaultSystemLog.getLog().warn(packageName + " 包已经被初始化过啦！");
             return;
         }
         //扫描
@@ -125,7 +125,7 @@ public class CommonInitPackage {
             for (Map.Entry<Method, Integer> item : newList) {
                 Method method = item.getKey();
                 if (METHOD_LIST.contains(method) && !ApplicationBuilder.isRestart()) {
-                    DefaultSystemLog.LOG().info(classT + "  " + method.getName() + "已经调用过啦");
+                    DefaultSystemLog.getLog().warn(classT + "  " + method.getName() + "已经调用过啦");
                     continue;
                 }
                 try {
@@ -133,7 +133,7 @@ public class CommonInitPackage {
                     method.invoke(null);
                     METHOD_LIST.add(method);
                 } catch (IllegalAccessException | InvocationTargetException e) {
-                    DefaultSystemLog.ERROR().error("预加载包错误:" + classT + "  " + method.getName() + "  执行错误", e);
+                    DefaultSystemLog.getLog().error("预加载包错误:" + classT + "  " + method.getName() + "  执行错误", e);
                 }
             }
         }

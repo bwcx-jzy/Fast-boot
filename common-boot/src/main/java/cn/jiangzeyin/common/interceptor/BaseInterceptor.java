@@ -83,7 +83,7 @@ public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         if (response.getStatus() >= HttpStatus.BAD_REQUEST.value()) {
-            DefaultSystemLog.LOG(DefaultSystemLog.LogType.REQUEST_ERROR).error("请求错误:" + request.getRequestURI() + "  " + response.getStatus());
+            DefaultSystemLog.getLog().error("请求错误:" + request.getRequestURI() + "  " + response.getStatus());
         }
     }
 
@@ -91,7 +91,7 @@ public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         if (ex != null) {
-            DefaultSystemLog.ERROR().error("controller 异常:" + request.getRequestURL(), ex);
+            DefaultSystemLog.getLog().error("controller 异常:" + request.getRequestURL(), ex);
         }
         // 释放资源
         AbstractController.clearResources();
@@ -115,7 +115,13 @@ public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
             if (StrUtil.isEmpty(host)) {
                 throw new RuntimeException("请配置host header");
             }
-            String toUrl = StrUtil.format("{}://{}{}", proto, host, url);
+            int remotePort = request.getRemotePort();
+            String remotePortStr = "";
+//            if (remotePort != 80 && remotePort != 443) {
+//                remotePortStr = ":" + String.valueOf(remotePort);
+//            }
+            //javax.servlet.http.HttpUtils.getRequestURL
+            String toUrl = StrUtil.format("{}://{}{}{}", proto, host, remotePortStr, url);
             response.sendRedirect(toUrl);
         }
     }

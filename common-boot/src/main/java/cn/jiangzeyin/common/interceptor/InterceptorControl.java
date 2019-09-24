@@ -91,7 +91,7 @@ public class InterceptorControl implements WebMvcConfigurer {
                 continue;
             }
             if (!HandlerInterceptor.class.isAssignableFrom(item)) {
-                DefaultSystemLog.ERROR().error("加载拦截器异常: {} 没有实现 {}", item, HandlerInterceptor.class);
+                DefaultSystemLog.getLog().error("加载拦截器异常: {} 没有实现 {}", item, HandlerInterceptor.class);
                 continue;
             }
             InterceptorPattens interceptorPattens = (InterceptorPattens) item.getAnnotation(InterceptorPattens.class);
@@ -108,7 +108,7 @@ public class InterceptorControl implements WebMvcConfigurer {
 
     private void loadInterceptor(Class<?> itemCls, InterceptorRegistry registry) {
         if (LOAD_OK.contains(itemCls) && !ApplicationBuilder.isRestart()) {
-            DefaultSystemLog.LOG().info("重复注入拦截器" + itemCls);
+            DefaultSystemLog.getLog().warn("重复注入拦截器" + itemCls);
             return;
         }
         InterceptorPattens interceptorPattens = itemCls.getAnnotation(InterceptorPattens.class);
@@ -123,7 +123,7 @@ public class InterceptorControl implements WebMvcConfigurer {
             registration.excludePathPatterns(exclude);
         }
         LOAD_OK.add(itemCls);
-        DefaultSystemLog.LOG().info("加载拦截器：{} {} {} {}", itemCls, Arrays.toString(patterns), Arrays.toString(exclude), interceptorPattens.sort());
+        DefaultSystemLog.getLog().debug("加载拦截器：{} {} {} {}", itemCls, Arrays.toString(patterns), Arrays.toString(exclude), interceptorPattens.sort());
     }
 
     /**
@@ -198,6 +198,6 @@ public class InterceptorControl implements WebMvcConfigurer {
         }
         Object methodArgumentResolver = Singleton.get(aClass);
         argumentResolvers.add((HandlerMethodArgumentResolver) methodArgumentResolver);
-        DefaultSystemLog.LOG().info("参数解析器：" + aClass);
+        DefaultSystemLog.getLog().debug("参数解析器：" + aClass);
     }
 }

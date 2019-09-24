@@ -38,7 +38,7 @@ public final class ThreadPoolService {
         PoolCacheInfo poolCacheInfo = POOL_CACHE_INFO_CONCURRENT_HASH_MAP.computeIfAbsent(class1, aClass -> {
             // 创建线程方法
             PoolCacheInfo poolCacheInfo1 = createPool(class1);
-            DefaultSystemLog.LOG().info(class1 + "线程池申请成功:" + poolCacheInfo1);
+            DefaultSystemLog.getLog().debug(class1 + "线程池申请成功:" + poolCacheInfo1);
             return poolCacheInfo1;
         });
         return poolCacheInfo.poolExecutor;
@@ -175,11 +175,11 @@ public final class ThreadPoolService {
      */
     public static void shutdown() {
         for (Entry<Class, PoolCacheInfo> entry : POOL_CACHE_INFO_CONCURRENT_HASH_MAP.entrySet()) {
-            DefaultSystemLog.LOG().info(String.format("关闭%s使用的线程池", entry.getKey()));
+            DefaultSystemLog.getLog().info(String.format("关闭%s使用的线程池", entry.getKey()));
             entry.getValue().poolExecutor.shutdown();
             String name = ClassUtil.getShortClassName(entry.getKey().getName());
             JSONObject jsonObject = convertInfo(name, entry.getValue());
-            DefaultSystemLog.LOG().info("关闭完成:" + jsonObject);
+            DefaultSystemLog.getLog().info("关闭完成:" + jsonObject);
         }
     }
 

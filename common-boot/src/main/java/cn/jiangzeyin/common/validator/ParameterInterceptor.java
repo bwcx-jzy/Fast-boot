@@ -206,13 +206,13 @@ public class ParameterInterceptor extends BaseInterceptor {
             method = ReflectUtil.getMethod(handlerMethod.getBeanType(), validatorConfig.customizeMethod(), MethodParameter.class, String.class);
         } catch (SecurityException s) {
             // 没有权限访问 直接拦截
-            DefaultSystemLog.ERROR().error(s.getMessage(), s);
+            DefaultSystemLog.getLog().error(s.getMessage(), s);
             interceptor.error(request, response, name, value, validatorItem);
             return false;
         }
         if (method == null) {
             // 没有配置对应方法
-            DefaultSystemLog.ERROR().error(handlerMethod.getBeanType() + "未配置验证方法：" + validatorConfig.customizeMethod());
+            DefaultSystemLog.getLog().error(handlerMethod.getBeanType() + "未配置验证方法：" + validatorConfig.customizeMethod());
             interceptor.error(request, response, name, value, validatorItem);
             return false;
         }
@@ -470,7 +470,7 @@ public class ParameterInterceptor extends BaseInterceptor {
             JsonMessage jsonMessage = new JsonMessage<>(validatorItem.code(), validatorItem.msg());
             DefaultSystemLog.LogCallback logCallback = DefaultSystemLog.getLogCallback();
             if (logCallback == null) {
-                DefaultSystemLog.LOG(DefaultSystemLog.LogType.REQUEST).info("{} {} {} {} {}", request.getRequestURI(), parameterName, value, validatorItem.value(), jsonMessage);
+                DefaultSystemLog.getLog().info("{} {} {} {} {}", request.getRequestURI(), parameterName, value, validatorItem.value(), jsonMessage);
             } else {
                 logCallback.log(DefaultSystemLog.LogType.REQUEST, request.getRequestURI(), parameterName, value, validatorItem.value(), jsonMessage);
             }

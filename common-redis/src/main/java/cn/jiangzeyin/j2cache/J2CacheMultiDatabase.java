@@ -62,7 +62,7 @@ public class J2CacheMultiDatabase {
             try {
                 return J2CacheChannelProxy.getChannel(nowProperties);
             } catch (IOException e) {
-                DefaultSystemLog.ERROR().error("channel 异常", e);
+                DefaultSystemLog.getLog().error("channel 异常", e);
             }
             return null;
         });

@@ -50,7 +50,6 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 //        SpringUtil.applicationContext = applicationContext;
         setApplicationContexts(applicationContext);
-        DefaultSystemLog.init();
         Set<ApplicationEventLoad> applicationEventLoads = ApplicationBuilder.getApplicationEventLoads();
         if (applicationEventLoads != null) {
             for (ApplicationEventLoad applicationEventLoad : applicationEventLoads) {
@@ -82,12 +81,12 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
         // 启动最后的预加载
         if (event instanceof ApplicationReadyEvent) {
             CommonInitPackage.init();
-            DefaultSystemLog.LOG().info("common-boot 启动完成");
+            DefaultSystemLog.getLog().info("common-boot 启动完成");
             return;
         }
         // 应用关闭
         if (event instanceof ContextClosedEvent) {
-            DefaultSystemLog.LOG().info("common-boot 关闭程序");
+            DefaultSystemLog.getLog().info("common-boot 关闭程序");
             ThreadPoolService.shutdown();
             return;
         }
@@ -99,7 +98,7 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
                 if (logCallback != null) {
                     logCallback.log(DefaultSystemLog.LogType.REQUEST_ERROR, "servletRequestHandledEvent", servletRequestHandledEvent);
                 } else {
-                    DefaultSystemLog.LOG(DefaultSystemLog.LogType.REQUEST_ERROR).error("error:" + servletRequestHandledEvent.toString(),
+                    DefaultSystemLog.getLog().error("error:" + servletRequestHandledEvent.toString(),
                             servletRequestHandledEvent.getFailureCause());
                 }
             }
