@@ -162,7 +162,7 @@ public class XssFilter extends CharacterEncodingFilter {
             REQUEST_INFO.set(id);
         } else {
             StringBuilder stringBuffer = new StringBuilder();
-            stringBuffer.append(url)
+            stringBuffer.append(url).append(",method").append(request.getMethod())
                     .append(",ip:").append(ip)
                     .append(" parameters:");
             if (parameters != null) {
