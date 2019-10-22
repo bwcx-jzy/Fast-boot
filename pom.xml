@@ -20,7 +20,7 @@
         <fastjson.version>1.2.60</fastjson.version>
         <!-- 项目中使用SpringBoot 版本号 -->
         <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
-        <hutool-all.version>[4.6.0,4.6.99]</hutool-all.version>
+        <hutool-all.version>[5.0.0,5.0.99]</hutool-all.version>
     </properties>
     <modules>
         <module>common-boot</module>
