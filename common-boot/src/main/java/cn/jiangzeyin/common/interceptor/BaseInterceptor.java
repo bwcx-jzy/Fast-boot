@@ -83,6 +83,7 @@ public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         if (response.getStatus() >= HttpStatus.BAD_REQUEST.value()) {
+            //javax.servlet.error.exception"
             DefaultSystemLog.getLog().error("请求错误:" + request.getRequestURI() + "  " + response.getStatus());
         }
     }
