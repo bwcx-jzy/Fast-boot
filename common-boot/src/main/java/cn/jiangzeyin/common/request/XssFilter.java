@@ -186,6 +186,11 @@ public class XssFilter extends CharacterEncodingFilter {
         }
     }
 
+
+    public static String getReqId() {
+        return REQUEST_INFO.get();
+    }
+
     /**
      * 响应记录
      *
@@ -195,7 +200,7 @@ public class XssFilter extends CharacterEncodingFilter {
         if (!LOG) {
             return;
         }
-        String urlInfo = REQUEST_INFO.get();
+        String urlInfo = getReqId();
         if (urlInfo == null) {
             return;
         }
