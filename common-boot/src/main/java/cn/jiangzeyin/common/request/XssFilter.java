@@ -12,6 +12,7 @@ import cn.jiangzeyin.common.interceptor.BaseCallbackController;
 import cn.jiangzeyin.common.spring.SpringUtil;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.springframework.core.convert.ConversionFailedException;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
@@ -40,7 +41,7 @@ public class XssFilter extends CharacterEncodingFilter {
     private static final ThreadLocal<Long> REQUEST_TIME = new ThreadLocal<>();
     private static final ThreadLocal<String> REQUEST_INFO = new ThreadLocal<>();
     private static final ThreadLocal<Map<String, String>> REQUEST_HEADER_MAP = new ThreadLocal<>();
-    private static final ThreadLocal<Map<String, String[]>> REQUEST_PARAMETERS_MAP = new ThreadLocal<>();
+    private static final ThreadLocal<Map<String, String>> REQUEST_PARAMETERS_MAP = new ThreadLocal<>();
     private static long request_timeout_log = 3000L;
     /**
      * 默认true 配置错误 false
@@ -152,43 +153,33 @@ public class XssFilter extends CharacterEncodingFilter {
         // 获取请求信息
         Map<String, String> header = BaseCallbackController.getHeaderMapValues(request);
         REQUEST_HEADER_MAP.set(header);
-        Map<String, String[]> parameters = request.getParameterMap();
+        Map<String, String> parameters = ServletUtil.getParamMap(request);
         REQUEST_PARAMETERS_MAP.set(parameters);
         String ip = ServletUtil.getClientIP(request);
         DefaultSystemLog.LogCallback logCallback = DefaultSystemLog.getLogCallback();
         if (logCallback != null) {
             String id = IdUtil.fastSimpleUUID();
-            logCallback.log(DefaultSystemLog.LogType.REQUEST, id, url, ip, parameters, header);
+            HttpMethod httpMethod = HttpMethod.valueOf(request.getMethod());
+            logCallback.logStart(id, url, httpMethod, ip, parameters, header);
             REQUEST_INFO.set(id);
         } else {
             StringBuilder stringBuffer = new StringBuilder();
             stringBuffer.append(url).append(",method:").append(request.getMethod())
                     .append(",ip:").append(ip)
                     .append(" parameters:");
-            if (parameters != null) {
-                Set<Map.Entry<String, String[]>> entries = parameters.entrySet();
-                stringBuffer.append("{");
-                for (Map.Entry<String, String[]> entry : entries) {
-                    String key = entry.getKey();
-                    if (StrUtil.containsAnyIgnoreCase(key, logFilterPar)) {
-                        continue;
-                    }
-                    stringBuffer.append(key).append(":");
-                    String[] value = entry.getValue();
-                    if (value != null) {
-                        for (int i = 0; i < value.length; i++) {
-                            if (i != 0) {
-                                stringBuffer.append(",");
-                            }
-                            stringBuffer.append(HtmlUtil.unescape(value[i]));
-                        }
-                    }
-                    stringBuffer.append(";");
+            Set<Map.Entry<String, String>> entries = parameters.entrySet();
+            stringBuffer.append("{");
+            for (Map.Entry<String, String> entry : entries) {
+                String key = entry.getKey();
+                if (StrUtil.containsAnyIgnoreCase(key, logFilterPar)) {
+                    continue;
                 }
-                stringBuffer.append("}");
-            } else {
-                stringBuffer.append("null");
+                stringBuffer.append(key).append(":");
+                String value = entry.getValue();
+                stringBuffer.append(HtmlUtil.unescape(value));
+                stringBuffer.append(";");
             }
+            stringBuffer.append("}");
             stringBuffer.append(",header:").append(header);
             DefaultSystemLog.getLog().info(stringBuffer.toString());
             REQUEST_INFO.set(stringBuffer.toString());
@@ -213,7 +204,7 @@ public class XssFilter extends CharacterEncodingFilter {
         DefaultSystemLog.LogCallback logCallback = DefaultSystemLog.getLogCallback();
         if (status >= HttpStatus.BAD_REQUEST.value()) {
             if (logCallback != null) {
-                logCallback.log(DefaultSystemLog.LogType.REQUEST_ERROR, "status", urlInfo, status);
+                logCallback.logError(urlInfo, status);
             } else {
                 String stringBuffer = "status:" +
                         status +
@@ -227,7 +218,7 @@ public class XssFilter extends CharacterEncodingFilter {
         long time = System.currentTimeMillis() - REQUEST_TIME.get();
         if (request_timeout_log > 0 && time > request_timeout_log) {
             if (logCallback != null) {
-                logCallback.log(DefaultSystemLog.LogType.REQUEST_ERROR, "time", urlInfo, time);
+                logCallback.logTimeOut(urlInfo, time);
             } else {
                 String stringBuffer = "time:" +
                         time +
