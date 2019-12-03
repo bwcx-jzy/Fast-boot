@@ -326,7 +326,7 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
                 if (parameters.length <= 0 && Map.class == retCls && Modifier.isStatic(modifiers) && Modifier.isPrivate(modifiers)) {
                     Map<String, Object> map = (Map<String, Object>) method.invoke(null);
                     if (map != null) {
-                        properties(map);
+                        super.properties(map);
                     }
                 } else {
                     throw new IllegalArgumentException(cls + "  " + method + "  " + PreLoadMethod.class + " must use empty parameters static Map private");
