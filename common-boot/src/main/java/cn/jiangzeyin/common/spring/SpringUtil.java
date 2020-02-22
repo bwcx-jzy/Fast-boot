@@ -58,6 +58,11 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
         }
     }
 
+    public static void updateApplicationContext(ApplicationContext applicationContext) {
+        SpringUtil.setApplicationContexts(applicationContext);
+    }
+
+
     /**
      * 启动完成
      *
