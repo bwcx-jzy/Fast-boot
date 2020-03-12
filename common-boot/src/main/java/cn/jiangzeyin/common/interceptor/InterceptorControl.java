@@ -57,7 +57,7 @@ public class InterceptorControl implements WebMvcConfigurer {
     }
 
     private Set<Class<?>> loadApplicationInterceptor() {
-        Set<Class<? extends BaseInterceptor>> interceptorClass = ApplicationBuilder.getInterceptorClass();
+        Set<Class<? extends BaseInterceptor>> interceptorClass = ApplicationBuilder.getActiveApplication().getInterceptorClass();
         if (interceptorClass == null) {
             return null;
         }
@@ -107,10 +107,10 @@ public class InterceptorControl implements WebMvcConfigurer {
 
 
     private void loadInterceptor(Class<?> itemCls, InterceptorRegistry registry) {
-        if (LOAD_OK.contains(itemCls) && !ApplicationBuilder.isRestart()) {
-            DefaultSystemLog.getLog().warn("重复注入拦截器" + itemCls);
-            return;
-        }
+//        if (LOAD_OK.contains(itemCls) && !ApplicationBuilder.isRestart()) {
+//            DefaultSystemLog.getLog().warn("重复注入拦截器" + itemCls);
+//            return;
+//        }
         InterceptorPattens interceptorPattens = itemCls.getAnnotation(InterceptorPattens.class);
         Object handlerInterceptor = Singleton.get(itemCls);
         String[] patterns = interceptorPattens.value();
@@ -149,7 +149,7 @@ public class InterceptorControl implements WebMvcConfigurer {
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        Set<HttpMessageConverter<?>> httpMessageConverters = ApplicationBuilder.getHttpMessageConverters();
+        Set<HttpMessageConverter<?>> httpMessageConverters = ApplicationBuilder.getActiveApplication().getHttpMessageConverters();
         if (httpMessageConverters != null) {
             converters.addAll(httpMessageConverters);
         }
@@ -178,7 +178,7 @@ public class InterceptorControl implements WebMvcConfigurer {
         }
         // 加载默认注入
         boolean ext = false;
-        Set<Class<? extends HandlerMethodArgumentResolver>> methodArgumentResolvers = ApplicationBuilder.getHandlerMethodArgumentResolvers();
+        Set<Class<? extends HandlerMethodArgumentResolver>> methodArgumentResolvers = ApplicationBuilder.getActiveApplication().getHandlerMethodArgumentResolvers();
         if (methodArgumentResolvers != null) {
             for (Class<? extends HandlerMethodArgumentResolver> methodArgumentResolver : methodArgumentResolvers) {
                 addArgumentResolvers(argumentResolvers, methodArgumentResolver);

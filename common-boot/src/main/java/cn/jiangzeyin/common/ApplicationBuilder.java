@@ -1,5 +1,6 @@
 package cn.jiangzeyin.common;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ClassUtil;
 import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.common.interceptor.BaseInterceptor;
@@ -27,14 +28,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2018/4/13
  */
 public class ApplicationBuilder extends SpringApplicationBuilder {
-    /**
-     * 程序全局控制对象
-     */
-    private volatile static ApplicationBuilder applicationBuilder;
+
+    private final static List<ApplicationBuilder> applicationBuilder = new ArrayList<>();
     /**
      * 程序主类
      */
-    protected Class applicationClass;
+    protected Class<?> applicationClass;
 
     protected SpringApplication application;
     /**
@@ -103,11 +102,6 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
     protected ApplicationBuilder(Class<?>... sources) throws Exception {
         super(sources);
         this.application = application();
-        if (applicationBuilder != null) {
-            if (!isRestart()) {
-                throw new IllegalArgumentException("duplicate create");
-            }
-        }
         this.applicationClass = this.application.getMainApplicationClass();
         // 重写banner
         banner((environment, sourceClass, out) -> {
@@ -125,50 +119,42 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
             }
         }
         loadProperties("cn.jiangzeyin");
-        ApplicationBuilder.applicationBuilder = this;
+        //
+        applicationBuilder.add(this);
     }
 
     public static Environment getEnvironment() {
-        if (applicationBuilder == null || applicationBuilder.environment == null) {
+        if (CollUtil.isEmpty(applicationBuilder)) {
             return SpringUtil.getBean(Environment.class);
         }
-        return applicationBuilder.environment;
+        return getActiveApplication().environment;
     }
 
-    public static Set<ApplicationEventClient> getApplicationEventClients() {
-        if (applicationBuilder == null) {
-            return null;
-        }
-        return applicationBuilder.applicationEventClients;
+    public Set<ApplicationEventClient> getApplicationEventClients() {
+        return getActiveApplication().applicationEventClients;
     }
 
-    public static Set<ApplicationEventLoad> getApplicationEventLoads() {
-        if (applicationBuilder == null) {
-            return null;
+    public static ApplicationBuilder getActiveApplication() {
+        if (CollUtil.isEmpty(applicationBuilder)) {
+            throw new RuntimeException();
         }
-        return applicationBuilder.applicationEventLoads;
+        return applicationBuilder.get(applicationBuilder.size() - 1);
     }
 
-    public static Set<Class<? extends BaseInterceptor>> getInterceptorClass() {
-        if (applicationBuilder == null) {
-            return null;
-        }
-        return applicationBuilder.interceptorClass;
+    public Set<ApplicationEventLoad> getApplicationEventLoads() {
+        return getActiveApplication().applicationEventLoads;
     }
 
-    public static Set<HttpMessageConverter<?>> getHttpMessageConverters() {
-        if (applicationBuilder == null) {
-            return null;
-        }
-        return applicationBuilder.httpMessageConverters;
+    public Set<Class<? extends BaseInterceptor>> getInterceptorClass() {
+        return getActiveApplication().interceptorClass;
     }
 
+    public Set<HttpMessageConverter<?>> getHttpMessageConverters() {
+        return getActiveApplication().httpMessageConverters;
+    }
 
-    public static Set<Class<? extends HandlerMethodArgumentResolver>> getHandlerMethodArgumentResolvers() {
-        if (applicationBuilder == null) {
-            return null;
-        }
-        return applicationBuilder.handlerMethodArgumentResolvers;
+    public Set<Class<? extends HandlerMethodArgumentResolver>> getHandlerMethodArgumentResolvers() {
+        return getActiveApplication().handlerMethodArgumentResolvers;
     }
 
     /**
