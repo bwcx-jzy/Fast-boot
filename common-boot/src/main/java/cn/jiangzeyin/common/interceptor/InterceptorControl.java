@@ -57,7 +57,7 @@ public class InterceptorControl implements WebMvcConfigurer {
     }
 
     private Set<Class<?>> loadApplicationInterceptor() {
-        Set<Class<? extends BaseInterceptor>> interceptorClass = ApplicationBuilder.getActiveApplication().getInterceptorClass();
+        Set<Class<? extends BaseInterceptor>> interceptorClass = ApplicationBuilder.getActiveApplication(ApplicationBuilder::getInterceptorClass);
         if (interceptorClass == null) {
             return null;
         }
@@ -149,7 +149,7 @@ public class InterceptorControl implements WebMvcConfigurer {
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        Set<HttpMessageConverter<?>> httpMessageConverters = ApplicationBuilder.getActiveApplication().getHttpMessageConverters();
+        Set<HttpMessageConverter<?>> httpMessageConverters = ApplicationBuilder.getActiveApplication(ApplicationBuilder::getHttpMessageConverters);
         if (httpMessageConverters != null) {
             converters.addAll(httpMessageConverters);
         }
@@ -178,7 +178,7 @@ public class InterceptorControl implements WebMvcConfigurer {
         }
         // 加载默认注入
         boolean ext = false;
-        Set<Class<? extends HandlerMethodArgumentResolver>> methodArgumentResolvers = ApplicationBuilder.getActiveApplication().getHandlerMethodArgumentResolvers();
+        Set<Class<? extends HandlerMethodArgumentResolver>> methodArgumentResolvers = ApplicationBuilder.getActiveApplication(ApplicationBuilder::getHandlerMethodArgumentResolvers);
         if (methodArgumentResolvers != null) {
             for (Class<? extends HandlerMethodArgumentResolver> methodArgumentResolver : methodArgumentResolvers) {
                 addArgumentResolvers(argumentResolvers, methodArgumentResolver);

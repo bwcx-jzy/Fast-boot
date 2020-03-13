@@ -50,7 +50,8 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 //        SpringUtil.applicationContext = applicationContext;
         setApplicationContexts(applicationContext);
-        Set<ApplicationEventLoad> applicationEventLoads = ApplicationBuilder.getActiveApplication().getApplicationEventLoads();
+        Set<ApplicationEventLoad> applicationEventLoads = ApplicationBuilder.getActiveApplication(ApplicationBuilder::getApplicationEventLoads);
+        //.getApplicationEventLoads();
         if (applicationEventLoads != null) {
             for (ApplicationEventLoad applicationEventLoad : applicationEventLoads) {
                 applicationEventLoad.applicationLoad();
@@ -77,7 +78,7 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
             return;
         }
         //  通知子级
-        Set<ApplicationEventClient> applicationEventClients = ApplicationBuilder.getActiveApplication().getApplicationEventClients();
+        Set<ApplicationEventClient> applicationEventClients = ApplicationBuilder.getActiveApplication(ApplicationBuilder::getApplicationEventClients);
         if (applicationEventClients != null) {
             for (ApplicationEventClient applicationEventClient : applicationEventClients) {
                 applicationEventClient.onApplicationEvent(event);

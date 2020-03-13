@@ -20,6 +20,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 /**
  * Boot 启动控制
@@ -29,7 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ApplicationBuilder extends SpringApplicationBuilder {
 
-    private final static List<ApplicationBuilder> applicationBuilder = new ArrayList<>();
+    private final static List<ApplicationBuilder> APPLICATION_BUILDER = new ArrayList<>();
     /**
      * 程序主类
      */
@@ -110,7 +111,7 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
             String msg = environment.getProperty(CommonPropertiesFinal.BANNER_MSG, "boot Application starting");
             out.println(msg);
         });
-        EnableCommonBoot enableCommonBoot = (EnableCommonBoot) this.applicationClass.getAnnotation(EnableCommonBoot.class);
+        EnableCommonBoot enableCommonBoot = this.applicationClass.getAnnotation(EnableCommonBoot.class);
         if (enableCommonBoot == null) {
             addLoadPage("cn.jiangzeyin");
         } else {
@@ -120,41 +121,43 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
         }
         loadProperties("cn.jiangzeyin");
         //
-        applicationBuilder.add(this);
+        APPLICATION_BUILDER.add(this);
     }
 
     public static Environment getEnvironment() {
-        if (CollUtil.isEmpty(applicationBuilder)) {
+        if (CollUtil.isEmpty(APPLICATION_BUILDER)) {
             return SpringUtil.getBean(Environment.class);
         }
-        return getActiveApplication().environment;
+        return getActiveApplication(applicationBuilder -> applicationBuilder.environment);
     }
 
-    public Set<ApplicationEventClient> getApplicationEventClients() {
-        return getActiveApplication().applicationEventClients;
-    }
 
-    public static ApplicationBuilder getActiveApplication() {
-        if (CollUtil.isEmpty(applicationBuilder)) {
-            throw new RuntimeException();
+    public static <R> R getActiveApplication(Function<ApplicationBuilder, R> function) {
+        if (CollUtil.isEmpty(APPLICATION_BUILDER)) {
+            return null;
         }
-        return applicationBuilder.get(applicationBuilder.size() - 1);
+        ApplicationBuilder applicationBuilder = ApplicationBuilder.APPLICATION_BUILDER.get(ApplicationBuilder.APPLICATION_BUILDER.size() - 1);
+        return function.apply(applicationBuilder);
     }
 
     public Set<ApplicationEventLoad> getApplicationEventLoads() {
-        return getActiveApplication().applicationEventLoads;
+        return applicationEventLoads;
     }
 
     public Set<Class<? extends BaseInterceptor>> getInterceptorClass() {
-        return getActiveApplication().interceptorClass;
+        return interceptorClass;
     }
 
     public Set<HttpMessageConverter<?>> getHttpMessageConverters() {
-        return getActiveApplication().httpMessageConverters;
+        return httpMessageConverters;
     }
 
     public Set<Class<? extends HandlerMethodArgumentResolver>> getHandlerMethodArgumentResolvers() {
-        return getActiveApplication().handlerMethodArgumentResolvers;
+        return handlerMethodArgumentResolvers;
+    }
+
+    public Set<ApplicationEventClient> getApplicationEventClients() {
+        return applicationEventClients;
     }
 
     /**
@@ -217,6 +220,7 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
         return this;
     }
 
+
     /**
      * 添加参数解析器
      *
@@ -246,9 +250,9 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
         }
         Object proxy;
         String fliedName;
-        ComponentScan componentScan = (ComponentScan) applicationClass.getAnnotation(ComponentScan.class);
+        ComponentScan componentScan = applicationClass.getAnnotation(ComponentScan.class);
         if (componentScan == null) {
-            SpringBootApplication springBootApplication = (SpringBootApplication) applicationClass.getAnnotation(SpringBootApplication.class);
+            SpringBootApplication springBootApplication = applicationClass.getAnnotation(SpringBootApplication.class);
             if (springBootApplication == null) {
                 throw new IllegalArgumentException("please add " + SpringBootApplication.class);
             } else {
