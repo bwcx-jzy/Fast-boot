@@ -40,8 +40,6 @@ public class XssFilter extends CharacterEncodingFilter {
 
     private static final ThreadLocal<Long> REQUEST_TIME = new ThreadLocal<>();
     private static final ThreadLocal<String> REQUEST_INFO = new ThreadLocal<>();
-    private static final ThreadLocal<Map<String, String>> REQUEST_HEADER_MAP = new ThreadLocal<>();
-    private static final ThreadLocal<Map<String, String>> REQUEST_PARAMETERS_MAP = new ThreadLocal<>();
     private static long request_timeout_log = 3000L;
     /**
      * 默认true 配置错误 false
@@ -102,10 +100,8 @@ public class XssFilter extends CharacterEncodingFilter {
      * 释放资源
      */
     private static void cleanThreadLocal() {
-        REQUEST_HEADER_MAP.remove();
         REQUEST_INFO.remove();
         REQUEST_TIME.remove();
-        REQUEST_PARAMETERS_MAP.remove();
     }
 
     @Override
@@ -152,15 +148,13 @@ public class XssFilter extends CharacterEncodingFilter {
         }
         // 获取请求信息
         Map<String, String> header = BaseCallbackController.getHeaderMapValues(request);
-        REQUEST_HEADER_MAP.set(header);
         Map<String, String> parameters = ServletUtil.getParamMap(request);
-        REQUEST_PARAMETERS_MAP.set(parameters);
         String ip = ServletUtil.getClientIP(request);
         DefaultSystemLog.LogCallback logCallback = DefaultSystemLog.getLogCallback();
         if (logCallback != null) {
             String id = IdUtil.fastSimpleUUID();
             HttpMethod httpMethod = HttpMethod.valueOf(request.getMethod());
-            logCallback.logStart(id, url, httpMethod, ip, parameters, header);
+            logCallback.logStart(request, id, url, httpMethod, ip, parameters, header);
             REQUEST_INFO.set(id);
         } else {
             StringBuilder stringBuffer = new StringBuilder();
