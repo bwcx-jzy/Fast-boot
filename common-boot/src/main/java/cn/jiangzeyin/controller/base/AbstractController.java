@@ -191,7 +191,7 @@ public abstract class AbstractController extends BaseCallbackController {
      */
     protected Map<String, String> getRefererParameter() {
         String referer = getHeader(HttpHeaders.REFERER);
-        return HttpUtil.decodeParamMap(referer, CharsetUtil.UTF_8);
+        return HttpUtil.decodeParamMap(referer, CharsetUtil.CHARSET_UTF_8);
     }
 
     /**

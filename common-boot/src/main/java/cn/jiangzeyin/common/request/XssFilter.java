@@ -94,7 +94,7 @@ public class XssFilter extends CharacterEncodingFilter {
         // 静态资源url
         String val = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.INTERCEPTOR_RESOURCE_HANDLER);
         if (StrUtil.isNotEmpty(val)) {
-            RESOURCE_HANDLER = StrUtil.split(val, StrUtil.COMMA);
+            RESOURCE_HANDLER = StrUtil.splitToArray(val, StrUtil.COMMA);
         }
     }
 

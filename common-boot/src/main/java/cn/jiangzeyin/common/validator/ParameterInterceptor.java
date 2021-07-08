@@ -236,7 +236,7 @@ public class ParameterInterceptor extends BaseInterceptor {
         }
         if (range.contains(StrUtil.COLON)) {
             // 范围
-            String[] ranges = StrUtil.split(range, StrUtil.COLON);
+            String[] ranges = StrUtil.splitToArray(range, StrUtil.COLON);
             if (ranges != null && ranges.length == 2) {
                 int start = Convert.toInt(ranges[0]);
                 int end = Convert.toInt(ranges[1]);
@@ -270,7 +270,7 @@ public class ParameterInterceptor extends BaseInterceptor {
             range = range.substring(0, start);
         }
         if (range.contains(StrUtil.COLON)) {
-            String[] ranges = StrUtil.split(range, StrUtil.COLON);
+            String[] ranges = StrUtil.splitToArray(range, StrUtil.COLON);
             if (ranges != null && ranges.length == 2) {
                 doubles[0] = Convert.toDouble(ranges[0]);
                 doubles[1] = Convert.toDouble(ranges[1]);
@@ -344,7 +344,7 @@ public class ParameterInterceptor extends BaseInterceptor {
             case POSITIVE_INTEGER:
             case NON_ZERO_INTEGERS:
                 String reg = validatorRule == ValidatorRule.POSITIVE_INTEGER ? "^\\+?[0-9]*$" : "^\\+?[1-9][0-9]*$";
-                if (!Validator.isMactchRegex(reg, value)) {
+                if (!Validator.isMatchRegex(reg, value)) {
                     return false;
                 }
                 // 强制现在整数不能超过7位
@@ -373,7 +373,7 @@ public class ParameterInterceptor extends BaseInterceptor {
         if (douRange != null && douRange[2] != null) {
             int len = douRange[2].intValue();
             // 小数
-            if (!Validator.isMactchRegex("\\d+\\.\\d{" + len + "}$", value)) {
+            if (!Validator.isMatchRegex("\\d+\\.\\d{" + len + "}$", value)) {
                 return false;
             }
         } else if (!Validator.isNumber(value)) {

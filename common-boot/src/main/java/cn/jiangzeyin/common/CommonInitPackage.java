@@ -38,7 +38,7 @@ public class CommonInitPackage {
         if (StrUtil.isBlank(pageName)) {
             return;
         }
-        String[] pages = StrUtil.split(pageName, StrUtil.COMMA);
+        String[] pages = StrUtil.splitToArray(pageName, StrUtil.COMMA);
         if (pages == null) {
             return;
         }

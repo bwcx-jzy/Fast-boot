@@ -43,7 +43,7 @@ public class InterceptorControl implements WebMvcConfigurer {
         Set<Class<?>> def = loadApplicationInterceptor();
         // 用户添加的
         if (StrUtil.isNotEmpty(loadPath)) {
-            String[] paths = StrUtil.split(loadPath, StrUtil.COMMA);
+            String[] paths = StrUtil.splitToArray(loadPath, StrUtil.COMMA);
             Collection<Class<?>> newClassSet = CollUtil.union(def, new ArrayList<>());
             for (String item : paths) {
                 Set<Class<?>> classSet = ClassUtil.scanPackageByAnnotation(item, InterceptorPattens.class);
@@ -163,7 +163,7 @@ public class InterceptorControl implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         if (StrUtil.isNotEmpty(loadPath)) {
-            String[] paths = StrUtil.split(loadPath, StrUtil.COMMA);
+            String[] paths = StrUtil.splitToArray(loadPath, StrUtil.COMMA);
             Collection<Class<?>> newClassSet = null;
             for (String item : paths) {
                 Set<Class<?>> classSet = ClassUtil.scanPackageBySuper(item, HandlerMethodArgumentResolver.class);
