@@ -8,12 +8,18 @@ import cn.jiangzeyin.common.spring.SpringUtil;
 import cn.jiangzeyin.common.spring.event.ApplicationEventClient;
 import cn.jiangzeyin.common.spring.event.ApplicationEventLoad;
 import cn.jiangzeyin.common.validator.ParameterInterceptor;
+import org.springframework.boot.Banner;
+import org.springframework.boot.ImageBanner;
+import org.springframework.boot.ResourceBanner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.Resource;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 
@@ -31,6 +37,8 @@ import java.util.function.Function;
 public class ApplicationBuilder extends SpringApplicationBuilder {
 
     private final static List<ApplicationBuilder> APPLICATION_BUILDER = new ArrayList<>();
+
+    static final String[] IMAGE_EXTENSION = new String[]{"gif", "jpg", "png"};
     /**
      * 程序主类
      */
@@ -109,6 +117,25 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
             // 最早获取配置信息
             ApplicationBuilder.this.environment = environment;
             String msg = environment.getProperty(CommonPropertiesFinal.BANNER_MSG, "boot Application starting");
+            //带路径的可能是banner文件或banner图片
+            if (msg.contains("classpath")) {
+                String suffixName = msg.substring(msg.indexOf(".")+1);
+                for (String s : IMAGE_EXTENSION) {
+                    if(s.equals(suffixName)){
+                        Banner imageBanner = getImageBanner(environment, msg);
+                        if (imageBanner != null) {
+                            imageBanner.printBanner(environment, sourceClass, out);
+                            return;
+                        }
+                    }
+                }
+
+                Banner textBanner = getTextBanner(environment, msg);
+                if (textBanner != null) {
+                    textBanner.printBanner(environment, sourceClass, out);
+                    return;
+                }
+            }
             out.println(msg);
         });
         EnableCommonBoot enableCommonBoot = this.applicationClass.getAnnotation(EnableCommonBoot.class);
@@ -122,6 +149,17 @@ public class ApplicationBuilder extends SpringApplicationBuilder {
         loadProperties("cn.jiangzeyin");
         //
         APPLICATION_BUILDER.add(this);
+    }
+
+    private Banner getImageBanner(Environment environment, String location) {
+        Resource resource = new DefaultResourceLoader(ClassUtils.getDefaultClassLoader()).getResource(location);
+        return resource.exists() ? new ImageBanner(resource) : null;
+
+    }
+
+    private Banner getTextBanner(Environment environment, String location) {
+        Resource resource = new DefaultResourceLoader(ClassUtils.getDefaultClassLoader()).getResource(location);
+        return resource.exists() ? new ResourceBanner(resource) : null;
     }
 
     public static Environment getEnvironment() {

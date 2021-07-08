@@ -1,7 +1,9 @@
 package cn.jiangzeyin.common.interceptor;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jiangzeyin.common.DefaultSystemLog;
 import cn.jiangzeyin.controller.base.AbstractController;
+import org.apache.catalina.connector.ClientAbortException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -86,11 +88,24 @@ public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        if (ex != null) {
-            DefaultSystemLog.getLog().error("controller 异常:" + request.getRequestURL(), ex);
-        }
+        this.afterCompletion(request, ex);
         // 释放资源
         AbstractController.clearResources();
         clearResources();
+    }
+
+    private void afterCompletion(HttpServletRequest request, Exception ex) {
+        if (ex == null) {
+            return;
+        }
+        if (ex instanceof ClientAbortException) {
+            ClientAbortException abortException = (ClientAbortException) ex;
+            String message = abortException.getMessage();
+            if (StrUtil.contains(message, "Broken pipe")) {
+                DefaultSystemLog.getLog().warn("controller 异常:" + request.getRequestURL());
+                return;
+            }
+        }
+        DefaultSystemLog.getLog().error("controller 异常:" + request.getRequestURL(), ex);
     }
 }

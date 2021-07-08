@@ -28,6 +28,10 @@ public final class CommonPropertiesFinal {
      */
     public static final String REQUEST_LOG = REQUEST + ".log";
     /**
+     * 是否复制ServletInputStream  默认不复制  true false
+     */
+    public static final String REQUEST_COPY_INPUT_STREAM = REQUEST + ".copyInputStream";
+    /**
      * 参数xss 提前过滤
      */
     public static final String REQUEST_PARAMETER_XSS = REQUEST + ".parameterXss";

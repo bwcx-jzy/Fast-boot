@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -68,6 +69,7 @@ public class DefaultSystemLog {
         /**
          * 请求开始
          *
+         * @param request    请求信息
          * @param id         请求id
          * @param url        url
          * @param httpMethod 方法
@@ -75,7 +77,7 @@ public class DefaultSystemLog {
          * @param parameters 参数
          * @param header     请求头
          */
-        void logStart(String id, String url, HttpMethod httpMethod, String ip, Map<String, String> parameters, Map<String, String> header);
+        void logStart(HttpServletRequest request, String id, String url, HttpMethod httpMethod, String ip, Map<String, String> parameters, Map<String, String> header);
 
         /**
          * 请求错误
