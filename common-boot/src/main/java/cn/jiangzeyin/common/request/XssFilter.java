@@ -4,6 +4,7 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.util.URLUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import cn.hutool.http.HtmlUtil;
 import cn.jiangzeyin.CommonPropertiesFinal;
@@ -54,6 +55,10 @@ public class XssFilter extends CharacterEncodingFilter {
      */
     private static boolean TRIMAll;
     /**
+     * url 解码
+     */
+    private static boolean URL_DECODE;
+    /**
      * 控制台日志管理字段
      */
     public static String[] logFilterPar = new String[]{"pwd", "pass", "password"};
@@ -81,12 +86,15 @@ public class XssFilter extends CharacterEncodingFilter {
         } catch (ConversionFailedException ignored) {
             TRIMAll = false;
         }
+        // 参数空格
+        try {
+            URL_DECODE = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.REQUEST_PARAMETER_URL_DECODE, Boolean.class, false);
+        } catch (ConversionFailedException ignored) {
+            URL_DECODE = false;
+        }
         // 超时时间
         try {
-            Long timeOut = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.REQUEST_TIME_OUT, Long.class, request_timeout_log);
-            if (timeOut != null) {
-                request_timeout_log = timeOut;
-            }
+            request_timeout_log = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.REQUEST_TIME_OUT, Long.class, request_timeout_log);
         } catch (ConversionFailedException ignored) {
         }
         // 静态资源url
@@ -269,6 +277,10 @@ public class XssFilter extends CharacterEncodingFilter {
             if (TRIMAll) {
                 // 空格
                 values[i] = values[i].trim();
+            }
+            if (URL_DECODE) {
+                // url 解码
+                values[i] = URLUtil.decode(values[i]);
             }
         }
         return values;

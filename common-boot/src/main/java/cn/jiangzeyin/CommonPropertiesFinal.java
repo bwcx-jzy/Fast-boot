@@ -39,6 +39,10 @@ public final class CommonPropertiesFinal {
      * 参数去掉前后空格
      */
     public static final String REQUEST_PARAMETER_TRIM_ALL = REQUEST + ".trimAll";
+    /**
+     * 参数 url 解码
+     */
+    public static final String REQUEST_PARAMETER_URL_DECODE = REQUEST + ".urlDecode";
 
     /**
      * tomcat 配置

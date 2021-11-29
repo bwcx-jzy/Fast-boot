@@ -37,6 +37,12 @@
       "defaultValue": true
     },
     {
+      "name": "request.urlDecode",
+      "type": "java.lang.Boolean",
+      "description": "是否在过滤器中 参数 url 解码",
+      "defaultValue": false
+    },
+    {
       "name": "interceptor.initPackageName",
       "type": "java.lang.String",
       "description": "加载拦截器包配置包名.多个包名请用逗号隔开",
