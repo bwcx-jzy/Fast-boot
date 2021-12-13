@@ -64,9 +64,9 @@ public class CommonInitPackage {
             return;
         }
         // 排序调用
-        List<Map.Entry<Class, Integer>> newList = splitClass(set);
+        List<Map.Entry<Class<?>, Integer>> newList = splitClass(set);
         if (newList != null) {
-            for (Map.Entry<Class, Integer> item : newList) {
+            for (Map.Entry<Class<?>, Integer> item : newList) {
                 loadClass(item.getKey());
             }
         }
@@ -79,16 +79,16 @@ public class CommonInitPackage {
      * @param list list
      * @return 排序后的
      */
-    private static List<Map.Entry<Class, Integer>> splitClass(Set<Class<?>> list) {
-        HashMap<Class, Integer> sortMap = new HashMap<>(10);
-        for (Class item : list) {
-            PreLoadClass preLoadClass = (PreLoadClass) item.getAnnotation(PreLoadClass.class);
+    private static List<Map.Entry<Class<?>, Integer>> splitClass(Set<Class<?>> list) {
+        HashMap<Class<?>, Integer> sortMap = new HashMap<>(10);
+        for (Class<?> item : list) {
+            PreLoadClass preLoadClass = item.getAnnotation(PreLoadClass.class);
             sortMap.put(item, preLoadClass.value());
         }
-        List<Map.Entry<Class, Integer>> newList = null;
+        List<Map.Entry<Class<?>, Integer>> newList = null;
         if (sortMap.size() > 0) {
             newList = new ArrayList<>(sortMap.entrySet());
-            newList.sort(Comparator.comparing(Map.Entry::getValue));
+            newList.sort(Map.Entry.comparingByValue());
         }
         return newList;
     }
@@ -98,8 +98,7 @@ public class CommonInitPackage {
      *
      * @param classT class
      */
-    @SuppressWarnings("unchecked")
-    private static void loadClass(Class classT) {
+    private static void loadClass(Class<?> classT) {
         // 注入到Spring 容器中
         SpringUtil.registerSingleton(classT);
         // 调用方法
@@ -121,7 +120,7 @@ public class CommonInitPackage {
         }
         if (sortMap.size() > 0) {
             List<Map.Entry<Method, Integer>> newList = new ArrayList<>(sortMap.entrySet());
-            newList.sort(Comparator.comparing(Map.Entry::getValue));
+            newList.sort(Map.Entry.comparingByValue());
             for (Map.Entry<Method, Integer> item : newList) {
                 Method method = item.getKey();
                 if (METHOD_LIST.contains(method) && !ApplicationBuilder.isRestart()) {
@@ -132,8 +131,10 @@ public class CommonInitPackage {
                     method.setAccessible(true);
                     method.invoke(null);
                     METHOD_LIST.add(method);
-                } catch (IllegalAccessException | InvocationTargetException e) {
-                    DefaultSystemLog.getLog().error("预加载包错误:" + classT + "  " + method.getName() + "  执行错误", e);
+                } catch (Exception e) {
+                    Throwable cause = e.getCause();
+                    Throwable show = cause == null ? e : cause;
+                    DefaultSystemLog.getLog().error("预加载包错误:" + classT + "  " + method.getName() + "  执行错误", show);
                 }
             }
         }

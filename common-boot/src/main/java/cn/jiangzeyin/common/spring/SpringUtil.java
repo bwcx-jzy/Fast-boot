@@ -72,7 +72,7 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
         if (event instanceof ApplicationFailedEvent) {
-            System.err.println("Common-Boot 启动失败");
+            System.err.println("common-Boot failed to activate");
             ApplicationFailedEvent applicationFailedEvent = (ApplicationFailedEvent) event;
             applicationFailedEvent.getException().printStackTrace();
             return;
@@ -87,12 +87,12 @@ public class SpringUtil implements ApplicationListener, ApplicationContextAware 
         // 启动最后的预加载
         if (event instanceof ApplicationReadyEvent) {
             CommonInitPackage.init();
-            DefaultSystemLog.getLog().info("common-boot 启动完成");
+            DefaultSystemLog.getLog().info("common-boot Successfully started");
             return;
         }
         // 应用关闭
         if (event instanceof ContextClosedEvent) {
-            DefaultSystemLog.getLog().info("common-boot 关闭程序");
+            DefaultSystemLog.getLog().info("common-boot turn off an app");
             ThreadPoolService.shutdown();
             return;
         }
