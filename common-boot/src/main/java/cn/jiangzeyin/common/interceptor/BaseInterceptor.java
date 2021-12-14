@@ -81,7 +81,7 @@ public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         if (response.getStatus() >= HttpStatus.BAD_REQUEST.value()) {
             //javax.servlet.error.exception"
-            DefaultSystemLog.getLog().error("请求错误:" + request.getRequestURI() + "  " + response.getStatus());
+            DefaultSystemLog.getLog().error("request code error:" + request.getRequestURI() + "  " + response.getStatus());
         }
     }
 
@@ -102,10 +102,10 @@ public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
             ClientAbortException abortException = (ClientAbortException) ex;
             String message = abortException.getMessage();
             if (StrUtil.contains(message, "Broken pipe")) {
-                DefaultSystemLog.getLog().warn("controller 异常:" + request.getRequestURL());
+                DefaultSystemLog.getLog().warn("controller Exception:" + request.getRequestURL());
                 return;
             }
         }
-        DefaultSystemLog.getLog().error("controller 异常:" + request.getRequestURL(), ex);
+        DefaultSystemLog.getLog().error("controller Exception:" + request.getRequestURL(), ex);
     }
 }

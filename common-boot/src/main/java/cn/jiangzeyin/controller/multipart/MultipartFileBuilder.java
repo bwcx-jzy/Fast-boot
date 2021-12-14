@@ -7,6 +7,7 @@ import cn.hutool.core.text.UnicodeUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
+import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -23,7 +24,7 @@ import java.util.*;
  */
 public class MultipartFileBuilder {
 
-    private MultipartHttpServletRequest multipartHttpServletRequest;
+    private final MultipartHttpServletRequest multipartHttpServletRequest;
     /**
      * 限制上传文件的大小
      */
@@ -31,7 +32,7 @@ public class MultipartFileBuilder {
     /**
      * 字段名称
      */
-    private Set<String> fieldNames = new HashSet<>();
+    private final Set<String> fieldNames = new HashSet<>();
     /**
      * 多文件上传
      */
@@ -268,6 +269,7 @@ public class MultipartFileBuilder {
      * @throws IOException IO
      */
     private String[] saveAndName(MultipartFile multiFile) throws IOException {
+        Assert.notNull(multiFile, "not null");
         String fileName = multiFile.getOriginalFilename();
         if (StrUtil.isEmpty(fileName)) {
             throw new IllegalArgumentException("fileName:不能获取到文件名");

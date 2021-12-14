@@ -108,9 +108,6 @@ public class ParameterInterceptor extends BaseInterceptor {
             return true;
         }
         MethodParameter[] methodParameters = handlerMethod.getMethodParameters();
-        if (methodParameters == null) {
-            return true;
-        }
         for (MethodParameter item : methodParameters) {
             ValidatorItem[] validatorItems;
             ValidatorConfig validatorConfig = item.getParameterAnnotation(ValidatorConfig.class);
@@ -467,7 +464,7 @@ public class ParameterInterceptor extends BaseInterceptor {
     public static class DefaultInterceptor implements Interceptor {
         @Override
         public void error(HttpServletRequest request, HttpServletResponse response, String parameterName, String value, ValidatorItem validatorItem) {
-            JsonMessage jsonMessage = new JsonMessage<>(validatorItem.code(), validatorItem.msg());
+            JsonMessage<String> jsonMessage = new JsonMessage<>(validatorItem.code(), validatorItem.msg());
             DefaultSystemLog.LogCallback logCallback = DefaultSystemLog.getLogCallback();
             if (logCallback == null) {
                 DefaultSystemLog.getLog().info("{} {} {} {} {}", request.getRequestURI(), parameterName, value, validatorItem.value(), jsonMessage);
