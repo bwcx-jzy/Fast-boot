@@ -55,6 +55,12 @@
       "defaultValue": ""
     },
     {
+      "name": "interceptor.resourceHandlerMap",
+      "type": "java.util.Map",
+      "description": "拦截器静态资源url配置",
+      "defaultValue": ""
+    },
+    {
       "name": "interceptor.resourceLocation",
       "type": "java.lang.String",
       "description": "拦截器资源本地location 配置",

@@ -63,7 +63,7 @@ public final class CommonPropertiesFinal {
     /**
      * 拦截器配置
      */
-    private static final String INTERCEPTOR = "interceptor";
+    public static final String INTERCEPTOR = "interceptor";
     /**
      * 加载指定包名下的拦截器
      */
@@ -72,6 +72,12 @@ public final class CommonPropertiesFinal {
      * 拦截器静态资源url路径
      */
     public static final String INTERCEPTOR_RESOURCE_HANDLER = INTERCEPTOR + ".resourceHandler";
+    /**
+     * 拦截器静态资源url路径 map
+     * <p>
+     * /css/** : /static/,1d,gzip
+     */
+    public static final String INTERCEPTOR_RESOURCE_HANDLER_MAP = INTERCEPTOR + ".resourceHandlerMap";
     /**
      * 拦截器静态资源文件路径
      */

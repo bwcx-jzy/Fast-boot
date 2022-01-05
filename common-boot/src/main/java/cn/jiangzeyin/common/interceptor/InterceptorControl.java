@@ -9,14 +9,17 @@ import cn.jiangzeyin.CommonPropertiesFinal;
 import cn.jiangzeyin.common.ApplicationBuilder;
 import cn.jiangzeyin.common.DefaultSystemLog;
 import cn.jiangzeyin.common.spring.SpringUtil;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.CacheControl;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.resource.EncodedResourceResolver;
 
 import java.lang.reflect.Modifier;
+import java.time.Duration;
 import java.util.*;
 
 /**
@@ -27,14 +30,29 @@ import java.util.*;
  */
 @Configuration
 @EnableWebMvc
+@ConfigurationProperties(prefix = CommonPropertiesFinal.INTERCEPTOR)
 public class InterceptorControl implements WebMvcConfigurer {
-    @Value("${" + CommonPropertiesFinal.INTERCEPTOR_INIT_PACKAGE_NAME + ":}")
-    private String loadPath;
+    //@Value("${" + CommonPropertiesFinal.INTERCEPTOR_INIT_PACKAGE_NAME + ":}")
+    /**
+     * @see CommonPropertiesFinal#INTERCEPTOR_INIT_PACKAGE_NAME
+     */
+    private String initPackageName;
+
+    //    @Value("${" + CommonPropertiesFinal.INTERCEPTOR_RESOURCE_HANDLER_MAP + ":}")
+    private Map<String, String> resourceHandlerMap;
     /**
      * 加载成功
      */
     private static final List<Class> LOAD_OK = new ArrayList<>();
     private InterceptorRegistry registry;
+
+    public void setInitPackageName(String initPackageName) {
+        this.initPackageName = initPackageName;
+    }
+
+    public void setResourceHandlerMap(Map<String, String> resourceHandlerMap) {
+        this.resourceHandlerMap = resourceHandlerMap;
+    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -42,8 +60,8 @@ public class InterceptorControl implements WebMvcConfigurer {
         //  加载application 注入
         Set<Class<?>> def = loadApplicationInterceptor();
         // 用户添加的
-        if (StrUtil.isNotEmpty(loadPath)) {
-            String[] paths = StrUtil.splitToArray(loadPath, StrUtil.COMMA);
+        if (StrUtil.isNotEmpty(initPackageName)) {
+            String[] paths = StrUtil.splitToArray(initPackageName, StrUtil.COMMA);
             Collection<Class<?>> newClassSet = CollUtil.union(def, new ArrayList<>());
             for (String item : paths) {
                 Set<Class<?>> classSet = ClassUtil.scanPackageByAnnotation(item, InterceptorPattens.class);
@@ -134,15 +152,38 @@ public class InterceptorControl implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         String resourceHandler = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.INTERCEPTOR_RESOURCE_HANDLER);
-        ResourceHandlerRegistration resourceHandlerRegistration;
+        // 统一配置
         if (StrUtil.isNotBlank(resourceHandler)) {
             String[] handler = ArrayUtil.toArray(StrUtil.splitTrim(resourceHandler, StrUtil.COMMA), String.class);
-            resourceHandlerRegistration = registry.addResourceHandler(handler);
+            ResourceHandlerRegistration resourceHandlerRegistration = registry.addResourceHandler(handler);
             // 资源文件路径
             String resourceLocation = SpringUtil.getEnvironment().getProperty(CommonPropertiesFinal.INTERCEPTOR_RESOURCE_LOCATION);
             if (StrUtil.isNotBlank(resourceLocation)) {
                 String[] location = ArrayUtil.toArray(StrUtil.splitTrim(resourceLocation, StrUtil.COMMA), String.class);
                 resourceHandlerRegistration.addResourceLocations(location);
+            }
+        }
+        //
+        if (resourceHandlerMap != null) {
+            for (Map.Entry<?, ?> entry : resourceHandlerMap.entrySet()) {
+                ResourceHandlerRegistration resourceHandlerRegistration = registry.addResourceHandler(String.valueOf(entry.getKey()));
+                String value = (String) entry.getValue();
+                String[] location = ArrayUtil.toArray(StrUtil.splitTrim(value, StrUtil.COMMA), String.class);
+                resourceHandlerRegistration.addResourceLocations((String) ArrayUtil.get(location, 0));
+                String cache = ArrayUtil.get(location, 1);
+                if (StrUtil.isNotEmpty(cache)) {
+                    try {
+                        Duration duration = Duration.parse(cache);
+                        resourceHandlerRegistration.setCacheControl(CacheControl.maxAge(duration).cachePrivate());
+                    } catch (Exception ignored) {
+                    }
+                }
+                String last = ArrayUtil.get(location, location.length - 1);
+                if (StrUtil.equalsIgnoreCase(last, "gzip")) {
+                    resourceHandlerRegistration
+                            .resourceChain(false)
+                            .addResolver(new EncodedResourceResolver());
+                }
             }
         }
     }
@@ -162,8 +203,8 @@ public class InterceptorControl implements WebMvcConfigurer {
      */
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-        if (StrUtil.isNotEmpty(loadPath)) {
-            String[] paths = StrUtil.splitToArray(loadPath, StrUtil.COMMA);
+        if (StrUtil.isNotEmpty(initPackageName)) {
+            String[] paths = StrUtil.splitToArray(initPackageName, StrUtil.COMMA);
             Collection<Class<?>> newClassSet = null;
             for (String item : paths) {
                 Set<Class<?>> classSet = ClassUtil.scanPackageBySuper(item, HandlerMethodArgumentResolver.class);
