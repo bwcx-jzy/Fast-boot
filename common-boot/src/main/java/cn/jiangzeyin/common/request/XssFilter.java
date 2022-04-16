@@ -16,6 +16,7 @@ import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.CharacterEncodingFilter;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletContext;
@@ -122,7 +123,12 @@ public class XssFilter extends CharacterEncodingFilter {
         boolean isFile = ServletFileUpload.isMultipartContent(request);
         HttpServletRequest newRequest;
         if (isFile) {
-            newRequest = new MultipartParameterXssWrapper(request);
+            try {
+                newRequest = new MultipartParameterXssWrapper(request);
+            } catch (MaxUploadSizeExceededException e) {
+                // 超过最大上传限制
+                newRequest = new ParameterXssWrapper(request);
+            }
         } else {
             newRequest = new ParameterXssWrapper(request);
         }
@@ -166,9 +172,7 @@ public class XssFilter extends CharacterEncodingFilter {
             REQUEST_INFO.set(id);
         } else {
             StringBuilder stringBuffer = new StringBuilder();
-            stringBuffer.append(url).append(",method:").append(request.getMethod())
-                    .append(",ip:").append(ip)
-                    .append(" parameters:");
+            stringBuffer.append(url).append(",method:").append(request.getMethod()).append(",ip:").append(ip).append(" parameters:");
             Set<Map.Entry<String, String>> entries = parameters.entrySet();
             stringBuffer.append("{");
             for (Map.Entry<String, String> entry : entries) {
@@ -213,10 +217,7 @@ public class XssFilter extends CharacterEncodingFilter {
             if (logCallback != null) {
                 logCallback.logError(urlInfo, status);
             } else {
-                String stringBuffer = "status:" +
-                        status +
-                        ",url:" +
-                        urlInfo;
+                String stringBuffer = "status:" + status + ",url:" + urlInfo;
                 DefaultSystemLog.getLog().error(stringBuffer);
             }
             return;
@@ -227,10 +228,7 @@ public class XssFilter extends CharacterEncodingFilter {
             if (logCallback != null) {
                 logCallback.logTimeOut(urlInfo, time);
             } else {
-                String stringBuffer = "time:" +
-                        time +
-                        ",url:" +
-                        urlInfo;
+                String stringBuffer = "time:" + time + ",url:" + urlInfo;
                 DefaultSystemLog.getLog().error(stringBuffer);
             }
         }
@@ -298,8 +296,7 @@ public class XssFilter extends CharacterEncodingFilter {
             return null;
         }
         //  xss 提前统一编码
-        return HtmlUtil.escape(value)
-                .replace(StrUtil.HTML_QUOTE, "\"");
+        return HtmlUtil.escape(value).replace(StrUtil.HTML_QUOTE, "\"");
     }
 
     private static String autoToUtf8(String str, Charset charset) {
