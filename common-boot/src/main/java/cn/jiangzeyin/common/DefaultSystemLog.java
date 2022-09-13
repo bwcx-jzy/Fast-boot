@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**
@@ -82,17 +83,19 @@ public class DefaultSystemLog {
         /**
          * 请求错误
          *
-         * @param id     请求id
-         * @param status 状态码
+         * @param response 响应
+         * @param id       请求id
+         * @param status   状态码
          */
-        void logError(String id, int status);
+        void logError(HttpServletResponse response, String id, int status);
 
         /**
          * 请求超时
          *
-         * @param id   请求id
-         * @param time 时间
+         * @param response 响应
+         * @param id       请求id
+         * @param time     时间
          */
-        void logTimeOut(String id, long time);
+        void logTimeOut(HttpServletResponse response, String id, long time);
     }
 }

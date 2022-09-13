@@ -215,7 +215,7 @@ public class XssFilter extends CharacterEncodingFilter {
         DefaultSystemLog.LogCallback logCallback = DefaultSystemLog.getLogCallback();
         if (status >= HttpStatus.BAD_REQUEST.value()) {
             if (logCallback != null) {
-                logCallback.logError(urlInfo, status);
+                logCallback.logError(response, urlInfo, status);
             } else {
                 String stringBuffer = "status:" + status + ",url:" + urlInfo;
                 DefaultSystemLog.getLog().error(stringBuffer);
@@ -226,7 +226,7 @@ public class XssFilter extends CharacterEncodingFilter {
         long time = System.currentTimeMillis() - REQUEST_TIME.get();
         if (request_timeout_log > 0 && time > request_timeout_log) {
             if (logCallback != null) {
-                logCallback.logTimeOut(urlInfo, time);
+                logCallback.logTimeOut(response, urlInfo, time);
             } else {
                 String stringBuffer = "time:" + time + ",url:" + urlInfo;
                 DefaultSystemLog.getLog().error(stringBuffer);
